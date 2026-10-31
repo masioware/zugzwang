@@ -4,7 +4,8 @@
     "stats": "Stats",
     "accounts": "Accounts",
     "language": "Language",
-    "puzzles": "Puzzles"
+    "puzzles": "Puzzles",
+    "friends": "Friends"
   },
   "common": {
     "loading": "Loading…",
@@ -101,7 +102,8 @@
     "errors": {
       "userNotFound": "User not found on {{platform}}.",
       "rateLimited": "{{platform}} is rate limiting requests. Wait a minute and try again.",
-      "generic": "Could not import games: {{message}}"
+      "generic": "Could not import games: {{message}}",
+      "accountTaken": "This {{platform}} account was already added (as yours or a friend's). Remove it before adding it again."
     }
   },
   "filters": {
@@ -581,5 +583,31 @@
     "count_other": "{{count}} puzzles",
     "moves_one": "{{n}} move",
     "moves_other": "{{n}} moves"
+  },
+  "friends": {
+    "title": "Friends",
+    "subtitle": "Add your friends' accounts to analyse their games and see how you do against them. Each friend's statistics are kept apart from yours.",
+    "name": "Friend",
+    "namePlaceholder": "friend's name",
+    "usernamePlaceholder": "friend's username",
+    "add": "Add friend",
+    "yourFriends": "Your friends",
+    "versus_one": "{{count}} game against you",
+    "versus_other": "{{count}} games against you",
+    "noGamesTogether": "No games against you",
+    "noGamesTogetherHint": "No games against {{name}} in your imported accounts. Sync your accounts to fetch new games.",
+    "notFound": "Friend not found.",
+    "headToHead": "Head to head",
+    "youVs": "You vs {{name}}",
+    "fromYourAccounts": "Games from your accounts against this friend's accounts",
+    "score": "games · {{score}}% score",
+    "needsAnalysis": "Analyse the games to compare your accuracy.",
+    "you": "You",
+    "moreAccurate_one": "You were more accurate in {{count}} game",
+    "moreAccurate_other": "You were more accurate in {{count}} games",
+    "lessAccurate_one": "{{name}} was more accurate in {{count}} game",
+    "lessAccurate_other": "{{name}} was more accurate in {{count}} games",
+    "gamesTogether": "Your games together",
+    "accountsOf": "{{name}}'s accounts"
   }
 }

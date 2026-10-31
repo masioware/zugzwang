@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAnalysedIds, useAnalyses, useFilteredGames, useFilters, useGames } from '../lib/hooks';
+import { useAnalysedIds, useAnalyses, useFilteredGames, useFilters, useGames, useScope } from '../lib/hooks';
 import { useAnalysisQueue } from '../engine/queue';
 import FilterBar from '../components/FilterBar';
 import PlatformIcon from '../components/PlatformIcon';
@@ -14,11 +14,12 @@ const PAGE_SIZE = 50;
 export default function Games() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const scope = useScope();
   const all = useGames();
   const games = useFilteredGames();
   const analysedIds = useAnalysedIds();
   const analyses = useAnalyses();
-  const filters = useFilters((s) => s.filters);
+  const { filters } = useFilters();
   const enqueue = useAnalysisQueue((s) => s.enqueue);
   const [page, setPage] = useState(0);
   useEffect(() => setPage(0), [filters]);
@@ -32,7 +33,7 @@ export default function Games() {
   if (!all.length)
     return (
       <div className="panel p-8 text-center text-ink-2">
-        {t('games.empty')} <Link className="text-accent underline" to="/">{t('nav.accounts')}</Link>
+        {t('games.empty')} <Link className="text-accent underline" to={scope ? '/friends' : '/'}>{t(scope ? 'nav.friends' : 'nav.accounts')}</Link>
       </div>
     );
 

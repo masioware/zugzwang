@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import { db } from '../db';
 import { ANALYSIS_VERSION } from '../analysis/classify';
 import { useSettings } from '../lib/settings';
+import { platformGameId } from '../api/importer';
+import type { GameAnalysis } from '../types';
 import { analyseGame, type AnalysisProgress } from './gameAnalysis';
 import { enginePool } from './pool';
 
@@ -74,7 +76,16 @@ async function runOne(id: string) {
   let last = 0;
   try {
     const [game, existing] = await Promise.all([db.games.get(id), db.analyses.get(id)]);
-    if (!game || controller.signal.aborted || (existing && existing.version === ANALYSIS_VERSION && existing.depth >= depth)) return;
+    const fresh = (a?: GameAnalysis) => !!a && a.version === ANALYSIS_VERSION && a.depth >= depth;
+    if (!game || controller.signal.aborted || fresh(existing)) return;
+    // The same game imported for another account (the user's and a friend's) needs no second engine run.
+    const twin = (await db.analyses.where('gameId').startsWith(platformGameId(id)).toArray()).find(
+      (a) => a.gameId !== id && platformGameId(a.gameId) === platformGameId(id) && fresh(a),
+    );
+    if (twin) {
+      await db.analyses.put({ ...twin, gameId: id });
+      return;
+    }
     const result = await analyseGame(
       game,
       depth,

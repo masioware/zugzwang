@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAnalyses, useFilteredGames, useFilters, useGameFacts, useGames } from '../lib/hooks';
+import { useAnalyses, useFilteredGames, useFilters, useGameFacts, useGames, useScope } from '../lib/hooks';
 import { useAnalysisQueue } from '../engine/queue';
 import FilterBar from '../components/FilterBar';
 import { BoardIcon, BookIcon, CalendarIcon, CastleIcon, ClockIcon, FlagIcon, MedalIcon, OverviewIcon, PieceIcon, TargetIcon, TrophyIcon } from '../components/icons';
@@ -25,11 +25,12 @@ const NAV: NavGroup[] = [
 
 export default function Stats() {
   const { t } = useTranslation();
+  const scope = useScope();
   const all = useGames();
   const games = useFilteredGames();
   const analyses = useAnalyses();
   const facts = useGameFacts(games);
-  const period = useFilters((s) => s.filters.period);
+  const period = useFilters().filters.period;
   const enqueue = useAnalysisQueue((s) => s.enqueue);
 
   const data = useMemo<StatsData | null>(() => {
@@ -41,7 +42,7 @@ export default function Stats() {
   if (!all.length)
     return (
       <div className="panel p-8 text-center text-ink-2">
-        {t('games.empty')} <Link className="text-accent underline" to="/">{t('nav.accounts')}</Link>
+        {t('games.empty')} <Link className="text-accent underline" to={scope ? '/friends' : '/'}>{t(scope ? 'nav.friends' : 'nav.accounts')}</Link>
       </div>
     );
 

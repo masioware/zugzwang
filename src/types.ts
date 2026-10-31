@@ -21,7 +21,7 @@ export interface Player {
 }
 
 export interface Game {
-  /** `${source}:${nativeId}` */
+  /** `${source}:${nativeId}`; games of friends' accounts get `@${accountId}` appended (see platformGameId). */
   id: string;
   source: Source;
   /** Account id (`${source}:${username}`) this game was imported for. */
@@ -53,6 +53,8 @@ export interface Account {
   source: Source;
   username: string;
   lastSync?: number;
+  /** Name of the friend this account belongs to; unset for the user's own accounts. */
+  friend?: string;
 }
 
 /** Engine score, always from White's point of view. */

@@ -4,7 +4,8 @@
     "stats": "Estatísticas",
     "accounts": "Contas",
     "language": "Idioma",
-    "puzzles": "Puzzles"
+    "puzzles": "Puzzles",
+    "friends": "Amigos"
   },
   "common": {
     "loading": "Carregando…",
@@ -101,7 +102,8 @@
     "errors": {
       "userNotFound": "Usuário não encontrado no {{platform}}.",
       "rateLimited": "O {{platform}} está limitando as requisições. Aguarde um minuto e tente de novo.",
-      "generic": "Não foi possível importar as partidas: {{message}}"
+      "generic": "Não foi possível importar as partidas: {{message}}",
+      "accountTaken": "Essa conta do {{platform}} já foi adicionada (como sua ou de um amigo). Remova-a antes de adicioná-la de novo."
     }
   },
   "filters": {
@@ -581,5 +583,31 @@
     "count_other": "{{count}} puzzles",
     "moves_one": "{{n}} lance",
     "moves_other": "{{n}} lances"
+  },
+  "friends": {
+    "title": "Amigos",
+    "subtitle": "Adicione as contas dos seus amigos para analisar as partidas deles e ver como você se sai contra eles. As estatísticas de cada um ficam separadas das suas.",
+    "name": "Amigo",
+    "namePlaceholder": "nome do amigo",
+    "usernamePlaceholder": "usuário do amigo",
+    "add": "Adicionar amigo",
+    "yourFriends": "Seus amigos",
+    "versus_one": "{{count}} partida contra você",
+    "versus_other": "{{count}} partidas contra você",
+    "noGamesTogether": "Nenhuma partida contra você",
+    "noGamesTogetherHint": "Nenhuma partida contra {{name}} nas suas contas importadas. Atualize suas contas para buscar partidas novas.",
+    "notFound": "Amigo não encontrado.",
+    "headToHead": "Confronto",
+    "youVs": "Você × {{name}}",
+    "fromYourAccounts": "Partidas das suas contas contra as contas deste amigo",
+    "score": "partidas · {{score}}% de aproveitamento",
+    "needsAnalysis": "Analise as partidas para comparar a precisão de vocês.",
+    "you": "Você",
+    "moreAccurate_one": "Você foi mais preciso em {{count}} partida",
+    "moreAccurate_other": "Você foi mais preciso em {{count}} partidas",
+    "lessAccurate_one": "{{name}} foi mais preciso em {{count}} partida",
+    "lessAccurate_other": "{{name}} foi mais preciso em {{count}} partidas",
+    "gamesTogether": "Partidas entre vocês",
+    "accountsOf": "Contas de {{name}}"
   }
 }

@@ -9,18 +9,27 @@ export interface ImportProgress {
   step?: string;
 }
 
+/** Id of the game on its platform, shared by the copies imported for different accounts. */
+export function platformGameId(gameId: string): string {
+  return gameId.split('@')[0];
+}
+
 /**
  * Fetches games for an account. On the first sync, goes back `months` months;
  * afterwards only fetches games newer than the most recent one stored.
+ * `friend` files the account under that friend instead of the user's own accounts.
  */
 export async function syncAccount(
   source: Source,
   username: string,
   months: number,
+  friend: string | undefined,
   onProgress: (p: ImportProgress) => void,
   signal?: AbortSignal,
 ): Promise<number> {
   const accountId = `${source}:${username.toLowerCase()}`;
+  const existing = await db.accounts.get(accountId);
+  if (existing && existing.friend !== friend) throw new Error('accountTaken');
   const book = await loadOpeningBook();
   const latest = await db.games.where('accountId').equals(accountId).reverse().sortBy('endTime');
   const newest = latest[0]?.endTime;
@@ -29,6 +38,8 @@ export async function syncAccount(
 
   const save = async (games: Game[]) => {
     if (!games.length) return;
+    // A game against a friend is imported for both sides; keep the friend's copy apart from the user's.
+    if (friend) games = games.map((g) => ({ ...g, id: `${g.id}@${accountId}` }));
     await db.games.bulkPut(games);
     imported += games.length;
     onProgress({ imported });
@@ -61,8 +72,7 @@ export async function syncAccount(
     await Promise.all(pending);
   }
 
-  const account: Account = { id: accountId, source, username, lastSync: Date.now() };
-  const existing = await db.accounts.get(accountId);
+  const account: Account = { id: accountId, source, username, lastSync: Date.now(), friend };
   await db.accounts.put({ ...existing, ...account, username: existing?.username ?? username });
   return imported;
 }

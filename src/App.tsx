@@ -6,6 +6,9 @@ import Games from './pages/Games';
 
 const GameReview = lazy(() => import('./pages/GameReview'));
 const Stats = lazy(() => import('./pages/Stats'));
+const Friends = lazy(() => import('./pages/Friends'));
+const Friend = lazy(() => import('./pages/Friend'));
+const HeadToHeadView = lazy(() => import('./pages/Friend').then((m) => ({ default: m.HeadToHeadView })));
 const Puzzles = lazy(() => import('./pages/Puzzles'));
 const PuzzleStats = lazy(() => import('./pages/PuzzleStats'));
 const Woodpecker = lazy(() => import('./pages/Woodpecker'));
@@ -34,6 +37,7 @@ export default function App() {
               <NavLink to="/games" className={link}>{t('nav.games')}</NavLink>
               <NavLink to="/stats" className={link}>{t('nav.stats')}</NavLink>
               <NavLink to="/puzzles" className={link}>{t('nav.puzzles')}</NavLink>
+              <NavLink to="/friends" className={link}>{t('nav.friends')}</NavLink>
               <NavLink to="/" end className={link}>{t('nav.accounts')}</NavLink>
             </nav>
             <div className="ml-auto flex shrink-0 items-center gap-3">
@@ -50,6 +54,12 @@ export default function App() {
             <Route path="/games" element={<Games />} />
             <Route path="/game/:id" element={<GameReview />} />
             <Route path="/stats" element={<Stats />} />
+            <Route path="/friends" element={<Friends />} />
+            <Route path="/friends/:friend" element={<Friend />}>
+              <Route index element={<HeadToHeadView />} />
+              <Route path="games" element={<Games />} />
+              <Route path="stats" element={<Stats />} />
+            </Route>
             <Route path="/puzzles" element={<Puzzles />} />
             <Route path="/puzzles/p/:id" element={<Puzzles />} />
             <Route path="/puzzles/stats" element={<PuzzleStats />} />
