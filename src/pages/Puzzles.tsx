@@ -159,7 +159,7 @@ export default function Puzzles() {
   return (
     <>
       <PuzzleTabs />
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_400px]">
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_400px]">
         <SolverBoard solver={solver} />
 
         <aside className="space-y-3 lg:sticky lg:top-[72px]">
@@ -255,7 +255,7 @@ export default function Puzzles() {
                     to={`/puzzles/p/${a.puzzleId}`}
                     title={t(a.solved ? 'puzzles.solved' : 'puzzles.failed')}
                     className={`tabular rounded px-1.5 py-0.5 text-xs font-semibold ${
-                      a.solved ? 'bg-accent/20 text-accent' : 'bg-loss/20 text-loss'
+                      a.solved ? 'bg-good/15 text-good' : 'bg-loss/15 text-loss'
                     } ${a.puzzleId === puzzle?.id ? 'ring-1 ring-ink' : ''}`}
                   >
                     {a.puzzleRating}

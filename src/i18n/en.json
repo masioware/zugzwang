@@ -5,7 +5,8 @@
     "accounts": "Accounts",
     "language": "Language",
     "puzzles": "Puzzles",
-    "friends": "Friends"
+    "friends": "Friends",
+    "play": "Play"
   },
   "common": {
     "loading": "Loading…",
@@ -88,6 +89,10 @@
     "months_other": "Last {{count}} months",
     "allTime": "All time",
     "import": "Import games",
+    "syncAll": "Sync all",
+    "syncing": "Syncing {{name}}… {{count}}",
+    "syncFailed": "Could not sync: {{names}}",
+    "cancelled": "Import cancelled. None of its games were kept.",
     "importing": "Importing… {{count}} games",
     "imported_one": "{{count}} new game imported",
     "imported_other": "{{count}} new games imported",
@@ -104,6 +109,13 @@
       "rateLimited": "{{platform}} is rate limiting requests. Wait a minute and try again.",
       "generic": "Could not import games: {{message}}",
       "accountTaken": "This {{platform}} account was already added (as yours or a friend's). Remove it before adding it again."
+    },
+    "local": "100% in your browser",
+    "accountsHint": "Your Chess.com and Lichess accounts, synced automatically.",
+    "features": {
+      "engine": "Stockfish game review",
+      "stats": "Deep statistics",
+      "puzzles": "Puzzles & Woodpecker"
     }
   },
   "filters": {
@@ -121,7 +133,9 @@
     },
     "rated": "Type",
     "ratedOnly": "Rated",
-    "casual": "Casual"
+    "casual": "Casual",
+    "toggle": "Filters",
+    "clear": "Clear"
   },
   "games": {
     "title": "Games",
@@ -157,13 +171,18 @@
     "end": "Last move",
     "nextMistake": "Next mistake",
     "evalGraph": "Evaluation",
+    "copyFen": "Copy FEN",
+    "copyPgn": "Copy PGN",
+    "copied": "Copied!",
+    "lichessAnalysis": "Analyse on Lichess",
+    "lichessAnalysisHint": "Open the position on the board in the Lichess analysis board",
     "openOn": "Open on {{platform}}",
     "platformAccuracy": "{{platform}}: {{value}}",
     "engineLines": "Engine",
     "depth": "depth {{depth}}",
     "startPosition": "Starting position",
     "gameOver": "Game over",
-    "keyboardHint": "Use ← → to navigate",
+    "keyboardHint": "Keyboard shortcuts (?)",
     "tabMoves": "Moves",
     "tabSummary": "Summary"
   },
@@ -285,7 +304,9 @@
     "showSeries": "Click a series to hide or show it",
     "first": "First",
     "last": "Current",
-    "peak": "Peak"
+    "peak": "Peak",
+    "preparing": "Preparing statistics…",
+    "preparingHint": "Each game is replayed only once; next time this page opens instantly."
   },
   "queue": {
     "running_one": "Analyzing 1 game",
@@ -301,6 +322,7 @@
     "board": "Board",
     "pieces": "Pieces",
     "themes": {
+      "graphite": "Graphite",
       "green": "Green",
       "brown": "Brown",
       "blue": "Light blue"
@@ -582,7 +604,22 @@
     "count_one": "{{count}} puzzle",
     "count_other": "{{count}} puzzles",
     "moves_one": "{{n}} move",
-    "moves_other": "{{n}} moves"
+    "moves_other": "{{n}} moves",
+    "themeChip": "Theme: {{theme}}",
+    "emptyTheme": "No {{theme}} puzzles in this period yet.",
+    "themeFocus": "{{theme}}",
+    "trainTheme": "Train this theme",
+    "themeTrend": "Accuracy over time",
+    "themeTrendSub": "Each dot is a try (top solved, bottom failed); the line is the share solved in the last {{count}}.",
+    "rollingAccuracy": "Last {{count}}",
+    "overallAverage": "Your overall: {{value}}%",
+    "result": "Result",
+    "fewAttempts": "Not enough tries in this theme yet.",
+    "coThemes": "Themes that come with it",
+    "filterByTheme": "Filter by this theme",
+    "overallIs": "Your overall: {{value}}",
+    "solvedShort": "Solved",
+    "failedShort": "Failed"
   },
   "friends": {
     "title": "Friends",
@@ -609,5 +646,91 @@
     "lessAccurate_other": "{{name}} was more accurate in {{count}} games",
     "gamesTogether": "Your games together",
     "accountsOf": "{{name}}'s accounts"
+  },
+  "shortcuts": {
+    "title": "Keyboard shortcuts",
+    "close": "Close"
+  },
+  "backup": {
+    "title": "Backup",
+    "hint": "Your data lives only in this browser. Export a backup to keep it safe or move it to another browser.",
+    "export": "Export backup",
+    "exporting": "Exporting…",
+    "exported": "Backup downloaded ({{size}}).",
+    "import": "Restore backup",
+    "restoring": "Restoring…",
+    "restoreConfirm": "Restoring replaces ALL current data (games, analyses, puzzles and settings) with the backup's. Continue?",
+    "restored": "Backup restored: {{games}} games, {{analyses}} analyses. Reloading…",
+    "invalidBackup": "This file is not a Zugzwang backup.",
+    "newerBackup": "This backup comes from a newer version of Zugzwang. Update the app before restoring it.",
+    "waitSync": "Wait for the import to finish.",
+    "error": "Something went wrong: {{message}}"
+  },
+  "play": {
+    "title": "Play the bot",
+    "subtitle": "Train the openings from your games against a bot of adjustable strength.",
+    "yourColor": "You play",
+    "randomColor": "Random",
+    "imitate": "The bot plays as",
+    "imitateOptions": {
+      "opponents": "Your opponents",
+      "me": "You"
+    },
+    "imitateHint": {
+      "opponents": "The bot takes your opponents' side from your {{count}} games as {{color}}. You train your repertoire.",
+      "me": "The bot takes your side from your {{count}} games as {{color}}. You face your own repertoire."
+    },
+    "imitateHintRandom": {
+      "opponents": "The bot takes your opponents' side from your games with the drawn colour.",
+      "me": "The bot takes your side from your games with the colour opposite to the drawn one."
+    },
+    "variation": "Opening",
+    "randomVariation": "Random (the ones you play most come up most)",
+    "variationHint": "These are the openings from your games; the number is how many games you have in each.",
+    "variationNeedsColor": "Pick a colour to choose a specific opening.",
+    "noGames": "You have no games with this colour yet, so there are no openings to choose from.",
+    "elo": "Bot strength (Elo)",
+    "max": "Max",
+    "start": "Play",
+    "yourTurn": "Your move",
+    "botThinking": "The bot is thinking…",
+    "resign": "Resign",
+    "resignConfirm": "Resign the game?",
+    "analyse": "Analyse game",
+    "again": "Play again",
+    "newSetup": "Change",
+    "promoteTo": "Promote to",
+    "you": "You",
+    "result": {
+      "win": "You won",
+      "draw": "Draw",
+      "loss": "You lost"
+    },
+    "noOpeningYet": "Starting position",
+    "chosenLine": "Line",
+    "leftLine": "you left the line",
+    "source": {
+      "line": "Move from the chosen line",
+      "opponents": "As your opponents played · {{n}} of {{total}}",
+      "me": "As you played · {{n}} of {{total}}",
+      "engine": "Engine · Elo {{elo}}",
+      "theory": "Theory move"
+    },
+    "deviation": "You played {{move}}, but in your games you usually play {{usual}} here.",
+    "trainingGame": "Training vs. the bot",
+    "openingMoves": "Bot's opening moves",
+    "fromGames": "From your games",
+    "fromTheory": "From theory",
+    "gamesHint": "The bot steers into the opening along the most common path in your games and follows what was played in them. When they run out, the engine takes over.",
+    "theoryHint": "The bot plays the theory moves of {{name}}. When theory runs out it plays as in your games, then the engine takes over.",
+    "theoryHintAny": "The bot plays theory moves of any opening. When theory runs out it plays as in your games, then the engine takes over.",
+    "theoryOf": "Theory: {{name}}",
+    "anyLine": "any line",
+    "offTheory": "You left theory with {{move}}; theory goes on with {{usual}} here.",
+    "imitateHintTheory": {
+      "opponents": "The openings come from your {{count}} games as {{color}}, and the bot takes your opponents' side.",
+      "me": "The openings come from your {{count}} games as {{color}} (the ones you play with the bot's colour), and the bot takes your side."
+    },
+    "gamesHintAny": "Each move, the bot picks from what was played in your games (the most common comes up most). When they run out, the engine takes over."
   }
 }

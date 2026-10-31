@@ -86,7 +86,7 @@ describe('insights', () => {
   const g2 = game({ id: 'g2', outcome: 'loss', black: { name: 'opp', rating: 1720 }, rated: false, endTime: new Date(2026, 9, 7, 9, 0).getTime() });
   const games = [g1, g2];
   const analysis = (id: string, acc: number, moves: MoveAnalysis[]): GameAnalysis => ({
-    gameId: id, depth: 10, version: 1, positions: [], createdAt: 0, accuracy: { white: acc, black: 50 }, moves,
+    gameId: id, depth: 10, version: 1, createdAt: 0, accuracy: { white: acc, black: 50 }, moves,
   });
   const analyses = new Map([
     ['g1', analysis('g1', 90, [move(0, 100, 'book'), move(1, 80), move(2, 70, 'mistake')])],

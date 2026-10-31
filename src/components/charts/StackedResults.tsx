@@ -71,7 +71,7 @@ export default function StackedResults({
       <div style={{ height }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 8, right: 4, bottom: 0, left: 0 }} barCategoryGap="18%">
-            <CartesianGrid stroke={GRID} vertical={false} />
+            <CartesianGrid stroke={GRID} strokeDasharray="3 4" vertical={false} />
             <XAxis dataKey="key" interval={0} height={tickHeight(!!tick, true)} {...AXIS} tick={stackedTick(label, tick, sub)} />
             <YAxis domain={[0, 1]} tickFormatter={(v) => `${Math.round(v * 100)}%`} ticks={[0, 0.25, 0.5, 0.75, 1]} width={40} {...AXIS} />
             <Tooltip
@@ -97,7 +97,7 @@ export default function StackedResults({
                 dataKey={`${k}S`}
                 stackId="r"
                 fill={WDL_COLOR[k]}
-                stroke="#262522"
+                stroke="#121215"
                 strokeWidth={2}
                 maxBarSize={88}
                 radius={i === keys.length - 1 ? [4, 4, 0, 0] : 0}

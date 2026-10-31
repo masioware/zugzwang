@@ -17,11 +17,11 @@ export default function EngineLines({ fen, lines, onPlay }: Props) {
 
   return (
     <div className="space-y-1">
-      <div className="flex items-center justify-between text-xs text-ink-3">
-        <span className="font-semibold uppercase tracking-wide">{t('review.engineLines')}</span>
-        {depth && <span>{t('review.depth', { depth })}</span>}
+      <div className="flex items-center justify-between pb-1">
+        <span className="eyebrow">{t('review.engineLines')}</span>
+        {depth && <span className="chip font-mono text-[11px]">{t('review.depth', { depth })}</span>}
       </div>
-      {lines.length === 0 && <div className="h-6 animate-pulse rounded bg-white/5" />}
+      {lines.length === 0 && <div className="h-7 animate-pulse rounded-lg bg-white/5" />}
       {lines.map((line, i) => {
         const san = pvToSan(fen, line.pv).slice(0, 12);
         const whiteAhead = (line.mate ?? line.cp ?? 0) >= 0;
@@ -29,11 +29,11 @@ export default function EngineLines({ fen, lines, onPlay }: Props) {
           <button
             key={i}
             onClick={() => onPlay(line.pv[0])}
-            className="flex w-full items-center gap-2 rounded px-1 py-0.5 text-left text-sm hover:bg-white/5"
+            className="flex w-full items-center gap-2.5 rounded-lg px-1.5 py-1 text-left text-sm transition-colors hover:bg-white/[0.05]"
           >
             <span
-              className={`tabular w-14 shrink-0 rounded px-1 text-center text-xs font-bold ${
-                whiteAhead ? 'bg-ink text-panel-2' : 'bg-panel-2 text-ink ring-1 ring-line'
+              className={`tabular w-14 shrink-0 rounded-md px-1 py-0.5 text-center font-mono text-xs font-bold ${
+                whiteAhead ? 'bg-[#f2f1ec] text-bg' : 'bg-panel-3 text-ink ring-1 ring-line-2'
               }`}
             >
               {formatScore(line)}

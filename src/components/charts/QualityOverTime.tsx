@@ -68,11 +68,11 @@ export default function QualityOverTime({
       <div className="h-60">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={rows} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
-            <CartesianGrid stroke={GRID} vertical={false} />
+            <CartesianGrid stroke={GRID} strokeDasharray="3 4" vertical={false} />
             <XAxis dataKey="t" tickFormatter={(v) => fmt.format(v)} {...AXIS} />
             <YAxis domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} tickFormatter={(v) => `${v}%`} width={40} {...AXIS} />
             <Tooltip
-              cursor={{ stroke: '#8b8987', strokeDasharray: '3 3' }}
+              cursor={{ stroke: '#7a7a80', strokeDasharray: '3 3' }}
               content={({ payload }) => {
                 const p = payload?.[0]?.payload as (typeof rows)[number] | undefined;
                 if (!p) return null;
@@ -94,7 +94,7 @@ export default function QualityOverTime({
                 dataKey={c}
                 stackId="q"
                 type="monotone"
-                stroke="#262522"
+                stroke="#121215"
                 strokeWidth={1}
                 fill={HEX[c]}
                 fillOpacity={0.9}

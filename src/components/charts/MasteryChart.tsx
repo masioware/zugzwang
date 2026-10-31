@@ -14,14 +14,14 @@ export default function MasteryChart({ points }: { points: { t: number; move: nu
     <div className="h-48">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={points} margin={{ top: 8, right: 8, bottom: 0, left: 0 }} barCategoryGap="15%">
-          <CartesianGrid stroke={GRID} vertical={false} />
+          <CartesianGrid stroke={GRID} strokeDasharray="3 4" vertical={false} />
           <XAxis dataKey="t" tickFormatter={(v) => short.format(v)} minTickGap={40} {...AXIS} />
           <YAxis allowDecimals={false} width={32} {...AXIS} />
           <ReferenceLine
             y={points.reduce((s, p) => s + p.move, 0) / (points.length || 1)}
-            stroke="#8b8987"
+            stroke="#7a7a80"
             strokeDasharray="4 3"
-            label={{ value: t('stats.average'), position: 'insideTopRight', fill: '#8b8987', fontSize: 10 }}
+            label={{ value: t('stats.average'), position: 'insideTopRight', fill: '#7a7a80', fontSize: 10 }}
           />
           <Tooltip
             cursor={{ fill: 'rgba(255,255,255,0.04)' }}
@@ -34,8 +34,8 @@ export default function MasteryChart({ points }: { points: { t: number; move: nu
           <Bar
             dataKey="move"
             fill={SERIES[0]}
-            activeBar={{ fill: SERIES[0], fillOpacity: 0.75, stroke: '#f0efec', strokeWidth: 1 }}
-            radius={[3, 3, 0, 0]}
+            activeBar={{ fill: SERIES[0], fillOpacity: 0.75, stroke: '#f6f5f1', strokeWidth: 1 }}
+            radius={[4, 4, 0, 0]}
             maxBarSize={18}
             cursor="pointer"
             isAnimationActive={false}

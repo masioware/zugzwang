@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSettings } from '../lib/settings';
 import { defaultWorkers, maxWorkers } from '../engine/pool';
+import { CpuIcon } from './icons';
 
 const DEPTHS = [10, 12, 14, 16, 18, 20];
 
@@ -27,20 +28,12 @@ export default function EngineSettings() {
 
   return (
     <div ref={ref} className="relative">
-      <button
-        className="btn-ghost px-2 py-1 text-xs"
-        aria-expanded={open}
-        onClick={() => setOpen(!open)}
-        title={t('engine.title')}
-      >
-        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden>
-          <rect x="6" y="6" width="12" height="12" rx="2" />
-          <path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4" />
-        </svg>
-        <span className="hidden sm:inline">{t('engine.short', { depth, workers })}</span>
+      <button className="btn-ghost h-9 px-2.5 text-xs" aria-expanded={open} onClick={() => setOpen(!open)} title={t('engine.title')}>
+        <CpuIcon className="h-4 w-4" />
+        <span className="tabular hidden lg:inline">{t('engine.short', { depth, workers })}</span>
       </button>
       {open && (
-        <div className="absolute right-0 top-10 z-30 w-72 space-y-4 rounded-lg bg-panel-2 p-4 text-sm shadow-2xl ring-1 ring-line">
+        <div className="panel absolute right-0 top-11 z-30 w-72 space-y-4 bg-panel-2 p-4 text-sm shadow-2xl">
           <label className="block space-y-1.5">
             <span className="text-xs font-semibold uppercase tracking-wide text-ink-3">{t('settings.depth')}</span>
             <select className="input w-full" value={depth} onChange={(e) => setDepth(Number(e.target.value))}>
@@ -57,7 +50,7 @@ export default function EngineSettings() {
             </span>
             <input
               type="range"
-              className="w-full accent-[var(--color-accent)]"
+              className="w-full accent-accent"
               min={1}
               max={maxWorkers()}
               value={workers}

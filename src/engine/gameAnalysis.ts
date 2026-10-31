@@ -1,8 +1,8 @@
 import { db } from '../db';
 import type { EngineLine, Game, GameAnalysis } from '../types';
 import { replay } from '../lib/chess';
-import { analyseMoves, ANALYSIS_VERSION } from '../analysis/classify';
-import { identifyOpening, loadOpeningBook } from '../analysis/openings';
+import { ANALYSIS_VERSION } from '../analysis/classify';
+import { classifyInWorker } from './classifyClient';
 import { Chess } from 'chess.js';
 import { enginePool } from './pool';
 
@@ -43,23 +43,19 @@ export async function analyseGame(
   if (signal?.aborted || results.some((r) => r === null)) return null;
   const positions = results as EngineLine[][];
 
-  const book = await loadOpeningBook();
-  const { bookPlies } = identifyOpening(plies.map((p) => p.fenAfter), book);
-  const result = analyseMoves({
-    plies,
-    positions,
-    bookPlies,
-    clocks: game.clocks,
-    initialTime: game.initialTime,
-  });
+  const result = await classifyInWorker({ moves: game.moves, positions, clocks: game.clocks, initialTime: game.initialTime });
+  if (signal?.aborted) return null;
   const analysis: GameAnalysis = {
     gameId: game.id,
     depth,
     version: ANALYSIS_VERSION,
-    positions,
     ...result,
     createdAt: Date.now(),
   };
-  await db.analyses.put(analysis);
+  // Lines first: whoever reacts to the new analysis may read them right away.
+  await db.transaction('rw', db.analyses, db.analysisLines, async () => {
+    await db.analysisLines.put({ gameId: game.id, positions });
+    await db.analyses.put(analysis);
+  });
   return analysis;
 }

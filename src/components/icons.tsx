@@ -59,3 +59,10 @@ export const MoonIcon = base(<path d="M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z"
 export const SunriseIcon = base(<><path d="M4 18h16M7 18a5 5 0 0110 0" /><path d="M12 4v4M9 7l3-3 3 3M4.6 11.6l1.4 1.4M19.4 11.6L18 13" /></>);
 export const SunIcon = base(<><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></>);
 export const SunsetIcon = base(<><path d="M4 18h16M7 18a5 5 0 0110 0" /><path d="M12 9V4M9 6l3 3 3-3M4.6 11.6l1.4 1.4M19.4 11.6L18 13" /></>);
+
+export const PlayIcon = base(<><path d="M8 21h8M9 21l1-6M15 21l-1-6" /><path d="M8 9a4 4 0 118 0c0 2-1.5 3.5-2 6h-4c-.5-2.5-2-4-2-6z" /></>);
+export const ChartIcon = base(<><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></>);
+export const PuzzleIcon = base(<path d="M10 3h4v2.5a1.5 1.5 0 003 0V3h4v7h-2.5a1.5 1.5 0 000 3H21v8h-7v-2.5a1.5 1.5 0 00-3 0V21H3v-8h2.5a1.5 1.5 0 000-3H3V3h7z" />);
+export const UsersIcon = base(<><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20a6.5 6.5 0 0113 0" /><path d="M16 4.6a3.5 3.5 0 010 6.8M18 14a6.5 6.5 0 013.5 6" /></>);
+export const UserIcon = base(<><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0116 0" /></>);
+export const CpuIcon = base(<><rect x="6" y="6" width="12" height="12" rx="2" /><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4" /></>);

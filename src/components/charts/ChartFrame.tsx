@@ -28,7 +28,7 @@ export default function ChartFrame({
           <div className="min-w-0">{!asTable && legend}</div>
           {table && (
             <button
-              className="ml-auto rounded px-2 py-0.5 text-xs font-semibold text-ink-3 ring-1 ring-line transition-colors hover:text-ink"
+              className="ml-auto rounded-lg px-2.5 py-1 text-xs font-semibold text-ink-3 ring-1 ring-line-2 transition-colors ring-inset hover:bg-white/[0.04] hover:text-ink"
               onClick={() => setAsTable(!asTable)}
               aria-pressed={asTable}
             >
@@ -40,10 +40,10 @@ export default function ChartFrame({
       {asTable && table ? (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="text-left text-xs text-ink-3">
+            <thead className="text-left">
               <tr className="border-b border-line">
                 {table.columns.map((c, i) => (
-                  <th key={i} className={`py-1.5 pr-3 font-normal ${i ? 'text-right' : ''}`}>{c}</th>
+                  <th key={i} className={`eyebrow py-2 pr-3 ${i ? 'text-right' : ''}`}>{c}</th>
                 ))}
               </tr>
             </thead>

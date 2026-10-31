@@ -4,7 +4,7 @@ import type { WoodpeckerSet } from '../../types';
 /** Signed rating change, green when up. */
 export function Delta({ value }: { value: number }) {
   return (
-    <span className={`tabular font-semibold ${value >= 0 ? 'text-accent' : 'text-loss'}`}>
+    <span className={`tabular font-semibold ${value >= 0 ? 'text-good' : 'text-loss'}`}>
       {value >= 0 ? '+' : '−'}
       {Math.abs(value)}
     </span>

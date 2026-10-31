@@ -138,7 +138,7 @@ export default function WoodpeckerPlay() {
   return (
     <>
       <PuzzleTabs />
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_400px]">
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_400px]">
         <SolverBoard solver={solver} />
 
         <aside className="space-y-3 lg:sticky lg:top-[72px]">
@@ -164,7 +164,7 @@ export default function WoodpeckerPlay() {
               </Stat>
             </div>
             {target !== undefined && projected !== undefined && (
-              <p className={`text-center text-xs ${projected <= target ? 'text-accent' : 'text-ink-3'}`}>
+              <p className={`text-center text-xs ${projected <= target ? 'text-good' : 'text-ink-3'}`}>
                 {t('woodpecker.pace', { time: formatClock(projected) })}
               </p>
             )}

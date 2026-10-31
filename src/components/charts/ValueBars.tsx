@@ -48,7 +48,7 @@ export default function ValueBars({
       <div style={{ height }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 22, right: 4, bottom: 0, left: 0 }} barCategoryGap="22%">
-            <CartesianGrid stroke={GRID} vertical={false} />
+            <CartesianGrid stroke={GRID} strokeDasharray="3 4" vertical={false} />
             <XAxis dataKey="key" interval={0} height={tickHeight(!!tick, notes || rows.some((r) => r.value === undefined))} {...AXIS} tick={stackedTick(label, tick, noteOf)} />
             <YAxis domain={domain} width={40} {...AXIS} />
             <Tooltip
@@ -59,7 +59,7 @@ export default function ValueBars({
                 return <ChartTooltip title={p.note ? `${p.label} · ${p.note}` : p.label} rows={[{ color, label: seriesLabel, value: p.value === undefined ? '–' : format(p.value) }]} />;
               }}
             />
-            <Bar dataKey="shown" fill={color} radius={[4, 4, 0, 0]} maxBarSize={64} isAnimationActive={false} activeBar={{ fill: color, fillOpacity: 0.8, stroke: '#f0efec', strokeWidth: 1 }}>
+            <Bar dataKey="shown" fill={color} radius={[4, 4, 0, 0]} maxBarSize={64} isAnimationActive={false} activeBar={{ fill: color, fillOpacity: 0.8, stroke: '#f6f5f1', strokeWidth: 1 }}>
               <LabelList
                 dataKey="key"
                 position="top"
@@ -67,10 +67,10 @@ export default function ValueBars({
                   const r = rows.find((x) => x.key === props.value);
                   const x = Number(props.x ?? 0) + Number(props.width ?? 0) / 2;
                   const y = Number(props.y ?? 0) - 6;
-                  if (!r || r.value === undefined) return <text x={x} y={y} textAnchor="middle" fill="#8b8987" fontSize={11}>–</text>;
+                  if (!r || r.value === undefined) return <text x={x} y={y} textAnchor="middle" fill="#7a7a80" fontSize={11}>–</text>;
                   const mark = highlightExtremes && values.length > 2 && max !== min ? (r.value === max ? ' ▲' : r.value === min ? ' ▼' : '') : '';
                   return (
-                    <text x={x} y={y} textAnchor="middle" fill="#f0efec" fontSize={11} fontWeight={600}>
+                    <text x={x} y={y} textAnchor="middle" fill="#f6f5f1" fontSize={11} fontWeight={600}>
                       {format(r.value)}
                       {mark}
                     </text>

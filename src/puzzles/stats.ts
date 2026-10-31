@@ -84,6 +84,30 @@ export function byTheme(attempts: PuzzleAttempt[], minN = 3): Group[] {
     .sort((a, b) => a.rate - b.rate || b.n - a.n);
 }
 
+/** Tactical themes present in the attempts with how many attempts each, most frequent first (for a filter). */
+export function themeCounts(attempts: PuzzleAttempt[]): { theme: string; n: number }[] {
+  return groupBy(attempts, (a) => (a.themes ?? []).filter((t) => !META_THEMES.has(t)))
+    .map((g) => ({ theme: g.key, n: g.n }))
+    .sort((a, b) => b.n - a.n || a.theme.localeCompare(b.theme));
+}
+
+export interface TrendPoint {
+  t: number;
+  solved: boolean;
+  /** Share solved among the last `window` attempts up to this one, 0–100. */
+  rolling: number;
+}
+/** Attempts in time order with a rolling accuracy, to see whether a theme is getting better. */
+export function accuracyTrend(attempts: PuzzleAttempt[], window = 10): TrendPoint[] {
+  const sorted = [...attempts].sort((a, b) => a.startedAt - b.startedAt);
+  let solvedInWindow = 0;
+  return sorted.map((a, i) => {
+    solvedInWindow += a.solved ? 1 : 0;
+    if (i >= window && sorted[i - window].solved) solvedInWindow--;
+    return { t: a.startedAt, solved: a.solved, rolling: (solvedInWindow / Math.min(i + 1, window)) * 100 };
+  });
+}
+
 export const PHASES = ['opening', 'middlegame', 'endgame'];
 export function byPhase(attempts: PuzzleAttempt[]): Group[] {
   return ordered(attempts, PHASES, (a) => PHASES.find((p) => a.themes?.includes(p)));

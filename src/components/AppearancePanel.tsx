@@ -42,7 +42,7 @@ export default function AppearancePanel({ placement = 'up' }: { placement?: 'up'
 
   const boards = [...Object.keys(BOARD_THEMES), ...local.boards.map((b) => `local:${b}`)];
   const sets = [...PIECE_SETS, ...local.pieces.map((p) => `local:${p}`)];
-  const previewBg = BOARD_THEMES[boardTheme]?.light ?? BOARD_THEMES.green.light;
+  const previewBg = BOARD_THEMES[boardTheme]?.light ?? BOARD_THEMES.graphite.light;
 
   return (
     <div ref={ref} className="relative">
@@ -60,12 +60,12 @@ export default function AppearancePanel({ placement = 'up' }: { placement?: 'up'
       </button>
       {open && (
         <div
-          className={`absolute right-0 ${placement === 'up' ? 'bottom-12' : 'top-12'} z-30 max-h-[70vh] w-80 space-y-4 overflow-y-auto rounded-lg bg-panel-2 p-4 shadow-2xl ring-1 ring-line`}
+          className={`absolute right-0 ${placement === 'up' ? 'bottom-12' : 'top-12'} z-30 max-h-[70vh] w-80 space-y-4 overflow-y-auto rounded-2xl border border-line bg-panel-2 p-4 shadow-2xl`}
           // On small screens it can open past the fold; bring it into view.
           ref={(el) => el?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })}
         >
           <div>
-            <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-3">{t('appearance.board')}</div>
+            <div className="eyebrow mb-2">{t('appearance.board')}</div>
             <div className="grid grid-cols-6 gap-2">
               {boards.map((k) => {
                 const img = boardImageUrl(k);
@@ -90,7 +90,7 @@ export default function AppearancePanel({ placement = 'up' }: { placement?: 'up'
             </div>
           </div>
           <div>
-            <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-3">{t('appearance.pieces')}</div>
+            <div className="eyebrow mb-2">{t('appearance.pieces')}</div>
             <div className="grid grid-cols-5 gap-2">
               {sets.map((set) => (
                 <button

@@ -7,6 +7,7 @@ import { defaultWorkers } from '../engine/pool';
 export type BoardTheme = string;
 
 export const BOARD_THEMES: Record<string, { light: string; dark: string }> = {
+  graphite: { light: '#dddbd3', dark: '#83868f' },
   green: { light: '#ebecd0', dark: '#739552' },
   brown: { light: '#f0d9b5', dark: '#b58863' },
   blue: { light: '#f0f1f0', dark: '#a7c4d8' },
@@ -74,14 +75,14 @@ export const useSettings = create<Settings>()(
       setDepth: (depth) => set({ depth }),
       workers: defaultWorkers(),
       setWorkers: (workers) => set({ workers }),
-      boardTheme: 'green',
+      boardTheme: 'graphite',
       setBoardTheme: (boardTheme) => set({ boardTheme }),
       pieceSet: DEFAULT_PIECE_SET,
       setPieceSet: (pieceSet) => set({ pieceSet }),
     }),
     {
       name: 'zugzwang-settings',
-      version: 3,
+      version: 4,
       migrate: (state, version) => {
         const s = state as Partial<Settings>;
         // v0 kept the chess.com sets in the local folder ("local:neo"); they are bundled now.
@@ -91,6 +92,8 @@ export const useSettings = create<Settings>()(
         if (version < 2 && (!s.pieceSet || s.pieceSet === 'staunty' || s.pieceSet === 'neo')) s.pieceSet = DEFAULT_PIECE_SET;
         // v3 removed the california and chessnut sets.
         if (version < 3 && (s.pieceSet === 'california' || s.pieceSet === 'chessnut')) s.pieceSet = DEFAULT_PIECE_SET;
+        // v4 made graphite (matching the yellow-on-dark UI) the default board.
+        if (version < 4 && (!s.boardTheme || s.boardTheme === 'green')) s.boardTheme = 'graphite';
         return s as Settings;
       },
     },

@@ -26,7 +26,7 @@ export function NeedsAnalysis() {
 
 export function Loading() {
   const { t } = useTranslation();
-  return <div className="h-32 animate-pulse rounded bg-white/[0.03]" aria-label={t('common.loading')} />;
+  return <div className="h-32 animate-pulse rounded-xl bg-gradient-to-r from-white/[0.02] via-white/[0.05] to-white/[0.02]" aria-label={t('common.loading')} />;
 }
 
 /** White piece image from the user's current set, used as an axis/legend icon. */
@@ -57,7 +57,7 @@ export function Figure({ icon, value, label }: { icon?: React.ReactNode; value: 
     <div className="flex items-center gap-3">
       {icon}
       <div>
-        <div className="tabular text-4xl leading-none font-bold">{value}</div>
+        <div className="tabular font-display text-4xl leading-none font-bold tracking-tight whitespace-nowrap sm:text-5xl">{value}</div>
         {label && <div className="mt-1 text-xs text-ink-3">{label}</div>}
       </div>
     </div>
@@ -67,17 +67,17 @@ export function Figure({ icon, value, label }: { icon?: React.ReactNode; value: 
 /** W/D/L share as three signed figures, like "＋51.8%  ＝7.1%  －41.1%". */
 export function WdlFigures({ wdl, values }: { wdl?: WDL; values?: Record<'win' | 'draw' | 'loss', string | undefined> }) {
   const { t } = useTranslation();
-  const color = { win: 'bg-win', draw: 'bg-draw', loss: 'bg-loss' };
+  const color = { win: 'bg-win/15 text-win ring-win/35', draw: 'bg-draw/20 text-ink-2 ring-draw/40', loss: 'bg-loss/15 text-loss ring-loss/35' };
   const glyph = { win: '+', draw: '=', loss: '−' };
   return (
     <div className="flex flex-wrap justify-end gap-x-6 gap-y-2">
       {(['win', 'draw', 'loss'] as const).map((k) => (
         <div key={k} className="text-right">
           <div className="flex items-center justify-end gap-1.5">
-            <span className={`inline-flex h-5 w-5 items-center justify-center rounded-[5px] text-sm leading-none font-bold text-white ${color[k]}`}>
+            <span className={`inline-flex h-5 w-5 items-center justify-center rounded-md font-mono text-sm leading-none font-bold ring-1 ring-inset ${color[k]}`}>
               {glyph[k]}
             </span>
-            <span className="tabular text-2xl font-bold">
+            <span className="tabular font-display text-3xl font-bold tracking-tight">
               {values ? (values[k] ?? '–') : wdl && wdl.games ? `${((wdl[k] / wdl.games) * 100).toFixed(1)}%` : '–'}
             </span>
           </div>

@@ -26,7 +26,7 @@ export default function Woodpecker() {
   return (
     <>
       <PuzzleTabs />
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="space-y-3">
           <div className="panel space-y-2 p-5 text-sm text-ink-2">
             <h1 className="text-xl font-bold text-ink">{t('woodpecker.title')}</h1>

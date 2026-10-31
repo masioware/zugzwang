@@ -10,15 +10,13 @@ export default function PuzzleTabs() {
     ['/puzzles/stats', t('puzzles.tabs.stats'), false],
   ];
   return (
-    <nav className="mb-4 flex gap-5 border-b border-line text-sm font-semibold">
+    <nav className="segmented mb-5 flex sm:inline-flex">
       {tabs.map(([to, label, end]) => (
         <NavLink
           key={to}
           to={to}
           end={end}
-          className={({ isActive }) =>
-            `-mb-px border-b-2 pb-2 transition-colors ${isActive ? 'border-accent text-ink' : 'border-transparent text-ink-3 hover:text-ink-2'}`
-          }
+          className="segmented-item"
         >
           {label}
         </NavLink>

@@ -162,7 +162,7 @@ export default function WoodpeckerSet() {
                         <span
                           key={c.index}
                           title={cycleLabel(String(c.index))}
-                          className={`h-3 w-3 rounded-sm ${r === undefined ? 'bg-white/10' : r ? 'bg-accent' : 'bg-loss'}`}
+                          className={`h-3 w-3 rounded-sm ${r === undefined ? 'bg-white/10' : r ? 'bg-good' : 'bg-loss'}`}
                         />
                       );
                     })}

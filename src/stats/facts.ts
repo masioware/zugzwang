@@ -24,8 +24,6 @@ export interface GameFacts {
   familyLine: string[];
 }
 
-const cache = new Map<string, GameFacts>();
-
 export function computeFacts(game: Game, book: OpeningBook): GameFacts {
   const plies = replay(game.moves);
   const fensAfter = plies.map((p) => p.fenAfter);
@@ -62,24 +60,14 @@ export function computeFacts(game: Game, book: OpeningBook): GameFacts {
   };
 }
 
-/**
- * Facts for every game, computed once and cached by game id. Work is split into
- * chunks so large libraries don't freeze the page.
- */
-export async function factsFor(games: Game[], book: OpeningBook): Promise<Map<string, GameFacts>> {
-  const out = new Map<string, GameFacts>();
-  let sinceYield = 0;
-  for (const g of games) {
-    let f = cache.get(g.id);
-    if (!f) {
-      f = computeFacts(g, book);
-      cache.set(g.id, f);
-      if (++sinceYield >= 40) {
-        sinceYield = 0;
-        await new Promise((r) => setTimeout(r));
-      }
-    }
-    out.set(g.id, f);
-  }
-  return out;
+/** Bump when computeFacts or the opening book changes, so stored facts get recomputed. */
+export const FACTS_VERSION = 1;
+
+/** A game's facts as stored in IndexedDB. */
+export interface StoredFacts extends GameFacts {
+  gameId: string;
+  v: number;
 }
+
+/** What a worker needs from a game. */
+export type FactsInput = Pick<Game, 'id' | 'moves' | 'userColor'>;

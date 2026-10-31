@@ -27,7 +27,7 @@ export default function Donut({ slices, unit }: { slices: Slice[]; unit: (n: num
               nameKey="label"
               innerRadius="58%"
               outerRadius="100%"
-              stroke="#262522"
+              stroke="#121215"
               strokeWidth={2}
               startAngle={90}
               endAngle={-270}

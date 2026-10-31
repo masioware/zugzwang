@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Chess } from 'chess.js';
@@ -9,6 +9,7 @@ import { useAnalysisQueue } from '../engine/queue';
 import { useLiveEngine } from '../engine/useLiveEngine';
 import { useSettings } from '../lib/settings';
 import AppearancePanel from '../components/AppearancePanel';
+import ShortcutsDialog from '../components/ShortcutsDialog';
 import { ANALYSIS_VERSION, positionScore } from '../analysis/classify';
 import Board, { type BoardArrow } from '../components/Board';
 import EvalBar from '../components/EvalBar';
@@ -28,6 +29,8 @@ interface Variation {
   /** Main-line ply the variation branches from. */
   base: number;
   plies: Ply[];
+  /** Plies of the variation on the board (1..plies.length); the rest can be replayed with →. */
+  index: number;
 }
 
 const BAD: Classification[] = ['inaccuracy', 'mistake', 'miss', 'blunder'];
@@ -37,19 +40,44 @@ export default function GameReview() {
   const id = decodeURIComponent(useParams().id ?? '');
   const game = useLiveQuery(() => db.games.get(id), [id], null);
   const analysis = useLiveQuery(() => db.analyses.get(id), [id]);
+  const analysisLines = useLiveQuery(() => db.analysisLines.get(id), [id]);
   const { active, queue, enqueue } = useAnalysisQueue();
   const depth = useSettings((s) => s.depth);
   const setDepth = useSettings((s) => s.setDepth);
 
   const plies = useMemo(() => (game ? replay(game.moves) : []), [game]);
-  const [ply, setPly] = useState(0);
+  // The main-line ply lives in the URL (?ply=N), so reloading or coming back keeps the position.
+  const [params, setParams] = useSearchParams();
+  const urlPly = Number(params.get('ply')) || 0;
+  // Local state answers at once; the router applies URL changes in a transition, so reading the ply back
+  // from the URL would make quick key presses act on a stale position (two → in a row moving only one ply).
+  const [rawPly, setRawPly] = useState(urlPly);
+  /** Plies written to the URL that it hasn't shown yet; the URL may pass through older ones on the way. */
+  const pending = useRef<number[]>([]);
+  useEffect(() => {
+    const i = pending.current.indexOf(urlPly);
+    if (i >= 0) pending.current = pending.current.slice(i + 1);
+    // Anything else came from outside (Back, a pasted link) and moves the board.
+    else setRawPly(urlPly);
+  }, [urlPly]);
+  const ply = Math.max(0, Math.min(plies.length, rawPly));
+  const setPly = useCallback(
+    (p: number) => {
+      setRawPly(p);
+      pending.current.push(p);
+      setParams(p ? { ply: String(p) } : {}, { replace: true });
+    },
+    [setParams],
+  );
   const [variation, setVariation] = useState<Variation | null>(null);
   const [flipped, setFlipped] = useState<boolean | null>(null);
-  const [tab, setTab] = useState<'moves' | 'summary'>('summary');
+  const [tab, setTab] = useState<'moves' | 'summary'>(() => (urlPly > 0 ? 'moves' : 'summary'));
+  const [help, setHelp] = useState(false);
+  const [copied, setCopied] = useState<'fen' | 'pgn' | null>(null);
   const isFlipped = flipped ?? game?.userColor === 'black';
 
   const startFen = plies[0]?.fenBefore ?? new Chess().fen();
-  const varPly = variation?.plies[variation.plies.length - 1];
+  const varPly = variation?.plies[variation.index - 1];
   const lastPly = variation ? (varPly ?? plies[variation.base - 1]) : plies[ply - 1];
   const fen = lastPly?.fenAfter ?? startFen;
 
@@ -62,14 +90,15 @@ export default function GameReview() {
       setVariation(null);
       setPly(Math.max(0, Math.min(plies.length, p)));
     },
-    [plies.length],
+    [plies.length, setPly],
   );
 
   const step = useCallback(
     (delta: number) => {
       if (variation) {
-        if (delta < 0 && variation.plies.length > 1) setVariation({ ...variation, plies: variation.plies.slice(0, -1) });
-        else if (delta < 0) goTo(variation.base);
+        const index = variation.index + delta;
+        if (index < 1) goTo(variation.base);
+        else if (index <= variation.plies.length) setVariation({ ...variation, index });
         return;
       }
       goTo(ply + delta);
@@ -80,11 +109,13 @@ export default function GameReview() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement) return;
-      if (e.key === 'ArrowLeft') step(-1);
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.key === '?') setHelp((h) => !h);
+      else if (e.key === 'ArrowLeft') step(-1);
       else if (e.key === 'ArrowRight') step(1);
       else if (e.key === 'ArrowUp' || e.key === 'Home') goTo(0);
       else if (e.key === 'ArrowDown' || e.key === 'End') goTo(plies.length);
-      else if (e.key === 'f') setFlipped(!isFlipped);
+      else if (e.key === 'f' || e.key === 'F') setFlipped(!isFlipped);
       else return;
       e.preventDefault();
     };
@@ -119,10 +150,13 @@ export default function GameReview() {
         piece: m.piece,
       };
       setTab('moves');
-      setVariation(variation ? { ...variation, plies: [...variation.plies, newPly] } : { base: ply, plies: [newPly] });
+      if (!variation) setVariation({ base: ply, plies: [newPly], index: 1 });
+      // Replaying the variation's own next move just advances along it; another move replaces what came after.
+      else if (variation.plies[variation.index]?.uci === uci) setVariation({ ...variation, index: variation.index + 1 });
+      else setVariation({ ...variation, plies: [...variation.plies.slice(0, variation.index), newPly], index: variation.index + 1 });
       return true;
     },
-    [fen, variation, plies, ply],
+    [fen, variation, plies, ply, setPly],
   );
 
   if (game === null) return <p className="text-ink-3">{t('common.loading')}</p>;
@@ -134,7 +168,7 @@ export default function GameReview() {
   const upToDate = analysis && analysis.version === ANALYSIS_VERSION;
 
   // Eval for the bar: the live engine once it has something, else the stored analysis.
-  const stored = !variation ? analysis?.positions[ply] : undefined;
+  const stored = !variation ? analysisLines?.positions[ply] : undefined;
   const barScore = lines[0] ?? (stored ? positionScore(stored, fen) : undefined);
 
   const arrows: BoardArrow[] = [];
@@ -160,15 +194,30 @@ export default function GameReview() {
   const bottom = isFlipped ? 'black' : 'white';
 
   const summaryTab = tab === 'summary' && analysis && upToDate;
+  const copy = (what: 'fen' | 'pgn') => {
+    void navigator.clipboard.writeText(what === 'fen' ? fen : game.pgn).then(() => {
+      setCopied(what);
+      setTimeout(() => setCopied((c) => (c === what ? null : c)), 1500);
+    });
+  };
+  const lichessAnalysis = `https://lichess.org/analysis/standard/${fen.replace(/ /g, '_')}?color=${isFlipped ? 'black' : 'white'}`;
+
   const header = (
     <div className="panel space-y-2 p-4">
       <div className="flex items-center gap-2 text-sm text-ink-2">
         <PlatformIcon source={game.source} />
-        <TimeClassIcon timeClass={game.timeClass} />
-        <span>{t(`timeClass.${game.timeClass}`)}</span>
+        {/* Training games against the bot have no time control and no page elsewhere. */}
+        {game.source === 'bot' ? (
+          <span>{t('play.trainingGame')}</span>
+        ) : (
+          <>
+            <TimeClassIcon timeClass={game.timeClass} />
+            <span>{t(`timeClass.${game.timeClass}`)}</span>
+          </>
+        )}
         <span className="text-ink-3">·</span>
         <span>{new Date(game.endTime).toLocaleDateString(i18n.resolvedLanguage)}</span>
-        <a
+        {game.url && <a
           className="ml-auto inline-flex items-center gap-1 text-xs text-ink-3 hover:text-accent"
           href={game.url}
           target="_blank"
@@ -176,7 +225,7 @@ export default function GameReview() {
           title={t('review.openOn', { platform: t(`platform.${game.source}`) })}
         >
           {t(`platform.${game.source}`)} <ExternalIcon className="h-3.5 w-3.5" />
-        </a>
+        </a>}
       </div>
       <div className="flex items-center gap-2">
         <ResultBadge outcome={game.outcome} />
@@ -187,6 +236,22 @@ export default function GameReview() {
         {game.opening.eco && <span className="mr-1.5 text-ink-3">{game.opening.eco}</span>}
         {game.opening.name ?? t('common.unknown')}
       </div>
+      <div className="flex flex-wrap items-center gap-1 border-t border-line pt-2 text-xs">
+        {(['fen', 'pgn'] as const).map((w) => (
+          <button key={w} className="btn-ghost px-2 py-1 text-xs" onClick={() => copy(w)}>
+            {copied === w ? t('review.copied') : t(w === 'fen' ? 'review.copyFen' : 'review.copyPgn')}
+          </button>
+        ))}
+        <a
+          className="btn-ghost ml-auto inline-flex items-center gap-1 px-2 py-1 text-xs"
+          href={lichessAnalysis}
+          target="_blank"
+          rel="noreferrer"
+          title={t('review.lichessAnalysisHint')}
+        >
+          {t('review.lichessAnalysis')} <ExternalIcon className="h-3.5 w-3.5" />
+        </a>
+      </div>
     </div>
   );
 
@@ -194,7 +259,11 @@ export default function GameReview() {
     <div className="flex items-center justify-between gap-2">
       <span className="min-w-0 text-sm text-ink-2">
         {t('review.variation')}
-        <span className="mt-0.5 block truncate font-semibold text-ink">{variation.plies.map((p) => p.san).join(' ')}</span>
+        <span className="mt-0.5 block truncate font-semibold text-ink">
+          {variation.plies.map((p, i) => (
+            <span key={i} className={i < variation.index ? undefined : 'text-ink-3'}>{i ? ' ' : ''}{p.san}</span>
+          ))}
+        </span>
       </span>
       <button className="btn-ghost shrink-0" onClick={() => goTo(variation.base)}>{t('review.backToGame')}</button>
     </div>
@@ -209,7 +278,7 @@ export default function GameReview() {
           <div className="text-sm text-ink-2">{t('review.bestWas', { move: moveAnalysis.bestSan })}</div>
         )}
       </div>
-      {barScore && <span className="tabular ml-auto rounded bg-white/5 px-2 py-0.5 text-sm font-bold">{formatScore(barScore)}</span>}
+      {barScore && <span className="tabular ml-auto rounded-lg bg-white/[0.06] px-2 py-0.5 font-mono text-sm font-bold">{formatScore(barScore)}</span>}
     </div>
   ) : (
     <div className="text-sm text-ink-3">{ply === 0 ? t('review.startPosition') : plies[ply - 1].san}</div>
@@ -223,13 +292,13 @@ export default function GameReview() {
   ];
 
   return (
-    <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_400px]">
+    <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_400px]">
       {/* Board column: sized so board + player rows + controls fit in the viewport. */}
       <section className="mx-auto w-full" style={{ maxWidth: 'max(340px, calc(100vh - 200px))' }}>
         <PlayerCard player={game[top]} color={top} clock={clockFor(top)} active={toMove === top} />
         <div className="flex gap-2">
           <EvalBar score={barScore} flipped={isFlipped} />
-          <div className="min-w-0 flex-1 shadow-[0_4px_16px_rgba(0,0,0,0.35)]">
+          <div className="min-w-0 flex-1 rounded-xl shadow-[0_20px_50px_-20px_rgba(0,0,0,0.9)] ring-1 ring-white/[0.06]">
             <Board
               fen={fen}
               flipped={isFlipped}
@@ -268,8 +337,8 @@ export default function GameReview() {
                   <span>{t('review.analyzing', { done: progress.done, total: progress.total })}</span>
                   <span className="tabular text-ink-3">{Math.round((progress.done / progress.total) * 100)}%</span>
                 </div>
-                <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-white/10">
-                  <div className="h-full rounded-full bg-accent transition-all" style={{ width: `${(progress.done / progress.total) * 100}%` }} />
+                <div className="meter mt-2 h-2">
+                  <div style={{ width: `${(progress.done / progress.total) * 100}%` }} />
                 </div>
               </div>
             ) : (
@@ -285,19 +354,19 @@ export default function GameReview() {
 
         <div className="panel overflow-hidden">
           {analysis && upToDate && (
-            <div className="flex border-b border-line text-sm font-semibold" role="tablist">
+            <div className="border-b border-line p-2"><div className="segmented flex w-full" role="tablist">
               {(['moves', 'summary'] as const).map((k) => (
                 <button
                   key={k}
                   role="tab"
                   aria-selected={tab === k}
                   onClick={() => setTab(k)}
-                  className={`flex-1 py-2.5 transition-colors ${tab === k ? 'border-b-2 border-accent text-ink' : 'text-ink-3 hover:text-ink-2'}`}
+                  className="segmented-item"
                 >
                   {t(k === 'moves' ? 'review.tabMoves' : 'review.tabSummary')}
                 </button>
               ))}
-            </div>
+            </div></div>
           )}
 
           {summaryTab ? (
@@ -319,9 +388,10 @@ export default function GameReview() {
             </>
           )}
 
-          <div className="flex items-center gap-1 border-t border-line bg-panel-2/60 p-2">
+          {/* Phones: pinned above the tab bar so stepping through moves never needs scrolling. */}
+          <div className="flex items-center gap-1.5 border-t border-line bg-panel-2/60 p-2 max-md:fixed max-md:inset-x-0 max-md:bottom-[calc(4rem+env(safe-area-inset-bottom))] max-md:z-20 max-md:bg-bg/90 max-md:backdrop-blur-xl">
             {navButtons.map(([icon, label, fn]) => (
-              <button key={label} className="btn-ghost h-10 flex-1" title={label} aria-label={label} onClick={fn}>
+              <button key={label} className="btn-ghost h-10 flex-1 px-0" title={label} aria-label={label} onClick={fn}>
                 {icon}
               </button>
             ))}
@@ -331,7 +401,22 @@ export default function GameReview() {
             <AppearancePanel />
           </div>
         </div>
-        <p className="text-center text-xs text-ink-3">{t('review.keyboardHint')}</p>
+        <div className="h-14 md:hidden" aria-hidden />
+        <button className="mx-auto hidden text-xs text-ink-3 hover:text-ink-2 md:block" onClick={() => setHelp(true)}>
+          {t('review.keyboardHint')}
+        </button>
+        <ShortcutsDialog
+          open={help}
+          onClose={() => setHelp(false)}
+          shortcuts={[
+            ['←', t('review.prev')],
+            ['→', t('review.next')],
+            ['↑ / Home', t('review.start')],
+            ['↓ / End', t('review.end')],
+            ['F', t('review.flip')],
+            ['?', t('shortcuts.title')],
+          ]}
+        />
       </aside>
     </div>
   );
@@ -341,8 +426,8 @@ function AccuracyChip({ label, value, color }: { label: string; value: number; c
   return (
     <span className="flex min-w-0 items-center gap-2" title={label}>
       <span
-        className={`tabular rounded px-2 py-0.5 text-base font-bold ${
-          color === 'white' ? 'bg-ink text-panel-2' : 'bg-panel-2 text-ink ring-1 ring-line'
+        className={`tabular rounded-lg px-2.5 py-0.5 font-display text-lg font-bold ${
+          color === 'white' ? 'bg-[#f2f1ec] text-bg' : 'bg-panel-3 text-ink ring-1 ring-line-2'
         }`}
       >
         {value.toFixed(1)}

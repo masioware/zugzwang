@@ -20,16 +20,22 @@ export default function PlayerCard({
   active: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between py-1.5">
-      <div className="flex items-center gap-2">
-        <span className={`h-6 w-6 rounded ${color === 'white' ? 'bg-ink' : 'border border-line bg-panel-2'}`} />
-        <span className="font-semibold">{player.name}</span>
-        {player.rating && <span className="tabular text-ink-3">({player.rating})</span>}
+    <div className="flex items-center justify-between gap-3 py-2">
+      <div className="flex min-w-0 items-center gap-2.5">
+        <span
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg font-display text-sm font-bold ${
+            color === 'white' ? 'bg-ink text-bg' : 'bg-panel-3 text-ink ring-1 ring-line-2'
+          }`}
+        >
+          {player.name.slice(0, 1).toUpperCase()}
+        </span>
+        <span className="truncate font-semibold">{player.name}</span>
+        {player.rating && <span className="chip tabular font-mono">{player.rating}</span>}
       </div>
       {clock !== undefined && (
         <span
-          className={`tabular rounded px-2 py-0.5 font-mono text-lg ${
-            active ? (color === 'white' ? 'bg-ink text-panel-2' : 'bg-panel-2 text-ink') : 'bg-white/5 text-ink-3'
+          className={`tabular rounded-lg px-2.5 py-1 font-mono text-lg font-semibold transition-colors ${
+            active ? 'bg-accent text-accent-ink shadow-[0_0_18px_-4px_var(--color-accent)]' : 'bg-panel-2 text-ink-3 ring-1 ring-line'
           }`}
         >
           {formatClock(clock)}

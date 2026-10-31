@@ -1,59 +1,13 @@
-import { createContext, useContext, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
-import { removeAccount, syncAccount } from '../api/importer';
+import { removeAccount } from '../api/importer';
+import { useSync } from '../api/sync';
 import PlatformIcon from './PlatformIcon';
 import type { Account, Source } from '../types';
 
 const PERIODS = [1, 3, 6, 12, 0];
-
-interface SyncState {
-  /** Id of the account being imported. */
-  busy: string | null;
-  progress: number;
-  message: { kind: 'ok' | 'error'; text: string } | null;
-  run: (source: Source, username: string, months: number, friend?: string) => Promise<boolean>;
-}
-
-const SyncContext = createContext<SyncState | null>(null);
-
-/** Shares one import at a time between the form and the account rows below it. */
-export function SyncProvider({ children }: { children: React.ReactNode }) {
-  const { t } = useTranslation();
-  const [busy, setBusy] = useState<string | null>(null);
-  const [progress, setProgress] = useState(0);
-  const [message, setMessage] = useState<SyncState['message']>(null);
-
-  async function run(src: Source, name: string, period: number, friend?: string) {
-    setBusy(`${src}:${name.toLowerCase()}`);
-    setProgress(0);
-    setMessage(null);
-    try {
-      const n = await syncAccount(src, name.trim(), period, friend, (p) => setProgress(p.imported));
-      setMessage({ kind: 'ok', text: t('home.imported', { count: n }) });
-      return true;
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      const platform = t(`platform.${src}`);
-      setMessage({
-        kind: 'error',
-        text: ['userNotFound', 'rateLimited', 'accountTaken'].includes(msg)
-          ? t(`home.errors.${msg}`, { platform })
-          : t('home.errors.generic', { message: msg }),
-      });
-      return false;
-    } finally {
-      setBusy(null);
-    }
-  }
-
-  return <SyncContext value={{ busy, progress, message, run }}>{children}</SyncContext>;
-}
-
-function useSync(): SyncState {
-  return useContext(SyncContext)!;
-}
 
 /**
  * Platform, username and period form. With `friends`, it also asks whose account it is:
@@ -61,7 +15,9 @@ function useSync(): SyncState {
  */
 export function ImportForm({ friends }: { friends?: string[] }) {
   const { t } = useTranslation();
-  const { busy, progress, message, run } = useSync();
+  const { busy, progress, message, run, cancel, clearMessage } = useSync();
+  // The sync state is app-wide; don't carry a result over to the next page that shows the form.
+  useEffect(() => clearMessage, [clearMessage]);
   const [source, setSource] = useState<Source>('chesscom');
   const [username, setUsername] = useState('');
   const [friend, setFriend] = useState('');
@@ -69,7 +25,7 @@ export function ImportForm({ friends }: { friends?: string[] }) {
 
   return (
     <form
-      className="panel space-y-4 p-5"
+      className="panel space-y-4 p-5 sm:p-6"
       onSubmit={async (e) => {
         e.preventDefault();
         const name = username.trim();
@@ -81,7 +37,7 @@ export function ImportForm({ friends }: { friends?: string[] }) {
         }
       }}
     >
-      <div className="flex gap-2" role="radiogroup" aria-label={t('home.platform')}>
+      <div className="segmented flex w-full" role="radiogroup" aria-label={t('home.platform')}>
         {(['chesscom', 'lichess'] as const).map((s) => (
           <button
             key={s}
@@ -89,7 +45,7 @@ export function ImportForm({ friends }: { friends?: string[] }) {
             role="radio"
             aria-checked={source === s}
             onClick={() => setSource(s)}
-            className={`btn flex-1 border ${source === s ? 'border-accent bg-accent/15 text-ink' : 'border-line text-ink-2 hover:text-ink'}`}
+            className="segmented-item py-2"
           >
             <PlatformIcon source={s} />
             {t(`platform.${s}`)}
@@ -98,8 +54,8 @@ export function ImportForm({ friends }: { friends?: string[] }) {
       </div>
       <div className="flex flex-wrap items-end gap-3">
         {friends && (
-          <label className="flex flex-1 flex-col gap-1 text-xs text-ink-3">
-            {t('friends.name')}
+          <label className="flex min-w-48 flex-1 flex-col gap-1.5">
+            <span className="eyebrow">{t('friends.name')}</span>
             <input
               className="input text-base"
               placeholder={username.trim() || t('friends.namePlaceholder')}
@@ -113,8 +69,8 @@ export function ImportForm({ friends }: { friends?: string[] }) {
             </datalist>
           </label>
         )}
-        <label className="flex flex-1 flex-col gap-1 text-xs text-ink-3">
-          {t('home.username')}
+        <label className="flex min-w-48 flex-1 flex-col gap-1.5">
+          <span className="eyebrow">{t('home.username')}</span>
           <input
             className="input text-base"
             placeholder={friends ? t('friends.usernamePlaceholder') : t('home.usernamePlaceholder')}
@@ -124,24 +80,27 @@ export function ImportForm({ friends }: { friends?: string[] }) {
             spellCheck={false}
           />
         </label>
-        <label className="flex flex-col gap-1 text-xs text-ink-3">
-          {t('home.period')}
+        <label className="flex flex-col gap-1.5">
+          <span className="eyebrow">{t('home.period')}</span>
           <select className="input text-base" value={months} onChange={(e) => setMonths(Number(e.target.value))}>
             {PERIODS.map((m) => (
               <option key={m} value={m}>{m ? t('home.months', { count: m }) : t('home.allTime')}</option>
             ))}
           </select>
         </label>
-        <button className="btn-primary h-[38px] px-5" disabled={!username.trim() || !!busy}>
+        <button className="btn-primary h-[38px] px-5 max-sm:w-full" disabled={!username.trim() || !!busy}>
           {busy && busy === `${source}:${username.trim().toLowerCase()}`
             ? t('home.importing', { count: progress })
             : friends
               ? t('friends.add')
               : t('home.import')}
         </button>
+        {busy && busy === `${source}:${username.trim().toLowerCase()}` && (
+          <button type="button" className="btn-ghost h-[38px]" onClick={cancel}>{t('common.cancel')}</button>
+        )}
       </div>
       {message && (
-        <p className={`text-sm ${message.kind === 'ok' ? 'text-accent' : 'text-loss'}`} role="status">
+        <p className={`text-sm ${message.kind === 'ok' ? 'text-good' : 'text-loss'}`} role="status">
           {message.text}
         </p>
       )}
@@ -150,10 +109,21 @@ export function ImportForm({ friends }: { friends?: string[] }) {
   );
 }
 
+/** Syncs every given account in turn. */
+export function SyncAllButton({ accounts }: { accounts: Account[] }) {
+  const { t } = useTranslation();
+  const { busy, syncAll } = useSync();
+  return (
+    <button className="btn-ghost text-xs" disabled={!!busy || !accounts.length} onClick={() => void syncAll(accounts)}>
+      {t('home.syncAll')}
+    </button>
+  );
+}
+
 /** Account rows with game count, last sync, and sync / remove buttons. */
 export function AccountList({ accounts }: { accounts: Account[] }) {
   const { t, i18n } = useTranslation();
-  const { busy, progress, run } = useSync();
+  const { busy, progress, run, cancel } = useSync();
   const counts = useLiveQuery(async () => {
     const map = new Map<string, number>();
     for (const a of accounts) map.set(a.id, await db.games.where('accountId').equals(a.id).count());
@@ -167,9 +137,10 @@ export function AccountList({ accounts }: { accounts: Account[] }) {
   return (
     <ul className="space-y-2">
       {accounts.map((a) => (
-        <li key={a.id} className="panel flex items-center gap-3 px-4 py-3">
+        <li key={a.id} className="panel flex flex-wrap items-center gap-3 px-4 py-3">
           <PlatformIcon source={a.source} />
-          <div className="min-w-0 flex-1">
+          {/* Wide enough for the name; in a narrow column the buttons wrap below. */}
+          <div className="min-w-40 flex-1">
             <div className="truncate font-semibold">{a.username}</div>
             <div className="text-xs text-ink-3">
               {t('home.gamesCount', { count: counts?.get(a.id) ?? 0 })}
@@ -180,9 +151,13 @@ export function AccountList({ accounts }: { accounts: Account[] }) {
           <button className="btn-ghost" disabled={!!busy} onClick={() => void run(a.source, a.username, 0, a.friend)}>
             {busy === a.id ? t('home.importing', { count: progress }) : t('home.sync')}
           </button>
-          <button className="btn-ghost" disabled={!!busy} onClick={() => void remove(a)}>
-            {t('home.remove')}
-          </button>
+          {busy === a.id ? (
+            <button className="btn-ghost" onClick={cancel}>{t('common.cancel')}</button>
+          ) : (
+            <button className="btn-ghost" disabled={!!busy} onClick={() => void remove(a)}>
+              {t('home.remove')}
+            </button>
+          )}
         </li>
       ))}
     </ul>

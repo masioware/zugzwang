@@ -13,6 +13,9 @@ import { enginePool } from './pool';
  */
 const GAMES_IN_FLIGHT = 2;
 
+/** Least time between two progress updates of a game in flight. */
+const PROGRESS_INTERVAL_MS = 250;
+
 interface QueueState {
   queue: string[];
   /** Games being analysed right now, by id. */
@@ -83,18 +86,30 @@ async function runOne(id: string) {
       (a) => a.gameId !== id && platformGameId(a.gameId) === platformGameId(id) && fresh(a),
     );
     if (twin) {
-      await db.analyses.put({ ...twin, gameId: id });
+      const lines = await db.analysisLines.get(twin.gameId);
+      await db.transaction('rw', db.analyses, db.analysisLines, async () => {
+        if (lines) await db.analysisLines.put({ ...lines, gameId: id });
+        // A fresh createdAt so lists reading only new analyses pick the copy up.
+        await db.analyses.put({ ...twin, gameId: id, createdAt: Date.now() });
+      });
       return;
     }
+    let lastEmit = 0;
     const result = await analyseGame(
       game,
       depth,
-      (p) =>
+      (p) => {
+        // Progress comes once per position; a few updates a second are plenty for the header, and each
+        // one re-renders whatever shows the queue.
+        const now = Date.now();
+        if (p.done < p.total && now - lastEmit < PROGRESS_INTERVAL_MS) return;
+        lastEmit = now;
         store.setState((s) => {
           const delta = p.done - last;
           last = p.done;
           return { active: { ...s.active, [id]: p }, positionsDone: s.positionsDone + delta };
-        }),
+        });
+      },
       controller.signal,
     );
     if (result)

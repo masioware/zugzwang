@@ -53,7 +53,7 @@ describe('aggregate', () => {
       accuracy: 90, scoreAfter: { cp: 0 }, phase: 'middlegame', clockBefore,
     });
     const analysis: GameAnalysis = {
-      gameId: 'g1', depth: 10, version: 1, positions: [], createdAt: 0, accuracy: { white: 90, black: 90 },
+      gameId: 'g1', depth: 10, version: 1, createdAt: 0, accuracy: { white: 90, black: 90 },
       moves: [move(170, 'best'), move(10, 'blunder')],
     };
     const buckets = errorsByClock(games, new Map([['g1', analysis]]));

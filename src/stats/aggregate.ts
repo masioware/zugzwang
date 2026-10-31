@@ -1,4 +1,4 @@
-import type { Classification, Color, Game, GameAnalysis, Phase, Source, Termination, TimeClass } from '../types';
+import type { Classification, Color, Game, GameAnalysis, GameSource, Phase, Source, Termination, TimeClass } from '../types';
 import { openingFamily } from '../analysis/openings';
 
 export interface Filters {
@@ -101,7 +101,7 @@ export function terminations(games: Game[]): { termination: Termination; win: nu
 
 export interface RatingSeries {
   key: string;
-  source: Source;
+  source: GameSource;
   timeClass: TimeClass;
   points: { t: number; rating: number }[];
 }

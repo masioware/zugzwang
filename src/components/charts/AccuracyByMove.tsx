@@ -21,7 +21,7 @@ export default function AccuracyByMove({ data }: { data: { move: number; accurac
             {t('common.accuracy')}
           </span>
           <span className="flex items-center gap-1.5">
-            <svg width="16" height="4" aria-hidden><line x1="0" y1="2" x2="16" y2="2" stroke="#8b8987" strokeWidth="1.5" strokeDasharray="4 3" /></svg>
+            <svg width="16" height="4" aria-hidden><line x1="0" y1="2" x2="16" y2="2" stroke="#7a7a80" strokeWidth="1.5" strokeDasharray="4 3" /></svg>
             {t('stats.average')} {mean.toFixed(1)}
           </span>
         </div>
@@ -40,12 +40,12 @@ export default function AccuracyByMove({ data }: { data: { move: number; accurac
                 <stop offset="100%" stopColor={SERIES[0]} stopOpacity={0.03} />
               </linearGradient>
             </defs>
-            <CartesianGrid stroke={GRID} vertical={false} />
+            <CartesianGrid stroke={GRID} strokeDasharray="3 4" vertical={false} />
             <XAxis dataKey="move" type="number" domain={['dataMin', 'dataMax']} allowDecimals={false} {...AXIS} />
             <YAxis domain={domain} ticks={ticksFor(domain)} width={36} allowDataOverflow {...AXIS} />
-            <ReferenceLine y={mean} stroke="#8b8987" strokeDasharray="4 3" />
+            <ReferenceLine y={mean} stroke="#7a7a80" strokeDasharray="4 3" />
             <Tooltip
-              cursor={{ stroke: '#8b8987', strokeDasharray: '3 3' }}
+              cursor={{ stroke: '#7a7a80', strokeDasharray: '3 3' }}
               content={({ payload }) => {
                 const p = payload?.[0]?.payload as (typeof data)[number] | undefined;
                 if (!p) return null;
@@ -64,7 +64,7 @@ export default function AccuracyByMove({ data }: { data: { move: number; accurac
               strokeWidth={2}
               fill="url(#acc-move)"
               baseValue={domain[0]}
-              activeDot={{ r: 4, fill: SERIES[0], stroke: '#262522', strokeWidth: 2 }}
+              activeDot={{ r: 4, fill: SERIES[0], stroke: '#121215', strokeWidth: 2 }}
               isAnimationActive={false}
             />
           </AreaChart>

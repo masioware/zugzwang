@@ -2,6 +2,8 @@ import type { EngineLine } from '../types';
 import { sideToMove } from '../lib/chess';
 
 const ENGINE_URL = '/stockfish/stockfish-19-lite-single.js';
+/** The same engine behind a filter that only reports each search's final lines (see public/engine). */
+const QUIET_ENGINE_URL = `/engine/stockfish-quiet.js#${encodeURIComponent(ENGINE_URL.replace(/\.js$/, '.wasm'))}`;
 
 export interface SearchOptions {
   depth: number;
@@ -29,8 +31,9 @@ export class Engine {
   private next: Job | null = null;
   private multiPv = 1;
 
-  constructor(hashMb = 32) {
-    this.worker = new Worker(ENGINE_URL);
+  /** `quiet`: only the final lines of each search are reported (no per-depth updates), for batch work. */
+  constructor(hashMb = 32, quiet = false) {
+    this.worker = new Worker(quiet ? QUIET_ENGINE_URL : ENGINE_URL);
     let markReady!: () => void;
     this.ready = new Promise((r) => (markReady = r));
     this.worker.onmessage = (e: MessageEvent<string>) => {

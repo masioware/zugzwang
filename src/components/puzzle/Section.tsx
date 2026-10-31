@@ -14,8 +14,8 @@ export default function Section({ title, aside, children }: { title: React.React
 /** Thin progress bar. */
 export function Progress({ value, total }: { value: number; total: number }) {
   return (
-    <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
-      <div className="h-full rounded-full bg-accent transition-all" style={{ width: `${total ? (value / total) * 100 : 0}%` }} />
+    <div className="meter">
+      <div style={{ width: `${total ? (value / total) * 100 : 0}%` }} />
     </div>
   );
 }

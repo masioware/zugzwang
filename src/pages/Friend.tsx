@@ -5,7 +5,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
 import { ScopeContext, useAnalyses, useScope, useScopeGames } from '../lib/hooks';
 import { useAnalysisQueue } from '../engine/queue';
-import { AccountList, SyncProvider } from '../components/AccountManager';
+import { AccountList } from '../components/AccountManager';
 import PlatformIcon from '../components/PlatformIcon';
 import ResultBadge from '../components/ResultBadge';
 import WdlBar from '../components/charts/WdlBar';
@@ -25,8 +25,7 @@ export default function Friend() {
   const { t } = useTranslation();
   const name = decodeURIComponent(useParams().friend ?? '');
   const accounts = useLiveQuery(() => db.accounts.filter((a) => a.friend === name).toArray(), [name]);
-  const tab = ({ isActive }: { isActive: boolean }) =>
-    `rounded-md px-3 py-1.5 text-sm font-semibold whitespace-nowrap ${isActive ? 'bg-white/10 text-ink' : 'text-ink-2 hover:text-ink'}`;
+  const tab = 'segmented-item';
 
   if (!accounts) return <p className="text-ink-3">{t('common.loading')}</p>;
   if (!accounts.length)
@@ -41,9 +40,9 @@ export default function Friend() {
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line pb-3">
         <div>
           <Link to="/friends" className="text-xs text-ink-3 hover:text-ink">← {t('nav.friends')}</Link>
-          <h1 className="text-2xl font-bold">{name}</h1>
+          <h1 className="font-display text-3xl font-bold">{name}</h1>
         </div>
-        <nav className="flex gap-1">
+        <nav className="segmented max-sm:w-full">
           <NavLink to="" end className={tab}>{t('friends.headToHead')}</NavLink>
           <NavLink to="games" className={tab}>{t('nav.games')}</NavLink>
           <NavLink to="stats" className={tab}>{t('nav.stats')}</NavLink>
@@ -85,7 +84,7 @@ export function HeadToHeadView() {
   const fmt = (v?: number) => (v === undefined ? '–' : v.toFixed(1));
 
   return (
-    <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+    <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
       <div className="min-w-0 space-y-5">
         {!games.length ? (
           <p className="panel p-6 text-center text-ink-2">{t('friends.noGamesTogetherHint', { name })}</p>
@@ -185,9 +184,7 @@ export function HeadToHeadView() {
 
       <aside className="space-y-3">
         <h2 className="text-sm font-semibold text-ink-2">{t('friends.accountsOf', { name })}</h2>
-        <SyncProvider>
-          <AccountList accounts={accounts} />
-        </SyncProvider>
+        <AccountList accounts={accounts} />
       </aside>
     </div>
   );

@@ -79,11 +79,11 @@ export default function RatingChart({ series }: { series: RatingSeries[] }) {
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
-            <CartesianGrid stroke={GRID} vertical={false} />
+            <CartesianGrid stroke={GRID} strokeDasharray="3 4" vertical={false} />
             <XAxis dataKey="t" type="number" scale="time" domain={[min, max]} ticks={ticks} tickFormatter={(v) => short.format(v)} {...AXIS} />
             <YAxis domain={yDomain} ticks={yTicks} {...AXIS} width={44} />
             <Tooltip
-              cursor={{ stroke: '#8b8987', strokeDasharray: '3 3' }}
+              cursor={{ stroke: '#7a7a80', strokeDasharray: '3 3' }}
               content={({ payload }) => {
                 const p = payload?.[0];
                 if (!p) return null;
@@ -106,7 +106,7 @@ export default function RatingChart({ series }: { series: RatingSeries[] }) {
                 strokeDasharray={s.source === 'lichess' ? '4 2' : undefined}
                 strokeWidth={2}
                 dot={false}
-                activeDot={{ r: 4, stroke: '#262522', strokeWidth: 2 }}
+                activeDot={{ r: 4, stroke: '#121215', strokeWidth: 2 }}
                 isAnimationActive={false}
               />
             ))}

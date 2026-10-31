@@ -11,7 +11,7 @@ import type { Solver } from '../../puzzles/useSolver';
 export function SolverBoard({ solver }: { solver: Solver }) {
   return (
     <section className="mx-auto w-full" style={{ maxWidth: 'max(340px, calc(100vh - 190px))' }}>
-      <div className="shadow-[0_4px_16px_rgba(0,0,0,0.35)]">
+      <div className="rounded-xl shadow-[0_20px_50px_-20px_rgba(0,0,0,0.9)] ring-1 ring-white/[0.06]">
         <Board
           fen={solver.board.fen}
           flipped={solver.flipped}
@@ -20,6 +20,7 @@ export function SolverBoard({ solver }: { solver: Solver }) {
           arrows={[]}
           highlights={solver.board.highlights}
           onMove={solver.onMove}
+          movable={solver.phase === 'play'}
         />
       </div>
     </section>
@@ -61,7 +62,7 @@ export function SolverStatus({ solver, done, aside }: { solver: Solver; done: Re
     return (
       <StatusLine
         icon={<ClassificationIcon c="best" size={36} />}
-        title={<span className="text-accent">{t('puzzles.correct')}</span>}
+        title={<span className="text-good">{t('puzzles.correct')}</span>}
         sub={t('puzzles.keepGoing')}
         aside={aside}
       />

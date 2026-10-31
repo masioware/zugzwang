@@ -1,4 +1,6 @@
 export type Source = 'chesscom' | 'lichess';
+/** Where a game came from: an imported account, or a training game against the bot (see pages/Play). */
+export type GameSource = Source | 'bot';
 export type Color = 'white' | 'black';
 export type TimeClass = 'bullet' | 'blitz' | 'rapid' | 'classical' | 'daily';
 export type Outcome = 'win' | 'loss' | 'draw';
@@ -23,7 +25,7 @@ export interface Player {
 export interface Game {
   /** `${source}:${nativeId}`; games of friends' accounts get `@${accountId}` appended (see platformGameId). */
   id: string;
-  source: Source;
+  source: GameSource;
   /** Account id (`${source}:${username}`) this game was imported for. */
   accountId: string;
   url: string;
@@ -106,11 +108,18 @@ export interface GameAnalysis {
   gameId: string;
   depth: number;
   version: number;
-  /** Engine lines for each position (index 0 = initial position). */
-  positions: EngineLine[][];
   moves: MoveAnalysis[];
   accuracy: { white: number; black: number };
   createdAt: number;
+}
+
+/**
+ * Engine lines for each position of an analysed game (index 0 = initial position). Kept apart from
+ * GameAnalysis: only the review shows them, and lists and statistics load every analysis at once.
+ */
+export interface AnalysisLines {
+  gameId: string;
+  positions: EngineLine[][];
 }
 
 /** A tactics puzzle, stored in full once seen so it can be replayed offline (e.g. in repetition training). */

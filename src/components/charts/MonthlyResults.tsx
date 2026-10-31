@@ -24,7 +24,7 @@ export default function MonthlyResults({ data }: { data: ({ month: string } & WD
       <div className="h-56">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 20, right: 8, bottom: 0, left: 0 }} barCategoryGap="22%">
-            <CartesianGrid stroke={GRID} vertical={false} />
+            <CartesianGrid stroke={GRID} strokeDasharray="3 4" vertical={false} />
             <XAxis dataKey="month" tickFormatter={label} {...AXIS} />
             <YAxis allowDecimals={false} width={36} {...AXIS} />
             <Tooltip
@@ -50,13 +50,13 @@ export default function MonthlyResults({ data }: { data: ({ month: string } & WD
                 dataKey={k}
                 stackId="r"
                 fill={WDL_COLOR[k]}
-                stroke="#262522"
+                stroke="#121215"
                 strokeWidth={2}
                 maxBarSize={56}
                 radius={i === keys.length - 1 ? [4, 4, 0, 0] : 0}
                 isAnimationActive={false}
               >
-                {i === keys.length - 1 && <LabelList dataKey="games" position="top" fill="#c3c2b7" fontSize={11} fontWeight={600} />}
+                {i === keys.length - 1 && <LabelList dataKey="games" position="top" fill="#b9b8b1" fontSize={11} fontWeight={600} />}
               </Bar>
             ))}
           </BarChart>

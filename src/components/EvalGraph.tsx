@@ -26,7 +26,7 @@ export default function EvalGraph({ analysis, current, onSelect }: Props) {
   ];
 
   return (
-    <div className="h-24 cursor-pointer select-none overflow-hidden rounded bg-[#403d39]" aria-label={t('review.evalGraph')}>
+    <div className="h-28 cursor-pointer select-none overflow-hidden rounded-xl bg-panel-3 ring-1 ring-line" aria-label={t('review.evalGraph')}>
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart
           data={data}
@@ -38,34 +38,34 @@ export default function EvalGraph({ analysis, current, onSelect }: Props) {
         >
           <XAxis dataKey="ply" hide type="number" domain={[0, data.length - 1]} />
           <YAxis hide domain={[0, 100]} />
-          <ReferenceLine y={50} stroke="#8b8987" strokeOpacity={0.5} />
+          <ReferenceLine y={50} stroke="#7a7a80" strokeOpacity={0.45} strokeDasharray="2 3" />
           <Area
             dataKey="white"
             type="monotone"
-            stroke="#f0efec"
+            stroke="#f2f1ec"
             strokeWidth={1}
-            fill="#f0efec"
-            fillOpacity={1}
+            fill="#f2f1ec"
+            fillOpacity={0.92}
             baseValue={0}
             isAnimationActive={false}
-            activeDot={{ r: 4, fill: '#81b64c', stroke: '#262522', strokeWidth: 2 }}
+            activeDot={{ r: 4.5, fill: '#ffd60a', stroke: '#09090b', strokeWidth: 2 }}
             // Notable moves get a dot in their classification colour.
             dot={(props: { cx?: number; cy?: number; index?: number }) => {
               const c = data[props.index ?? 0] as { classification?: Classification };
               if (props.cx === undefined || props.cy === undefined || !c.classification || !MARKED.has(c.classification))
                 return <g key={props.index} />;
-              return <circle key={props.index} cx={props.cx} cy={props.cy} r={3.5} fill={CLASS_COLOR[c.classification]} stroke="#262522" strokeWidth={1.5} />;
+              return <circle key={props.index} cx={props.cx} cy={props.cy} r={3.5} fill={CLASS_COLOR[c.classification]} stroke="#09090b" strokeWidth={1.5} />;
             }}
           />
-          <ReferenceLine x={current} stroke="#81b64c" strokeWidth={2} />
+          <ReferenceLine x={current} stroke="#ffd60a" strokeWidth={2} />
           <Tooltip
-            cursor={{ stroke: '#8b8987', strokeDasharray: '3 3' }}
+            cursor={{ stroke: '#7a7a80', strokeDasharray: '3 3' }}
             content={({ payload }) => {
               const p = payload?.[0]?.payload as (typeof data)[number] | undefined;
               if (!p) return null;
               return (
-                <div className="rounded bg-panel-2 px-2 py-1 text-xs shadow-lg ring-1 ring-line">
-                  <span className="font-bold text-ink">{p.eval}</span>{' '}
+                <div className="rounded-lg bg-panel-2/95 px-2.5 py-1.5 text-xs shadow-xl ring-1 ring-line-2 backdrop-blur">
+                  <span className="font-mono font-bold text-ink">{p.eval}</span>{' '}
                   <span className="text-ink-2">{p.label}</span>
                   {'classification' in p && p.classification && (
                     <span className="text-ink-3"> · {t(`classification.${p.classification}`)}</span>

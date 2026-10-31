@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { byLength, byPhase, byTheme, byTime, cycleStats, daily, median, puzzleTracks, summary } from '../puzzles/stats';
+import { accuracyTrend, byLength, byPhase, byTheme, byTime, cycleStats, daily, median, puzzleTracks, summary, themeCounts } from '../puzzles/stats';
 import { nextTarget } from '../puzzles/woodpecker';
 import { playerColor } from '../puzzles/solve';
 import { shuffle } from '../puzzles/source';
@@ -104,5 +104,19 @@ describe('playerColor', () => {
   it('is the side not to move before the setup move', () => {
     expect(playerColor({ fen: '8/8/8/8/8/8/8/8 b - - 0 1' })).toBe('white');
     expect(playerColor({ fen: '8/8/8/8/8/8/8/8 w - - 0 1' })).toBe('black');
+  });
+});
+
+describe('theme filter helpers', () => {
+  const at = (startedAt: number, solved: boolean, themes: string[]) => ({ startedAt, solved, themes }) as unknown as PuzzleAttempt;
+
+  it('counts tactical themes only, most frequent first', () => {
+    const list = [at(1, true, ['fork', 'middlegame']), at(2, false, ['fork', 'pin']), at(3, true, ['pin', 'short']), at(4, true, ['fork'])];
+    expect(themeCounts(list)).toEqual([{ theme: 'fork', n: 3 }, { theme: 'pin', n: 2 }]);
+  });
+
+  it('computes a rolling accuracy in time order', () => {
+    const list = [at(3, true, []), at(1, false, []), at(2, true, []), at(4, true, [])];
+    expect(accuracyTrend(list, 2).map((p) => [p.t, p.rolling])).toEqual([[1, 0], [2, 50], [3, 100], [4, 100]]);
   });
 });

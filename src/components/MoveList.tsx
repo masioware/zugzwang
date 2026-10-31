@@ -36,8 +36,8 @@ export default function MoveList({ plies, analysis, current, onSelect }: Props) 
       <button
         data-current={isCurrent}
         onClick={() => onSelect(i + 1)}
-        className={`flex items-center gap-1.5 rounded px-1.5 py-[3px] text-left font-semibold ${
-          isCurrent ? 'bg-white/15 text-ink shadow-[inset_0_-2px_0_rgba(255,255,255,0.15)]' : 'text-ink-2 hover:bg-white/5 hover:text-ink'
+        className={`flex items-center gap-1.5 rounded-md px-1.5 py-[3px] text-left font-semibold transition-colors ${
+          isCurrent ? 'bg-accent text-accent-ink' : 'text-ink-2 hover:bg-white/[0.06] hover:text-ink'
         }`}
       >
         {a && a.classification !== 'best' && a.classification !== 'excellent' && a.classification !== 'good' ? (
@@ -53,8 +53,8 @@ export default function MoveList({ plies, analysis, current, onSelect }: Props) 
   return (
     <div ref={ref} className="relative h-52 overflow-y-auto py-1 text-sm">
       {rows.map((i) => (
-        <div key={i} className={`grid grid-cols-[2.25rem_1fr_1fr] items-center px-3 ${i % 4 === 0 ? 'bg-white/[0.025]' : ''}`}>
-          <span className="tabular text-ink-3">{i / 2 + 1}.</span>
+        <div key={i} className="grid grid-cols-[2.25rem_1fr_1fr] items-center gap-1 px-3 py-px">
+          <span className="tabular font-mono text-xs text-ink-3">{i / 2 + 1}</span>
           {cell(i)}
           {cell(i + 1)}
         </div>

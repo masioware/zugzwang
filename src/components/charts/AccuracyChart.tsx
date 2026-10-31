@@ -1,4 +1,4 @@
-import { CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Scatter, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, CartesianGrid, ComposedChart, ReferenceLine, ResponsiveContainer, Scatter, Tooltip, XAxis, YAxis } from 'recharts';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AXIS, GRID, SERIES } from './theme';
@@ -27,7 +27,7 @@ export default function AccuracyChart({ data }: { data: Point[] }) {
       legend={
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-2">
           <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full" style={{ background: '#8b8987' }} />
+            <span className="h-2 w-2 rounded-full" style={{ background: '#7a7a80' }} />
             {t('stats.gameAccuracy')} <span className="text-ink-3">({t('stats.clickToOpen')})</span>
           </span>
           <span className="flex items-center gap-1.5">
@@ -44,12 +44,18 @@ export default function AccuracyChart({ data }: { data: Point[] }) {
       <div className="h-56">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
-            <CartesianGrid stroke={GRID} vertical={false} />
+            <defs>
+              <linearGradient id="acc-avg" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={SERIES[0]} stopOpacity={0.28} />
+                <stop offset="100%" stopColor={SERIES[0]} stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid stroke={GRID} strokeDasharray="3 4" vertical={false} />
             <XAxis dataKey="t" type="number" scale="time" domain={['dataMin', 'dataMax']} tickFormatter={(v) => short.format(v)} minTickGap={24} {...AXIS} />
             <YAxis domain={domain} ticks={ticksFor(domain)} width={36} allowDataOverflow {...AXIS} />
-            <ReferenceLine y={mean} stroke="#8b8987" strokeDasharray="4 4" />
+            <ReferenceLine y={mean} stroke="#7a7a80" strokeDasharray="4 4" />
             <Tooltip
-              cursor={{ stroke: '#8b8987', strokeDasharray: '3 3' }}
+              cursor={{ stroke: '#7a7a80', strokeDasharray: '3 3' }}
               content={({ payload }) => {
                 const p = payload?.[0]?.payload as Point | undefined;
                 if (!p) return null;
@@ -73,11 +79,11 @@ export default function AccuracyChart({ data }: { data: Point[] }) {
                 // Large invisible hit area around a small visible dot.
                 <g>
                   <circle cx={props.cx} cy={props.cy} r={10} fill="transparent" />
-                  <circle cx={props.cx} cy={props.cy} r={4} fill="#8b8987" stroke="#262522" strokeWidth={2} />
+                  <circle cx={props.cx} cy={props.cy} r={4} fill="#7a7a80" stroke="#121215" strokeWidth={2} />
                 </g>
               )}
             />
-            <Line dataKey="average" stroke={SERIES[0]} strokeWidth={2} dot={false} activeDot={false} isAnimationActive={false} type="monotone" />
+            <Area dataKey="average" stroke={SERIES[0]} strokeWidth={2} fill="url(#acc-avg)" baseValue={domain[0]} dot={false} activeDot={false} isAnimationActive={false} type="monotone" />
           </ComposedChart>
         </ResponsiveContainer>
       </div>

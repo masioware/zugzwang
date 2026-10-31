@@ -16,10 +16,10 @@ export default function ReviewSummary({ game, analysis }: { game: Game; analysis
         <span className="w-20 truncate text-center text-xs text-ink-3" title={game.white.name}>{game.white.name}</span>
         <span className="w-20 truncate text-center text-xs text-ink-3" title={game.black.name}>{game.black.name}</span>
         <span className="font-semibold">{t('common.accuracy')}</span>
-        <span className="tabular rounded bg-ink py-1 text-center text-lg font-bold text-panel-2">
+        <span className="tabular rounded-xl bg-[#f2f1ec] py-1.5 text-center font-display text-2xl font-bold text-bg">
           {analysis.accuracy.white.toFixed(1)}
         </span>
-        <span className="tabular rounded bg-panel-2 py-1 text-center text-lg font-bold ring-1 ring-line">
+        <span className="tabular rounded-xl bg-panel-3 py-1.5 text-center font-display text-2xl font-bold ring-1 ring-line-2">
           {analysis.accuracy.black.toFixed(1)}
         </span>
         {game.platformAccuracy?.white !== undefined && (
@@ -37,8 +37,8 @@ export default function ReviewSummary({ game, analysis }: { game: Game; analysis
               <ClassificationIcon c={c} size={16} />
               <span className="text-ink-2">{t(`classification.${c}`)}</span>
             </span>
-            <span className="tabular w-20 text-center font-semibold">{white[c]}</span>
-            <span className="tabular w-20 text-center font-semibold">{black[c]}</span>
+            <span className={`tabular w-20 text-center font-mono font-semibold ${white[c] ? '' : 'text-ink-3/50'}`}>{white[c]}</span>
+            <span className={`tabular w-20 text-center font-mono font-semibold ${black[c] ? '' : 'text-ink-3/50'}`}>{black[c]}</span>
           </div>
         ))}
       </div>

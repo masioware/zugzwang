@@ -5,7 +5,8 @@
     "accounts": "Contas",
     "language": "Idioma",
     "puzzles": "Puzzles",
-    "friends": "Amigos"
+    "friends": "Amigos",
+    "play": "Jogar"
   },
   "common": {
     "loading": "Carregando…",
@@ -88,6 +89,10 @@
     "months_other": "Últimos {{count}} meses",
     "allTime": "Todo o período",
     "import": "Importar partidas",
+    "syncAll": "Atualizar todas",
+    "syncing": "Atualizando {{name}}… {{count}}",
+    "syncFailed": "Não foi possível atualizar: {{names}}",
+    "cancelled": "Importação cancelada. Nenhuma partida dessa importação foi salva.",
     "importing": "Importando… {{count}} partidas",
     "imported_one": "{{count}} partida nova importada",
     "imported_other": "{{count}} partidas novas importadas",
@@ -104,6 +109,13 @@
       "rateLimited": "O {{platform}} está limitando as requisições. Aguarde um minuto e tente de novo.",
       "generic": "Não foi possível importar as partidas: {{message}}",
       "accountTaken": "Essa conta do {{platform}} já foi adicionada (como sua ou de um amigo). Remova-a antes de adicioná-la de novo."
+    },
+    "local": "100% no navegador",
+    "accountsHint": "Suas contas do Chess.com e do Lichess, atualizadas automaticamente.",
+    "features": {
+      "engine": "Revisão com Stockfish",
+      "stats": "Estatísticas a fundo",
+      "puzzles": "Puzzles e Pica-pau"
     }
   },
   "filters": {
@@ -121,7 +133,9 @@
     },
     "rated": "Tipo",
     "ratedOnly": "Com rating",
-    "casual": "Casual"
+    "casual": "Casual",
+    "toggle": "Filtros",
+    "clear": "Limpar"
   },
   "games": {
     "title": "Partidas",
@@ -157,13 +171,18 @@
     "end": "Último lance",
     "nextMistake": "Próximo erro",
     "evalGraph": "Avaliação",
+    "copyFen": "Copiar FEN",
+    "copyPgn": "Copiar PGN",
+    "copied": "Copiado!",
+    "lichessAnalysis": "Analisar no Lichess",
+    "lichessAnalysisHint": "Abrir a posição do tabuleiro no tabuleiro de análise do Lichess",
     "openOn": "Abrir no {{platform}}",
     "platformAccuracy": "{{platform}}: {{value}}",
     "engineLines": "Motor",
     "depth": "profundidade {{depth}}",
     "startPosition": "Posição inicial",
     "gameOver": "Fim de jogo",
-    "keyboardHint": "Use ← → para navegar",
+    "keyboardHint": "Atalhos de teclado (?)",
     "tabMoves": "Lances",
     "tabSummary": "Resumo"
   },
@@ -285,7 +304,9 @@
     "showSeries": "Clique numa série para ocultá-la ou mostrá-la",
     "first": "Inicial",
     "last": "Atual",
-    "peak": "Máximo"
+    "peak": "Máximo",
+    "preparing": "Preparando estatísticas…",
+    "preparingHint": "Cada partida é reprocessada uma única vez; da próxima vez esta página abre na hora."
   },
   "queue": {
     "running_one": "Analisando 1 partida",
@@ -301,6 +322,7 @@
     "board": "Tabuleiro",
     "pieces": "Peças",
     "themes": {
+      "graphite": "Grafite",
       "green": "Verde",
       "brown": "Marrom",
       "blue": "Azul claro"
@@ -582,7 +604,22 @@
     "count_one": "{{count}} puzzle",
     "count_other": "{{count}} puzzles",
     "moves_one": "{{n}} lance",
-    "moves_other": "{{n}} lances"
+    "moves_other": "{{n}} lances",
+    "themeChip": "Tema: {{theme}}",
+    "emptyTheme": "Nenhum puzzle de {{theme}} neste período ainda.",
+    "themeFocus": "{{theme}}",
+    "trainTheme": "Treinar este tema",
+    "themeTrend": "Precisão ao longo do tempo",
+    "themeTrendSub": "Cada ponto é uma tentativa (em cima acertou, embaixo errou); a linha é a taxa de acerto nas últimas {{count}}.",
+    "rollingAccuracy": "Últimas {{count}}",
+    "overallAverage": "Sua média geral: {{value}}%",
+    "result": "Resultado",
+    "fewAttempts": "Ainda não há tentativas suficientes neste tema.",
+    "coThemes": "Temas que aparecem junto",
+    "filterByTheme": "Filtrar por este tema",
+    "overallIs": "Sua média geral: {{value}}",
+    "solvedShort": "Acertou",
+    "failedShort": "Errou"
   },
   "friends": {
     "title": "Amigos",
@@ -609,5 +646,91 @@
     "lessAccurate_other": "{{name}} foi mais preciso em {{count}} partidas",
     "gamesTogether": "Partidas entre vocês",
     "accountsOf": "Contas de {{name}}"
+  },
+  "shortcuts": {
+    "title": "Atalhos de teclado",
+    "close": "Fechar"
+  },
+  "backup": {
+    "title": "Backup",
+    "hint": "Seus dados ficam só neste navegador. Exporte um backup para guardá-los ou levá-los para outro navegador.",
+    "export": "Exportar backup",
+    "exporting": "Exportando…",
+    "exported": "Backup baixado ({{size}}).",
+    "import": "Restaurar backup",
+    "restoring": "Restaurando…",
+    "restoreConfirm": "Restaurar substitui TODOS os dados atuais (partidas, análises, puzzles e configurações) pelos do backup. Continuar?",
+    "restored": "Backup restaurado: {{games}} partidas, {{analyses}} análises. Recarregando…",
+    "invalidBackup": "Este arquivo não é um backup do Zugzwang.",
+    "newerBackup": "Este backup é de uma versão mais nova do Zugzwang. Atualize o app antes de restaurá-lo.",
+    "waitSync": "Aguarde a importação terminar.",
+    "error": "Algo deu errado: {{message}}"
+  },
+  "play": {
+    "title": "Jogar contra o bot",
+    "subtitle": "Treine as aberturas das suas partidas contra um bot com força ajustável.",
+    "yourColor": "Você joga de",
+    "randomColor": "Aleatório",
+    "imitate": "O bot joga como",
+    "imitateOptions": {
+      "opponents": "Seus adversários",
+      "me": "Você"
+    },
+    "imitateHint": {
+      "opponents": "O bot fica com o lado dos seus adversários nas suas {{count}} partidas de {{color}}. Você treina o seu repertório.",
+      "me": "O bot fica com o seu lado nas suas {{count}} partidas de {{color}}. Você enfrenta o seu próprio repertório."
+    },
+    "imitateHintRandom": {
+      "opponents": "O bot fica com o lado dos seus adversários nas suas partidas com a cor sorteada.",
+      "me": "O bot fica com o seu lado nas suas partidas com a cor oposta à sorteada."
+    },
+    "variation": "Variante",
+    "randomVariation": "Aleatória (as que você mais joga saem mais)",
+    "variationHint": "As variantes são as aberturas das suas partidas; o número é quantas partidas você tem em cada uma.",
+    "variationNeedsColor": "Escolha uma cor para selecionar uma variante específica.",
+    "noGames": "Você ainda não tem partidas com essa cor, então não há variantes para escolher.",
+    "elo": "Força do bot (Elo)",
+    "max": "Máximo",
+    "start": "Jogar",
+    "yourTurn": "Sua vez",
+    "botThinking": "O bot está pensando…",
+    "resign": "Abandonar",
+    "resignConfirm": "Abandonar a partida?",
+    "analyse": "Analisar partida",
+    "again": "Jogar de novo",
+    "newSetup": "Mudar",
+    "promoteTo": "Promover para",
+    "you": "Você",
+    "result": {
+      "win": "Você venceu",
+      "draw": "Empate",
+      "loss": "Você perdeu"
+    },
+    "noOpeningYet": "Posição inicial",
+    "chosenLine": "Linha",
+    "leftLine": "você saiu da linha",
+    "source": {
+      "line": "Lance da linha escolhida",
+      "opponents": "Como seus adversários jogaram · {{n}} de {{total}}",
+      "me": "Como você jogou · {{n}} de {{total}}",
+      "engine": "Motor · Elo {{elo}}",
+      "theory": "Lance teórico"
+    },
+    "deviation": "Você jogou {{move}}, mas nas suas partidas costuma jogar {{usual}} aqui.",
+    "trainingGame": "Treino contra o bot",
+    "openingMoves": "Lances de abertura do bot",
+    "fromGames": "Das suas partidas",
+    "fromTheory": "Da teoria",
+    "gamesHint": "O bot leva a partida para a variante pelo caminho mais comum nas suas partidas e segue o que foi jogado nelas. Quando elas acabam, entra o motor.",
+    "theoryHint": "O bot joga os lances teóricos de {{name}}. Quando a teoria acaba, joga como nas suas partidas e, depois, entra o motor.",
+    "theoryHintAny": "O bot joga lances teóricos de qualquer abertura. Quando a teoria acaba, joga como nas suas partidas e, depois, entra o motor.",
+    "theoryOf": "Teoria: {{name}}",
+    "anyLine": "qualquer linha",
+    "offTheory": "Você saiu da teoria com {{move}}; aqui a teoria segue com {{usual}}.",
+    "imitateHintTheory": {
+      "opponents": "As variantes vêm das suas {{count}} partidas de {{color}}, e o bot fica com o lado dos seus adversários.",
+      "me": "As variantes vêm das suas {{count}} partidas de {{color}} (as aberturas que você joga com a cor do bot), e o bot fica com o seu lado."
+    },
+    "gamesHintAny": "A cada lance, o bot escolhe entre o que foi jogado nas suas partidas (o mais comum sai mais). Quando elas acabam, entra o motor."
   }
 }
