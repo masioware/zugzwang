@@ -23,7 +23,8 @@
     "moves": "Moves",
     "score": "Score",
     "showTable": "Show table",
-    "showChart": "Show chart"
+    "showChart": "Show chart",
+    "close": "Close"
   },
   "platform": {
     "chesscom": "Chess.com",
@@ -415,7 +416,8 @@
       "stats": "Statistics"
     },
     "opponentMove": "Opponent's move…",
-    "getReady": "Your turn comes next."
+    "getReady": "Your turn comes next.",
+    "offline": "You're offline and no puzzles are saved for this theme and difficulty. Puzzles around your rating become available offline once used with a connection."
   },
   "puzzleTheme": {
     "advancedPawn": "Advanced pawn",
@@ -732,5 +734,16 @@
       "me": "The openings come from your {{count}} games as {{color}} (the ones you play with the bot's colour), and the bot takes your side."
     },
     "gamesHintAny": "Each move, the bot picks from what was played in your games (the most common comes up most). When they run out, the engine takes over."
+  },
+  "pwa": {
+    "title": "Install Zugzwang",
+    "hint": "It sits on your home screen like an app, opens full screen and works offline (game review and puzzles you have played).",
+    "iosHint": "In Safari, tap Share (□↑), then “Add to Home Screen”. It opens full screen and works offline.",
+    "menuHint": "In the browser menu, choose “Install app” or “Add to Home screen”. It opens full screen and works offline.",
+    "install": "Install app",
+    "installShort": "Install",
+    "updateReady": "A new version is available.",
+    "update": "Reload",
+    "offlineReady": "Done: the app now works offline."
   }
 }

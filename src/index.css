@@ -45,8 +45,18 @@
 }
 
 :root {
-  /* Height of the sticky header; sticky sub-bars sit right under it. */
-  --header-h: 57px;
+  /* Height of the sticky header (plus the status bar area in the installed app); sticky sub-bars sit under it. */
+  --header-h: calc(57px + env(safe-area-inset-top));
+}
+
+/* App-like touch behaviour (it also runs as an installed app): no rubber-band at the page ends, no grey tap
+   flash, no double-tap zoom delay. */
+html {
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+body {
+  touch-action: manipulation;
 }
 
 html,

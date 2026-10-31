@@ -20,4 +20,7 @@ void i18n
     detection: { order: ['localStorage', 'navigator'], caches: ['localStorage'] },
   });
 
+// Keep <html lang> in step (screen readers, hyphenation, the browser's translate offer).
+i18n.on('languageChanged', (lng) => document.documentElement.setAttribute('lang', lng));
+
 export default i18n;

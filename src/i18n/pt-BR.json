@@ -23,7 +23,8 @@
     "moves": "Lances",
     "score": "Aproveitamento",
     "showTable": "Ver tabela",
-    "showChart": "Ver gráfico"
+    "showChart": "Ver gráfico",
+    "close": "Fechar"
   },
   "platform": {
     "chesscom": "Chess.com",
@@ -415,7 +416,8 @@
       "stats": "Estatísticas"
     },
     "opponentMove": "Lance do adversário…",
-    "getReady": "Sua vez vem a seguir."
+    "getReady": "Sua vez vem a seguir.",
+    "offline": "Sem conexão, e não há puzzles guardados para esse tema e dificuldade. Os puzzles perto do seu rating ficam disponíveis offline depois de usados uma vez com internet."
   },
   "puzzleTheme": {
     "advancedPawn": "Peão avançado",
@@ -732,5 +734,16 @@
       "me": "As variantes vêm das suas {{count}} partidas de {{color}} (as aberturas que você joga com a cor do bot), e o bot fica com o seu lado."
     },
     "gamesHintAny": "A cada lance, o bot escolhe entre o que foi jogado nas suas partidas (o mais comum sai mais). Quando elas acabam, entra o motor."
+  },
+  "pwa": {
+    "title": "Instale o Zugzwang",
+    "hint": "Fica na tela inicial como um app, abre em tela cheia e funciona offline (revisão de partidas e puzzles já usados).",
+    "iosHint": "No Safari, toque em Compartilhar (□↑) e depois em “Adicionar à Tela de Início”. Ele abre em tela cheia e funciona offline.",
+    "menuHint": "No menu do navegador, escolha “Instalar app” ou “Adicionar à tela inicial”. Ele abre em tela cheia e funciona offline.",
+    "install": "Instalar app",
+    "installShort": "Instalar",
+    "updateReady": "Nova versão disponível.",
+    "update": "Recarregar",
+    "offlineReady": "Pronto: o app agora funciona offline."
   }
 }

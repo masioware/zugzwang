@@ -10,7 +10,7 @@ import Clock from '../components/puzzle/Clock';
 import { SolverBoard, SolverNav, SolverStatus, StatusLine } from '../components/puzzle/Solver';
 import { Delta, ThemeChips, ThemeSelect } from '../components/puzzle/Bits';
 import { puzzleFacts } from '../puzzles/solve';
-import { getPuzzle, localThemes, nextPuzzle, savePuzzle } from '../puzzles/source';
+import { getPuzzle, localThemes, nextPuzzle, savePuzzle, warmBuckets } from '../puzzles/source';
 import { INITIAL_RATING, PROVISIONAL_RD, updateRating, type Rating } from '../puzzles/rating';
 import { DIFFICULTIES, usePuzzlePrefs, type Difficulty } from '../puzzles/prefs';
 import { useSolver, type FinishResult, type SolveResult } from '../puzzles/useSolver';
@@ -36,6 +36,8 @@ export default function Puzzles() {
   );
   const [themes, setThemes] = useState<string[]>([]);
   useEffect(() => void localThemes().then(setThemes), []);
+  // Keep the puzzles around the user's level available offline.
+  useEffect(() => void warmBuckets(rating.rating), [Math.round(rating.rating / 100)]);
 
   const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
   const [mode, setMode] = useState<PuzzleMode>('practice');
@@ -137,7 +139,7 @@ export default function Puzzles() {
     ) : load === 'error' ? (
       <StatusLine
         title={<span className="text-loss">{t('puzzles.errorTitle')}</span>}
-        sub={t(error === 'rateLimited' ? 'puzzles.rateLimited' : 'puzzles.loadError', { error })}
+        sub={t(!navigator.onLine ? 'puzzles.offline' : error === 'rateLimited' ? 'puzzles.rateLimited' : 'puzzles.loadError', { error })}
       />
     ) : (
       <SolverStatus

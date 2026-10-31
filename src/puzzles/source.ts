@@ -180,3 +180,14 @@ export async function savePuzzle(puzzle: Puzzle): Promise<void> {
   const existing = await db.puzzles.get(puzzle.id);
   if (!existing) await db.puzzles.put({ ...puzzle, addedAt: Date.now() });
 }
+
+/**
+ * Fetches the bundled buckets around a rating so the service worker keeps them for offline use (the ones
+ * actually played from are cached anyway). Skipped when the user asked to save data.
+ */
+export async function warmBuckets(rating: number, span = 200): Promise<void> {
+  if ((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData || !navigator.onLine) return;
+  const index = await loadIndex();
+  for (const [start] of index?.buckets ?? [])
+    if (start + 100 > rating - span && start < rating + span) void fetch(`/data/puzzles/${start}.json`).catch(() => {});
+}

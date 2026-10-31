@@ -108,6 +108,8 @@ let autoSynced = false;
 export async function autoSync(): Promise<void> {
   if (autoSynced) return;
   autoSynced = true;
+  // Opening the installed app offline: nothing to fetch, and no failure message about it.
+  if (!navigator.onLine) return;
   const now = Date.now();
   const stale = (await db.accounts.toArray()).filter((a) => !a.lastSync || now - a.lastSync > AUTO_SYNC_AFTER);
   // Own accounts first: they matter most and feed the head-to-head stats.

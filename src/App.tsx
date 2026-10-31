@@ -21,6 +21,7 @@ const WoodpeckerSet = lazy(() => import('./pages/WoodpeckerSet'));
 const WoodpeckerPlay = lazy(() => import('./pages/WoodpeckerPlay'));
 import QueueIndicator from './components/QueueIndicator';
 import SyncIndicator from './components/SyncIndicator';
+import { InstallButton, PwaToast } from './components/Pwa';
 import { autoSync } from './api/sync';
 import LanguageSelect from './components/LanguageSelect';
 import EngineSettings from './components/EngineSettings';
@@ -47,7 +48,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="flex min-h-full flex-col">
-        <header className="sticky top-0 z-20 h-[var(--header-h)] border-b border-line bg-bg/75 backdrop-blur-xl">
+        <header className="sticky top-0 z-20 h-[var(--header-h)] border-b border-line bg-bg/75 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
           <div className="mx-auto flex h-full max-w-7xl items-center gap-3 px-3 sm:px-4">
             <NavLink to="/" className="flex shrink-0 items-center gap-2.5">
               <Logo className="h-8 w-8" />
@@ -70,6 +71,7 @@ export default function App() {
               ))}
             </nav>
             <div className="ml-auto flex min-w-0 items-center gap-2">
+              <InstallButton />
               <SyncIndicator />
               <QueueIndicator />
               <EngineSettings />
@@ -111,6 +113,8 @@ export default function App() {
           </Routes>
           </Suspense>
         </main>
+
+        <PwaToast />
 
         {/* Phones: the sections live in a bottom tab bar, within thumb reach. */}
         <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-bg/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden">

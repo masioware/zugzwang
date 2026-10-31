@@ -43,5 +43,5 @@ Ordenado por prioridade: primeiro o que tem mais impacto com menos esforço.
 - [ ] **Desenhar setas e círculos** com o botão direito no tabuleiro.
 - [ ] **Modal de confirmação próprio** (ou "desfazer") no lugar do `confirm()` nativo ao remover conta.
 - [ ] **Tema claro** / seguir `prefers-color-scheme`.
-- [ ] **PWA**: manifest + service worker para instalar e usar puzzles e revisão offline.
+- [x] **PWA**: manifest + service worker para instalar e usar puzzles e revisão offline.
 - [ ] **Sons e animações de lance** opcionais na revisão e nos puzzles.

@@ -4,6 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
 import { AccountList, ImportForm, SyncAllButton } from '../components/AccountManager';
 import BackupPanel from '../components/BackupPanel';
+import { InstallPanel } from '../components/Pwa';
 import { ChartIcon, CpuIcon, PuzzleIcon } from '../components/icons';
 
 /** Accounts page; with no account yet it doubles as the welcome screen. */
@@ -42,6 +43,9 @@ export default function Home() {
           <Link to="/games" className="btn-primary">{t('nav.games')} →</Link>
         </section>
       )}
+
+      {/* Near the top: on a phone it's how the app gets to the home screen. Hidden once installed. */}
+      <InstallPanel />
 
       <ImportForm />
 
