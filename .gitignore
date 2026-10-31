@@ -1,0 +1,9 @@
+node_modules
+dist
+public/stockfish
+*.local
+public/pieces/local
+public/boards/local
+chess_assets
+data-src/lichess_db_puzzle*
+*.tsbuildinfo

@@ -1,0 +1,62 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-bg: #302e2b;
+  --color-panel: #262522;
+  --color-panel-2: #1f1e1c;
+  --color-line: #3c3a37;
+  --color-ink: #f0efec;
+  --color-ink-2: #c3c2b7;
+  --color-ink-3: #8b8987;
+  --color-accent: #81b64c;
+  --color-accent-dark: #5d8a32;
+
+  --color-win: #3987e5;
+  --color-draw: #6b6a65;
+  --color-loss: #e66767;
+
+  --color-c-brilliant: #26c2a3;
+  --color-c-great: #749bbf;
+  --color-c-best: #81b64c;
+  --color-c-excellent: #96bc4b;
+  --color-c-good: #95b776;
+  --color-c-book: #a88865;
+  --color-c-inaccuracy: #f7c631;
+  --color-c-mistake: #ffa459;
+  --color-c-miss: #ff7769;
+  --color-c-blunder: #fa412d;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-bg text-ink antialiased;
+  font-family: ui-sans-serif, system-ui, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: dark;
+}
+
+@utility panel {
+  @apply rounded-lg bg-panel;
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-md px-3 py-1.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn bg-accent text-white shadow-[0_3px_0_var(--color-accent-dark)] hover:brightness-110;
+}
+@utility btn-ghost {
+  @apply btn bg-white/5 text-ink-2 hover:bg-white/10 hover:text-ink;
+}
+
+@utility input {
+  @apply rounded-md border border-line bg-panel-2 px-3 py-1.5 text-sm text-ink outline-none focus:border-accent;
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
