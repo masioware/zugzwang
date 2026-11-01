@@ -10,7 +10,7 @@ import { db } from '../db';
 import type { Game, GameAnalysis } from '../types';
 import { DEFAULT_FILTERS, filterGames, type Filters } from '../stats/aggregate';
 import type { GameFacts } from '../stats/facts';
-import { factsFor } from '../stats/factsStore';
+import { cachedFacts, factsFor } from '../stats/factsStore';
 import { filtersFromParams, sameFilters, writeFilterParams } from './filterParams';
 
 /**
@@ -188,9 +188,10 @@ export interface FactsState {
 
 /** Replay-derived facts for the given games (see stats/factsStore). */
 export function useGameFacts(games: Game[] | undefined): FactsState {
+  const cached = useMemo(() => (games ? cachedFacts(games) : undefined), [games]);
   const [state, setState] = useState<{ games: Game[]; map?: Map<string, GameFacts>; done: number; total: number }>();
   useEffect(() => {
-    if (!games) return;
+    if (!games || cached) return;
     let cancelled = false;
     void factsFor(games, (done, total) => !cancelled && setState({ games, done, total })).then(
       (map) => !cancelled && setState({ games, map, done: games.length, total: games.length }),
@@ -198,7 +199,8 @@ export function useGameFacts(games: Game[] | undefined): FactsState {
     return () => {
       cancelled = true;
     };
-  }, [games]);
+  }, [games, cached]);
+  if (cached) return { facts: cached, done: cached.size, total: cached.size };
   const current = state && state.games === games ? state : undefined;
   return { facts: current?.map, done: current?.done ?? 0, total: current?.total ?? games?.length ?? 0 };
 }

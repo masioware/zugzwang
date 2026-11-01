@@ -1,4 +1,5 @@
-import { Area, CartesianGrid, ComposedChart, ReferenceLine, ResponsiveContainer, Scatter, Tooltip, XAxis, YAxis } from 'recharts';
+import { useMemo } from 'react';
+import { Area, CartesianGrid, ComposedChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, useXAxisScale, useYAxisScale } from 'recharts';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AXIS, GRID, SERIES } from './theme';
@@ -70,23 +71,58 @@ export default function AccuracyChart({ data }: { data: Point[] }) {
                 );
               }}
             />
-            <Scatter
-              dataKey="accuracy"
-              isAnimationActive={false}
-              cursor="pointer"
-              onClick={(p: { payload?: Point }) => p.payload && navigate(`/game/${encodeURIComponent(p.payload.id)}`)}
-              shape={(props: { cx?: number; cy?: number }) => (
-                // Large invisible hit area around a small visible dot.
-                <g>
-                  <circle cx={props.cx} cy={props.cy} r={10} fill="transparent" />
-                  <circle cx={props.cx} cy={props.cy} r={4} fill="#7a7a80" stroke="#121215" strokeWidth={2} />
-                </g>
-              )}
-            />
             <Area dataKey="average" stroke={SERIES[0]} strokeWidth={2} fill="url(#acc-avg)" baseValue={domain[0]} dot={false} activeDot={false} isAnimationActive={false} type="monotone" />
+            <Dots data={data} onOpen={(id) => navigate(`/game/${encodeURIComponent(id)}`)} />
           </ComposedChart>
         </ResponsiveContainer>
       </div>
     </ChartFrame>
+  );
+}
+
+/** Circles of radius r centred on each point, as path data. */
+const circles = (pts: { x: number; y: number }[], r: number) =>
+  pts.map(({ x, y }) => `M${x - r},${y}a${r},${r} 0 1,0 ${2 * r},0a${r},${r} 0 1,0 ${-2 * r},0`).join('');
+
+/**
+ * Each game as a dot, all drawn as one path (plus one invisible path as a wider click target). A Scatter
+ * made every game several SVG elements and a React subtree: with thousands of analysed games, each filter
+ * change spent hundreds of milliseconds re-rendering them. A click opens the nearest game within reach.
+ */
+function Dots({ data, onOpen }: { data: Point[]; onOpen: (id: string) => void }) {
+  const x = useXAxisScale();
+  const y = useYAxisScale();
+  const pts = useMemo(
+    () =>
+      x && y
+        ? data.flatMap((p) => {
+            const px = x(p.t);
+            const py = y(p.accuracy);
+            return px === undefined || py === undefined ? [] : [{ x: px, y: py, id: p.id }];
+          })
+        : [],
+    [data, x, y],
+  );
+  const paths = useMemo(() => ({ dots: circles(pts, 4), hits: circles(pts, 10) }), [pts]);
+  if (!pts.length) return null;
+
+  const open = (e: React.MouseEvent<SVGPathElement>) => {
+    const ctm = e.currentTarget.getScreenCTM();
+    if (!ctm) return;
+    const at = new DOMPoint(e.clientX, e.clientY).matrixTransform(ctm.inverse());
+    let best: string | undefined;
+    let bestD = 10 ** 2;
+    for (const p of pts) {
+      const d = (p.x - at.x) ** 2 + (p.y - at.y) ** 2;
+      if (d <= bestD) [best, bestD] = [p.id, d];
+    }
+    if (best) onOpen(best);
+  };
+
+  return (
+    <g>
+      <path d={paths.dots} fill="#7a7a80" stroke="#121215" strokeWidth={2} pointerEvents="none" />
+      <path d={paths.hits} fill="transparent" cursor="pointer" onClick={open} />
+    </g>
   );
 }

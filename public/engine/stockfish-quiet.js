@@ -3,7 +3,16 @@
 // and per variation; with several workers that came to thousands of messages a second for the page to
 // handle, which kept it from painting. Other output (uciok, readyok, options, bestmove) goes through as is.
 //
-// The .wasm path comes in the URL hash (Stockfish reads it from there): stockfish-quiet.js#<wasm url>.
+// Stockfish derives its .wasm URL from the script's own location (this file's, so .../stockfish-quiet.wasm,
+// which doesn't exist) unless given one in the URL hash, which a worker's location doesn't reliably keep.
+// So any .wasm it fetches is redirected to the real file here.
+var WASM_URL = '/stockfish/stockfish-19-lite-single.wasm';
+var realFetch = self.fetch.bind(self);
+self.fetch = function (input, init) {
+  var url = typeof input === 'string' ? input : input && input.url;
+  return realFetch(/\.wasm(\?|#|$)/.test(url || '') ? WASM_URL : input, init);
+};
+
 var latest = {};
 var post = self.postMessage.bind(self);
 self.postMessage = function (line) {

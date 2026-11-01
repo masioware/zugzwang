@@ -6,7 +6,12 @@ import type { ClassifyInput } from './classifyClient';
 /** Classifies an analysed game's moves off the main thread (sacrifice detection replays many positions). */
 self.onmessage = async (e: MessageEvent<{ id: number; input: ClassifyInput }>) => {
   const { moves, positions, clocks, initialTime } = e.data.input;
-  const plies = replay(moves);
-  const { bookPlies } = identifyOpening(plies.map((p) => p.fenAfter), await loadOpeningBook());
-  self.postMessage({ id: e.data.id, result: analyseMoves({ plies, positions, bookPlies, clocks, initialTime }) });
+  try {
+    const plies = replay(moves);
+    const { bookPlies } = identifyOpening(plies.map((p) => p.fenAfter), await loadOpeningBook());
+    self.postMessage({ id: e.data.id, result: analyseMoves({ plies, positions, bookPlies, clocks, initialTime }) });
+  } catch (err) {
+    // Fail this game only; the queue moves on.
+    self.postMessage({ id: e.data.id, error: err instanceof Error ? err.message : String(err) });
+  }
 };

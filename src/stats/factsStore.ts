@@ -34,6 +34,20 @@ function compute(worker: Worker, games: FactsInput[]): Promise<StoredFacts[]> {
 }
 
 /**
+ * Facts for every game when all are already in memory, without waiting; undefined otherwise. Lets a filter
+ * change render the new statistics at once instead of going through a "preparing" render first.
+ */
+export function cachedFacts(games: Game[]): Map<string, GameFacts> | undefined {
+  const map = new Map<string, GameFacts>();
+  for (const g of games) {
+    const f = cache.get(g.id);
+    if (!f) return undefined;
+    map.set(g.id, f);
+  }
+  return map;
+}
+
+/**
  * Facts for every game. Facts never change once a game is imported, so they are stored in IndexedDB and
  * only games never seen before are replayed, in a pool of workers so the page stays responsive.
  * `onProgress` reports how many of the games are ready.

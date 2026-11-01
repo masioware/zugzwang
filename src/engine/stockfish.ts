@@ -3,7 +3,7 @@ import { sideToMove } from '../lib/chess';
 
 const ENGINE_URL = '/stockfish/stockfish-19-lite-single.js';
 /** The same engine behind a filter that only reports each search's final lines (see public/engine). */
-const QUIET_ENGINE_URL = `/engine/stockfish-quiet.js#${encodeURIComponent(ENGINE_URL.replace(/\.js$/, '.wasm'))}`;
+const QUIET_ENGINE_URL = '/engine/stockfish-quiet.js';
 
 export interface SearchOptions {
   depth: number;

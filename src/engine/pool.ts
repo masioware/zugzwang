@@ -16,11 +16,13 @@ export function maxWorkers(): number {
 }
 
 /**
- * After the user clicks, types or scrolls, no new position starts for this long. A batch keeps every core
- * busy; searches in flight are short, so pausing new ones frees the CPU for the page right when the user
- * interacts, and the batch resumes at full speed once they stop.
+ * For this long after the user clicks, types or scrolls, the pool runs on a quarter of its workers (at
+ * least one). A batch keeps every core busy; searches in flight are short, so this frees most of the CPU
+ * for the page right when the user interacts. It slows the batch down rather than stopping it: with a full
+ * stop, someone scrolling or clicking around kept postponing every search and the batch never moved.
  */
 const YIELD_AFTER_INPUT_MS = 600;
+const YIELD_SHARE = 0.25;
 let lastInput = 0;
 if (typeof window !== 'undefined')
   for (const type of ['pointerdown', 'keydown', 'wheel', 'touchstart'] as const)
@@ -81,14 +83,15 @@ class EnginePool {
 
   private pump() {
     const sinceInput = performance.now() - lastInput;
-    if (this.queue.length && sinceInput < YIELD_AFTER_INPUT_MS) {
+    const yielding = sinceInput < YIELD_AFTER_INPUT_MS;
+    const limit = yielding ? Math.max(1, Math.floor(this.size * YIELD_SHARE)) : this.size;
+    // Back to full speed once the user has been still for a moment.
+    if (yielding && this.queue.length)
       this.resumeTimer ??= setTimeout(() => {
         this.resumeTimer = undefined;
         this.pump();
       }, YIELD_AFTER_INPUT_MS - sinceInput);
-      return;
-    }
-    while (this.queue.length) {
+    while (this.queue.length && this.busy.size < limit) {
       let engine = this.idle.pop();
       if (!engine && this.created < this.size) {
         // Quiet: a batch only needs each search's result, not the per-depth progress lines.
