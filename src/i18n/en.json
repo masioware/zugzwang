@@ -412,6 +412,7 @@
     "failed": "Failed",
     "tabs": {
       "train": "Train",
+      "sprint": "Sprint",
       "woodpecker": "Woodpecker",
       "stats": "Statistics"
     },
@@ -493,6 +494,21 @@
     "zugzwang": "Zugzwang",
     "swallowstailMate": "Swallow's tail mate",
     "collinearMove": "Collinear move"
+  },
+  "sprint": {
+    "title": "Sprint",
+    "intro": "Solve as many puzzles as you can. They start easy and get harder with each one. A wrong move costs a strike and moves on to the next puzzle; {{strikes}} strikes end the run. Your rating doesn't change.",
+    "modes": { "3min": "3 minutes", "5min": "5 minutes", "survival": "Survival" },
+    "modeHints": { "3min": "Pure speed", "5min": "A little time to think", "survival": "No clock, only strikes" },
+    "best": "Best: {{score}}",
+    "score": "Solved",
+    "strike": "Strike!",
+    "strikesLabel": "{{count}} of {{max}} strikes",
+    "finish": "End run",
+    "lastRun": "Last run",
+    "newRecord": "New record!",
+    "reviewHint": "Click a puzzle to go over it calmly.",
+    "noPuzzles": "Couldn't load the puzzles. Connect to the internet at least once to keep them for offline use."
   },
   "woodpecker": {
     "title": "Woodpecker Method",

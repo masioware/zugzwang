@@ -412,6 +412,7 @@
     "failed": "Errado",
     "tabs": {
       "train": "Treinar",
+      "sprint": "Sprint",
       "woodpecker": "Pica-pau",
       "stats": "Estatísticas"
     },
@@ -493,6 +494,21 @@
     "zugzwang": "Zugzwang",
     "swallowstailMate": "Mate rabo de andorinha",
     "collinearMove": "Lance colinear"
+  },
+  "sprint": {
+    "title": "Sprint",
+    "intro": "Resolva o máximo de puzzles que conseguir. Eles começam fáceis e ficam mais difíceis a cada um. Um lance errado custa um erro e passa para o próximo puzzle; {{strikes}} erros encerram a partida. Seu rating não muda.",
+    "modes": { "3min": "3 minutos", "5min": "5 minutos", "survival": "Sobrevivência" },
+    "modeHints": { "3min": "Velocidade pura", "5min": "Um pouco de tempo para pensar", "survival": "Sem relógio, só os erros" },
+    "best": "Recorde: {{score}}",
+    "score": "Resolvidos",
+    "strike": "Errou!",
+    "strikesLabel": "{{count}} de {{max}} erros",
+    "finish": "Encerrar partida",
+    "lastRun": "Última partida",
+    "newRecord": "Novo recorde!",
+    "reviewHint": "Clique em um puzzle para revê-lo com calma.",
+    "noPuzzles": "Não foi possível carregar os puzzles. Conecte-se à internet ao menos uma vez para guardá-los para uso offline."
   },
   "woodpecker": {
     "title": "Método pica-pau",

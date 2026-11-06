@@ -16,6 +16,7 @@ const HeadToHeadView = lazy(() => import('./pages/Friend').then((m) => ({ defaul
 const Puzzles = lazy(() => import('./pages/Puzzles'));
 const PuzzleStats = lazy(() => import('./pages/PuzzleStats'));
 const Play = lazy(() => import('./pages/Play'));
+const Sprint = lazy(() => import('./pages/Sprint'));
 const Woodpecker = lazy(() => import('./pages/Woodpecker'));
 const WoodpeckerSet = lazy(() => import('./pages/WoodpeckerSet'));
 const WoodpeckerPlay = lazy(() => import('./pages/WoodpeckerPlay'));
@@ -107,6 +108,7 @@ export default function App() {
             <Route path="/puzzles" element={<Puzzles />} />
             <Route path="/puzzles/p/:id" element={<Puzzles />} />
             <Route path="/puzzles/stats" element={<PuzzleStats />} />
+            <Route path="/puzzles/sprint" element={<Sprint />} />
             <Route path="/puzzles/woodpecker" element={<Woodpecker />} />
             <Route path="/puzzles/woodpecker/:id" element={<WoodpeckerSet />} />
             <Route path="/puzzles/woodpecker/:id/play" element={<WoodpeckerPlay />} />

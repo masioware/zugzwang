@@ -16,7 +16,7 @@ import { usePuzzlePrefs } from '../puzzles/prefs';
 import { formatSeconds } from '../puzzles/format';
 import type { PuzzleAttempt } from '../types';
 
-type ModeFilter = 'all' | 'free' | 'woodpecker';
+type ModeFilter = 'all' | 'free' | 'sprint' | 'woodpecker';
 const PERIODS = [7, 30, 90, 0];
 const THEMES_SHOWN = 10;
 /** Attempts in the rolling accuracy of the theme chart. */
@@ -45,7 +45,7 @@ export default function PuzzleStats() {
   const scoped = useMemo(() => {
     const since = period ? Date.now() - period * 86_400_000 : 0;
     return (all ?? []).filter(
-      (a) => a.startedAt >= since && (mode === 'all' || (mode === 'woodpecker' ? a.mode === 'woodpecker' : a.mode !== 'woodpecker')),
+      (a) => a.startedAt >= since && (mode === 'all' || (mode === 'free' ? a.mode === 'rated' || a.mode === 'practice' : a.mode === mode)),
     );
   }, [all, mode, period]);
   const attempts = useMemo(() => (theme ? scoped.filter((a) => a.themes?.includes(theme)) : scoped), [scoped, theme]);
@@ -73,6 +73,7 @@ export default function PuzzleStats() {
               options={[
                 ['all', t('puzzleStats.modeAll')],
                 ['free', t('puzzleStats.modeFree')],
+                ['sprint', t('puzzles.tabs.sprint')],
                 ['woodpecker', t('puzzles.tabs.woodpecker')],
               ]}
             />
