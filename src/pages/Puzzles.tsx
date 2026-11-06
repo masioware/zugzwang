@@ -31,7 +31,7 @@ export default function Puzzles() {
     ? { rating: lastRated.ratingAfter, rd: lastRated.rdAfter ?? INITIAL_RATING.rd }
     : INITIAL_RATING;
   const history = useLiveQuery(
-    () => db.puzzleAttempts.orderBy('id').reverse().filter((a) => a.mode !== 'woodpecker').limit(40).toArray(),
+    () => db.puzzleAttempts.orderBy('id').reverse().filter((a) => a.mode === 'rated' || a.mode === 'practice').limit(40).toArray(),
     [],
   );
   const [themes, setThemes] = useState<string[]>([]);

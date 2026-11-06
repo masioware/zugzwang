@@ -139,7 +139,7 @@ export interface Puzzle {
   addedAt: number;
 }
 
-export type PuzzleMode = 'rated' | 'practice' | 'woodpecker';
+export type PuzzleMode = 'rated' | 'practice' | 'woodpecker' | 'sprint';
 
 export interface PuzzleAttempt {
   id?: number;
@@ -201,4 +201,24 @@ export interface WoodpeckerCycle {
   finishedAt?: number;
   /** Time spent solving (sum of the puzzles' times), so pauses don't count. */
   activeMs: number;
+}
+
+export type SprintMode = '3min' | '5min' | 'survival';
+
+export interface SprintResult {
+  puzzleId: string;
+  rating: number;
+  solved: boolean;
+}
+
+/** A finished Sprint run: as many puzzles as possible before the clock or the strikes end it. */
+export interface SprintRun {
+  id?: number;
+  mode: SprintMode;
+  startedAt: number;
+  durationMs: number;
+  /** Puzzles solved. */
+  score: number;
+  /** Every puzzle answered, in order. */
+  results: SprintResult[];
 }

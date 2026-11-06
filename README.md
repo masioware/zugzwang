@@ -29,6 +29,8 @@ RUN_ENGINE=1 npm test   # inclui o teste de integração com o Stockfish real
   tema/dificuldade, o app busca na API do Lichess. Todo puzzle mostrado e toda tentativa ficam no IndexedDB.
 - Pica-pau (Woodpecker Method): conjuntos fixos de puzzles (por tema/rating ou a partir dos que você errou) resolvidos
   em ciclos com ordem embaralhada; erro encerra o puzzle e cada ciclo mira metade do tempo do anterior.
+- Sprint: resolver o máximo de puzzles em 3 min, 5 min ou sem relógio, com dificuldade crescente e fim no terceiro
+  erro. Guarda recorde por modo, não altera o rating e os puzzles errados entram nos conjuntos de errados do Pica-pau.
 - Cada tentativa guarda tempo até o resultado e até o fim da linha, tempo por lance, lances errados, temas, cor e
   tamanho do puzzle; a aba Estatísticas de puzzles agrega isso por tema, rating, tamanho, fase, cor e tempo gasto.
 - Stockfish é GPL-3.0; é carregado como arquivo separado a partir de `public/stockfish`.
