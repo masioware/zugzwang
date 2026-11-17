@@ -8,7 +8,7 @@ import { pieceUrl, useSettings } from '../../lib/settings';
 import type { Solver } from '../../puzzles/useSolver';
 
 /** The board column of a puzzle page. */
-export function SolverBoard({ solver }: { solver: Solver }) {
+export function SolverBoard({ solver, hidePieces, movable }: { solver: Solver; hidePieces?: boolean; movable?: boolean }) {
   return (
     <section className="mx-auto w-full" style={{ maxWidth: 'max(340px, calc(100vh - 190px))' }}>
       <div className="rounded-xl shadow-[0_20px_50px_-20px_rgba(0,0,0,0.9)] ring-1 ring-white/[0.06]">
@@ -20,7 +20,8 @@ export function SolverBoard({ solver }: { solver: Solver }) {
           arrows={[]}
           highlights={solver.board.highlights}
           onMove={solver.onMove}
-          movable={solver.phase === 'play'}
+          movable={movable ?? solver.phase === 'play'}
+          hidePieces={hidePieces}
         />
       </div>
     </section>

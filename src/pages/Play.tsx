@@ -9,6 +9,7 @@ import { useGameFacts, useScopeGames } from '../lib/hooks';
 import { pieceUrl, useSettings } from '../lib/settings';
 import { identifyOpening, loadOpeningBook, type OpeningBook } from '../analysis/openings';
 import Board from '../components/Board';
+import MoveInput from '../components/blindfold/MoveInput';
 import MoveList from '../components/MoveList';
 import PlayerCard from '../components/PlayerCard';
 import { FlipIcon } from '../components/icons';
@@ -30,6 +31,8 @@ import {
 import type { Color, Game } from '../types';
 import { loadTheory, theoryMove, theoryMoves } from '../play/theory';
 import { gameOver, type Result } from '../play/result';
+import { useBlindfoldPrefs } from '../blindfold/prefs';
+import { canSpeak, langOf, speak, spokenMove, stopSpeaking } from '../blindfold/speech';
 
 interface Session {
   userColor: Color;
@@ -39,6 +42,8 @@ interface Session {
   variation?: Variation;
   /** Opening moves from theory (of `variation`, or any line) before the user's games. */
   theory: boolean;
+  /** Pieces hidden; moves typed or spoken. */
+  blindfold: boolean;
   startedAt: number;
 }
 
@@ -52,7 +57,9 @@ const thinkMs = (elo: number) => Math.round(300 + ((elo - DEFAULT_ELO_RANGE.min)
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export default function Play() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = langOf(i18n.language);
+  const voice = useBlindfoldPrefs((s) => s.voice);
   const navigate = useNavigate();
   const prefs = usePlayPrefs();
   const pieceSet = useSettings((s) => s.pieceSet);
@@ -76,6 +83,9 @@ export default function Play() {
   const [promotion, setPromotion] = useState<{ from: string; to: string } | null>(null);
   const [flipped, setFlipped] = useState(false);
   const [saving, setSaving] = useState(false);
+  /** Blindfold: the board is shown on request until the next move; each request is counted. */
+  const [peeking, setPeeking] = useState(false);
+  const [peeks, setPeeks] = useState(0);
   const engine = useRef<BotEngine | null>(null);
   useEffect(() => () => engine.current?.terminate(), []);
 
@@ -109,6 +119,7 @@ export default function Play() {
   function apply(san: string) {
     const next = [...moves, san];
     setMoves(next);
+    setPeeking(false);
     if (session) setResult(gameOver(next, session.userColor));
   }
 
@@ -147,6 +158,20 @@ export default function Play() {
     };
     // `apply` and the derived values only change together with `moves`.
   }, [session, moves, result]);
+
+  // Blindfold: the bot's move is read out as soon as it is played.
+  const lastSan = moves[moves.length - 1];
+  const botJustMoved = !!session && moves.length > 0 && turn === session.userColor;
+  useEffect(() => {
+    if (session?.blindfold && voice && botJustMoved && lastSan) speak(spokenMove(lastSan, lang), lang);
+  }, [moves.length]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => () => stopSpeaking(), []);
+
+  /** Blindfold input names the promotion piece itself (or defaults to a queen), so no picker is needed. */
+  function blindMove(from: string, to: string, _piece: string, promotion?: string): boolean {
+    if (!userTurn) return false;
+    return play(from, to, promotion);
+  }
 
   function onMove(from: string, to: string, piece: string): boolean {
     if (!userTurn || !session) return false;
@@ -191,8 +216,11 @@ export default function Play() {
       // The list was built for the setup colour; a random colour may not match it, so it plays by frequency.
       variation: prefs.color === 'random' ? undefined : variationList.find((v) => v.name === prefs.variation),
       theory: prefs.theory,
+      blindfold: prefs.blindfold,
       startedAt: Date.now(),
     });
+    setPeeking(false);
+    setPeeks(0);
     setMoves([]);
     setRepertoire(null);
     setResult(null);
@@ -233,6 +261,7 @@ export default function Play() {
       endTime: Date.now(),
       rated: false,
       opening: { eco: opening?.eco, name: opening?.name },
+      ...(session.blindfold && { blindfold: true, blindfoldPeeks: peeks }),
     };
     await db.games.put(game);
     navigate(`/game/${encodeURIComponent(id)}`);
@@ -261,7 +290,8 @@ export default function Play() {
             lastMove={lastPly ? { from: lastPly.from, to: lastPly.to } : undefined}
             arrows={[]}
             onMove={onMove}
-            movable={userTurn && !promotion}
+            movable={userTurn && !promotion && !session?.blindfold}
+            hidePieces={!!session?.blindfold && !peeking && !result}
           />
         </div>
         <PlayerCard player={player(bottom)} color={bottom} active={!!session && !result && turn === bottom} />
@@ -369,7 +399,34 @@ export default function Play() {
             </div>
 
             <div className="panel overflow-hidden">
-              <MoveList plies={plies} current={plies.length} onSelect={() => {}} />
+              {session.blindfold && !result && (
+                <div className="space-y-3 border-b border-line p-4">
+                  {lastSan && botJustMoved && (
+                    <p className="text-sm text-ink-2">
+                      {t('blindfold.opponentPlayed')} <span className="font-mono text-base font-bold text-ink">{lastSan}</span>
+                    </p>
+                  )}
+                  <MoveInput fen={fen} lang={lang} disabled={!userTurn} onMove={blindMove} />
+                  <div className="flex gap-2">
+                    {canSpeak() && lastSan && (
+                      <button className="btn-ghost h-10 flex-1" onClick={() => speak(spokenMove(lastSan, lang), lang)}>
+                        {t('blindfold.repeat')}
+                      </button>
+                    )}
+                    <button
+                      className="btn-ghost h-10 flex-1"
+                      disabled={peeking}
+                      onClick={() => {
+                        setPeeking(true);
+                        setPeeks(peeks + 1);
+                      }}
+                    >
+                      {t('blindfold.reveal')}{peeks ? ` (${peeks})` : ''}
+                    </button>
+                  </div>
+                </div>
+              )}
+              {(!session.blindfold || result || peeking) && <MoveList plies={plies} current={plies.length} onSelect={() => {}} />}
               <div className="flex gap-2 border-t border-line p-2">
                 {result ? (
                   <>
@@ -492,6 +549,14 @@ function Setup({ variationList, sourceCount, factsReady, onStart }: { variationL
         <span className="flex justify-between text-[11px] text-ink-3">
           <span>{DEFAULT_ELO_RANGE.min}</span>
           <span>{t('play.max')}</span>
+        </span>
+      </label>
+
+      <label className="flex cursor-pointer items-start gap-3 rounded-xl bg-panel-2/60 p-3">
+        <input type="checkbox" className="mt-1 accent-accent" checked={prefs.blindfold} onChange={(e) => prefs.set({ blindfold: e.target.checked })} />
+        <span>
+          <span className="block text-sm font-semibold">{t('blindfold.playMode')}</span>
+          <span className="block text-xs text-ink-3">{t('blindfold.playModeHint')}</span>
         </span>
       </label>
 

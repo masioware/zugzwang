@@ -48,6 +48,10 @@ export interface Game {
   /** Remaining clock in seconds after each ply, when known. */
   clocks?: number[];
   platformAccuracy?: { white?: number; black?: number };
+  /** Played against the bot with the pieces hidden. */
+  blindfold?: boolean;
+  /** Times the board was shown during a blindfold game. */
+  blindfoldPeeks?: number;
 }
 
 export interface Account {
@@ -139,7 +143,7 @@ export interface Puzzle {
   addedAt: number;
 }
 
-export type PuzzleMode = 'rated' | 'practice' | 'woodpecker' | 'sprint';
+export type PuzzleMode = 'rated' | 'practice' | 'woodpecker' | 'sprint' | 'blindfold';
 
 export interface PuzzleAttempt {
   id?: number;
@@ -221,4 +225,16 @@ export interface SprintRun {
   score: number;
   /** Every puzzle answered, in order. */
   results: SprintResult[];
+}
+
+export type DrillKind = 'color' | 'knight' | 'bishop' | 'board';
+
+/** A finished round of a blindfold visualisation drill. */
+export interface DrillRun {
+  id?: number;
+  kind: DrillKind;
+  startedAt: number;
+  durationMs: number;
+  correct: number;
+  total: number;
 }

@@ -16,7 +16,7 @@ import { usePuzzlePrefs } from '../puzzles/prefs';
 import { formatSeconds } from '../puzzles/format';
 import type { PuzzleAttempt } from '../types';
 
-type ModeFilter = 'all' | 'free' | 'sprint' | 'woodpecker';
+type ModeFilter = 'all' | 'free' | 'sprint' | 'woodpecker' | 'blindfold';
 const PERIODS = [7, 30, 90, 0];
 const THEMES_SHOWN = 10;
 /** Attempts in the rolling accuracy of the theme chart. */
@@ -75,6 +75,7 @@ export default function PuzzleStats() {
                 ['free', t('puzzleStats.modeFree')],
                 ['sprint', t('puzzles.tabs.sprint')],
                 ['woodpecker', t('puzzles.tabs.woodpecker')],
+                ['blindfold', t('puzzles.tabs.blindfold')],
               ]}
             />
             </div>

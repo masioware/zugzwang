@@ -17,6 +17,8 @@ const Puzzles = lazy(() => import('./pages/Puzzles'));
 const PuzzleStats = lazy(() => import('./pages/PuzzleStats'));
 const Play = lazy(() => import('./pages/Play'));
 const Sprint = lazy(() => import('./pages/Sprint'));
+const BlindfoldPuzzles = lazy(() => import('./pages/BlindfoldPuzzles'));
+const BlindfoldDrills = lazy(() => import('./pages/BlindfoldDrills'));
 const Woodpecker = lazy(() => import('./pages/Woodpecker'));
 const WoodpeckerSet = lazy(() => import('./pages/WoodpeckerSet'));
 const WoodpeckerPlay = lazy(() => import('./pages/WoodpeckerPlay'));
@@ -109,6 +111,8 @@ export default function App() {
             <Route path="/puzzles/p/:id" element={<Puzzles />} />
             <Route path="/puzzles/stats" element={<PuzzleStats />} />
             <Route path="/puzzles/sprint" element={<Sprint />} />
+            <Route path="/puzzles/blindfold" element={<BlindfoldPuzzles />} />
+            <Route path="/puzzles/vision" element={<BlindfoldDrills />} />
             <Route path="/puzzles/woodpecker" element={<Woodpecker />} />
             <Route path="/puzzles/woodpecker/:id" element={<WoodpeckerSet />} />
             <Route path="/puzzles/woodpecker/:id/play" element={<WoodpeckerPlay />} />

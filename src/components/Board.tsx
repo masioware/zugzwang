@@ -51,6 +51,8 @@ interface Props {
   onMove: (from: string, to: string, piece: string) => boolean;
   /** False while the user may not move (e.g. the opponent's reply in a puzzle): no selection, no dots. */
   movable?: boolean;
+  /** Blindfold: draws the squares but no pieces (the position is still tracked by `fen`). */
+  hidePieces?: boolean;
 }
 
 type MarkColor = 'red' | 'green';
@@ -76,7 +78,7 @@ function legalTargets(fen: string, square: string | null) {
   return { quiet, captures, checkedKing };
 }
 
-export default function Board({ fen, flipped, lastMove, marker, arrows, highlights, onMove, movable = true }: Props) {
+export default function Board({ fen, flipped, lastMove, marker, arrows, highlights, onMove, movable = true, hidePieces = false }: Props) {
   // The selected square belongs to one position: any new position (a move, navigation) clears it.
   const [picked, setPicked] = useState<{ fen: string; square: string } | null>(null);
   const selected = movable && picked?.fen === fen ? picked.square : null;
@@ -143,7 +145,7 @@ export default function Board({ fen, flipped, lastMove, marker, arrows, highligh
     <Chessboard
       options={{
         id: 'review',
-        position: fen,
+        position: hidePieces ? {} : fen,
         boardOrientation: flipped ? 'black' : 'white',
         pieces: piecesFor(pieceSet),
         darkSquareStyle: { backgroundColor: theme.dark },

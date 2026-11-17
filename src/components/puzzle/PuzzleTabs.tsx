@@ -8,10 +8,12 @@ export default function PuzzleTabs() {
     ['/puzzles', t('puzzles.tabs.train'), true],
     ['/puzzles/sprint', t('puzzles.tabs.sprint'), false],
     ['/puzzles/woodpecker', t('puzzles.tabs.woodpecker'), false],
+    ['/puzzles/blindfold', t('puzzles.tabs.blindfold'), false],
+    ['/puzzles/vision', t('puzzles.tabs.vision'), false],
     ['/puzzles/stats', t('puzzles.tabs.stats'), false],
   ];
   return (
-    <nav className="segmented mb-5 flex sm:inline-flex">
+    <nav className="segmented mb-5 flex max-w-full overflow-x-auto sm:inline-flex">
       {tabs.map(([to, label, end]) => (
         <NavLink
           key={to}

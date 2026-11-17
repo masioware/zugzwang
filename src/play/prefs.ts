@@ -12,13 +12,15 @@ interface PlayPrefs {
   /** The bot's opening moves come from opening theory (of the chosen opening) rather than the user's games. */
   theory: boolean;
   elo: number;
+  /** Play with the pieces hidden, moving by typing or voice. */
+  blindfold: boolean;
   set: (p: Partial<Omit<PlayPrefs, 'set'>>) => void;
 }
 
 /** The last bot setup, so "play again" and the next visit start from it. */
 export const usePlayPrefs = create<PlayPrefs>()(
   persist(
-    (set) => ({ color: 'white', imitate: 'opponents', variation: '', theory: false, elo: 1500, set: (p) => set(p) }),
+    (set) => ({ color: 'white', imitate: 'opponents', variation: '', theory: false, elo: 1500, blindfold: false, set: (p) => set(p) }),
     { name: 'zugzwang-play' },
   ),
 );
