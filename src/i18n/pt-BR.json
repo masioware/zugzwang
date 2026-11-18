@@ -938,6 +938,16 @@
     "time": {
       "lowClock": "Erros com pouco tempo"
     },
-    "openingLabel": "Erros na {{name}}"
+    "openingLabel": "Erros na {{name}}",
+    "practice": "Treinar",
+    "lessonGone": "Esta lição não está mais na sua lista.",
+    "back": "Voltar ao treino",
+    "noExercises": "Ainda não foi possível montar exercícios para esta.",
+    "lessonDone": "Lição concluída: {{solved}} de {{total}} resolvidos.",
+    "yourMistake": "Seu erro",
+    "practiceTag": "Prática",
+    "progress": "Progresso",
+    "missed": "Desta vez não",
+    "ownMissedSub": "Veja de novo: este é o lance que lhe custou caro."
   }
 }
