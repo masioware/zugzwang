@@ -7,11 +7,13 @@
     "puzzles": "Puzzles",
     "friends": "Amigos",
     "play": "Jogar",
+    "more": "Mais",
     "train": "Treino"
   },
   "common": {
     "loading": "Carregando…",
     "cancel": "Cancelar",
+    "confirm": "Confirmar",
     "white": "Brancas",
     "black": "Pretas",
     "win": "Vitória",
@@ -154,10 +156,17 @@
     "next": "Próxima",
     "count_one": "{{count}} partida",
     "count_other": "{{count}} partidas",
-    "platformAccuracyHint": "Precisão informada pela plataforma (partida ainda não analisada aqui)"
+    "platformAccuracyHint": "Precisão informada pela plataforma (partida ainda não analisada aqui)",
+    "analysed": "Analisada com o motor",
+    "sortBy": "Ordenar por",
+    "sortAsc": "Crescente",
+    "sortDesc": "Decrescente",
+    "sort": { "date": "Data", "accuracy": "Precisão", "opponent": "Rating do adversário", "moves": "Lances" }
   },
   "review": {
     "notFound": "Partida não encontrada.",
+    "moreInfo": "Detalhes",
+    "lessInfo": "Ocultar",
     "analyzeGame": "Analisar partida",
     "analyzing": "Analisando… {{done}}/{{total}}",
     "queued": "Na fila de análise",

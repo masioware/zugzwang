@@ -1,3 +1,4 @@
+import { confirmDialog } from './ConfirmDialog';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { exportBackup, restoreBackup } from '../db/backup';
@@ -32,7 +33,7 @@ export default function BackupPanel() {
   }
 
   async function restore(file: File) {
-    if (!confirm(t('backup.restoreConfirm'))) return;
+    if (!(await confirmDialog(t('backup.restoreConfirm'), { danger: true, confirmLabel: t('backup.import') }))) return;
     setBusy('import');
     setMessage(null);
     cancelAnalysis();

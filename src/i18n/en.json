@@ -7,11 +7,13 @@
     "puzzles": "Puzzles",
     "friends": "Friends",
     "play": "Play",
+    "more": "More",
     "train": "Train"
   },
   "common": {
     "loading": "Loading…",
     "cancel": "Cancel",
+    "confirm": "Confirm",
     "white": "White",
     "black": "Black",
     "win": "Win",
@@ -154,10 +156,17 @@
     "next": "Next",
     "count_one": "{{count}} game",
     "count_other": "{{count}} games",
-    "platformAccuracyHint": "Accuracy reported by the platform (game not analyzed here yet)"
+    "platformAccuracyHint": "Accuracy reported by the platform (game not analyzed here yet)",
+    "analysed": "Analyzed with the engine",
+    "sortBy": "Sort by",
+    "sortAsc": "Ascending",
+    "sortDesc": "Descending",
+    "sort": { "date": "Date", "accuracy": "Accuracy", "opponent": "Opponent rating", "moves": "Moves" }
   },
   "review": {
     "notFound": "Game not found.",
+    "moreInfo": "Details",
+    "lessInfo": "Hide",
     "analyzeGame": "Analyze game",
     "analyzing": "Analyzing… {{done}}/{{total}}",
     "queued": "Queued for analysis",

@@ -12,7 +12,7 @@ export default function PlatformIcon({ source, className = '' }: { source: GameS
   return (
     <span
       title={m.title}
-      className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[10px] font-black ${m.style} ${className}`}
+      className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[11px] font-black ${m.style} ${className}`}
     >
       {m.letter}
     </span>

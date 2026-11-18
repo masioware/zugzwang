@@ -1,3 +1,4 @@
+import { confirmDialog } from '../components/ConfirmDialog';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -438,7 +439,9 @@ export default function Play() {
                   <button
                     className="btn-ghost flex-1"
                     onClick={() => {
-                      if (confirm(t('play.resignConfirm'))) setResult({ outcome: 'loss', termination: 'resignation' });
+                      void confirmDialog(t('play.resignConfirm'), { danger: true, confirmLabel: t('play.resign') }).then((ok) => {
+                        if (ok) setResult({ outcome: 'loss', termination: 'resignation' });
+                      });
                     }}
                   >
                     {t('play.resign')}
@@ -472,7 +475,7 @@ function Setup({ variationList, sourceCount, factsReady, onStart }: { variationL
   return (
     <div className="panel space-y-5 p-5">
       <div>
-        <h1 className="text-2xl font-bold">{t('play.title')}</h1>
+        <h1 className="page-title">{t('play.title')}</h1>
         <p className="text-sm text-ink-3">{t('play.subtitle')}</p>
       </div>
 

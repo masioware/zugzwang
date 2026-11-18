@@ -84,7 +84,7 @@ export function stackedTick(label: (k: string) => string, icon?: (k: string) => 
         <div className="flex flex-col items-center text-center text-[11px] leading-tight">
           {icon && <span className="mb-0.5">{icon(key)}</span>}
           <span className="max-w-full truncate font-semibold text-ink-2">{label(key)}</span>
-          {s && <span className="text-[10px] text-ink-3">{s}</span>}
+          {s && <span className="text-[11px] text-ink-3">{s}</span>}
         </div>
       </foreignObject>
     );

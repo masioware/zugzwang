@@ -1,3 +1,4 @@
+import { Loading } from '../components/State';
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -30,14 +31,14 @@ export default function Friends() {
   return (
     <div className="mx-auto max-w-3xl space-y-8">
       <section className="space-y-2 text-center">
-        <h1 className="text-3xl font-bold">{t('friends.title')}</h1>
+        <h1 className="page-title">{t('friends.title')}</h1>
         <p className="text-ink-2">{t('friends.subtitle')}</p>
       </section>
 
       <ImportForm friends={friends ? [...friends.keys()] : []} />
 
       {!rows ? (
-        <p className="text-ink-3">{t('common.loading')}</p>
+        <Loading />
       ) : (
         !!rows.length && (
           <section className="space-y-3">
@@ -54,7 +55,7 @@ export default function Friends() {
                       <div className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-ink-3">
                         {accs.map((a) => (
                           <span key={a.id} className="inline-flex items-center gap-1">
-                            <PlatformIcon source={a.source} className="h-4 w-4 text-[8px]" />
+                            <PlatformIcon source={a.source} className="h-4 w-4 text-[11px]" />
                             {a.username}
                           </span>
                         ))}

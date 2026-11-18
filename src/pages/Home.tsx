@@ -37,7 +37,7 @@ export default function Home() {
       ) : (
         <section className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h1 className="font-display text-3xl font-bold">{t('nav.accounts')}</h1>
+            <h1 className="page-title">{t('nav.accounts')}</h1>
             <p className="text-sm text-ink-3">{t('home.accountsHint')}</p>
           </div>
           <Link to="/games" className="btn-primary">{t('nav.games')} →</Link>

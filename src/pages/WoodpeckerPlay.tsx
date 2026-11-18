@@ -1,3 +1,4 @@
+import { EmptyState, Loading } from '../components/State';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -90,8 +91,8 @@ export default function WoodpeckerPlay() {
     setCycle(await startCycle(set));
   }
 
-  if (set === null || cycle === undefined) return <p className="text-ink-3">{t('common.loading')}</p>;
-  if (!set) return <p className="panel p-6 text-center text-ink-2">{t('woodpecker.notFound')}</p>;
+  if (set === null || cycle === undefined) return <Loading />;
+  if (!set) return <EmptyState compact>{t('woodpecker.notFound')}</EmptyState>;
 
   const target = nextTarget(previous ? [previous] : []);
   const finished = !!cycle?.finishedAt && (!puzzle || solver.done);

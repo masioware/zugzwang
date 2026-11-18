@@ -9,9 +9,11 @@ interface Props {
   /** Number of plies played (0 = starting position). */
   current: number;
   onSelect: (ply: number) => void;
+  /** Height classes of the scroll box. */
+  className?: string;
 }
 
-export default function MoveList({ plies, analysis, current, onSelect }: Props) {
+export default function MoveList({ plies, analysis, current, onSelect, className = 'h-52' }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   // Scroll only the list itself (scrollIntoView would also scroll the page).
   useEffect(() => {
@@ -51,7 +53,7 @@ export default function MoveList({ plies, analysis, current, onSelect }: Props) 
   };
 
   return (
-    <div ref={ref} className="relative h-52 overflow-y-auto py-1 text-sm">
+    <div ref={ref} className={`relative overflow-y-auto py-1 text-sm ${className}`}>
       {rows.map((i) => (
         <div key={i} className="grid grid-cols-[2.25rem_1fr_1fr] items-center gap-1 px-3 py-px">
           <span className="tabular font-mono text-xs text-ink-3">{i / 2 + 1}</span>

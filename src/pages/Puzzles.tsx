@@ -193,7 +193,8 @@ export default function Puzzles() {
               </div>
             )}
 
-            <div className="flex gap-2 border-t border-line p-3">
+            {/* Phones: pinned above the tab bar, so hint / solution / next never sit below the fold. */}
+            <div className="flex gap-2 border-t border-line p-3 max-md:fixed max-md:inset-x-0 max-md:bottom-[calc(4rem+env(safe-area-inset-bottom))] max-md:z-20 max-md:border-line max-md:bg-bg/90 max-md:backdrop-blur-xl">
               {solver.done || load === 'empty' || load === 'error' ? (
                 <button className="btn-primary h-10 flex-1" onClick={next}>{t('puzzles.next')}</button>
               ) : (
@@ -266,6 +267,7 @@ export default function Puzzles() {
               </div>
             </div>
           )}
+          <div className="h-16 md:hidden" aria-hidden />
         </aside>
       </div>
     </>

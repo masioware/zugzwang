@@ -1,3 +1,4 @@
+import { EmptyState, Loading } from '../components/State';
 import { useCallback, useMemo } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -48,12 +49,12 @@ export default function Stats() {
     return { games, analyses, facts, analysedCount: games.filter((g) => analyses.has(g.id)).length };
   }, [games, analyses, facts]);
 
-  if (!all || !data) return <p className="text-ink-3">{t('common.loading')}</p>;
+  if (!all || !data) return <Loading />;
   if (!all.length)
     return (
-      <div className="panel p-8 text-center text-ink-2">
+      <EmptyState>
         {t('games.empty')} <Link className="text-accent underline" to={scope ? '/friends' : '/accounts'}>{t(scope ? 'nav.friends' : 'nav.accounts')}</Link>
-      </div>
+      </EmptyState>
     );
 
   const pending = data.games.filter((g) => !data.analyses.has(g.id)).map((g) => g.id);
@@ -64,7 +65,7 @@ export default function Stats() {
     <div className="space-y-5">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-bold">{t('stats.title')}</h1>
+          <h1 className="page-title">{t('stats.title')}</h1>
           <p className="text-sm text-ink-3">{t('games.count', { count: data.games.length })}</p>
         </div>
         <FilterBar show={['rated', 'source', 'timeClass', 'color', 'period']} />
@@ -87,7 +88,7 @@ export default function Stats() {
       </nav>
 
       {!data.games.length ? (
-        <p className="panel p-6 text-center text-ink-2">{t('stats.noGames')}</p>
+        <EmptyState compact>{t('stats.noGames')}</EmptyState>
       ) : (
         <div className="space-y-5">
           <p className="text-ink-2">{t(`statsNav.${section}Question`)}</p>
