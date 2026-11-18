@@ -348,7 +348,9 @@
     "calendar": "Calendar",
     "calendarQuestion": "When do you play your best?",
     "timeOfDay": "Time of day",
-    "weekday": "Day of the week"
+    "weekday": "Day of the week",
+    "style": "Style",
+    "styleQuestion": "Which chess legends play like you?"
   },
   "pieces": {
     "p": "Pawn",
@@ -824,7 +826,7 @@
   },
   "style": {
     "loadError": "Could not load the legends' data.",
-    "computing": "Reading your games… {{done}}/{{total}}",
+    "computing": "Reading the openings of your games…",
     "needGames": "Play at least {{count}} games to see your style (you have {{have}} in this filter).",
     "closest": "Your style is closest to…",
     "basedOn": "Based on {{count}} of your games, compared with the games of {{legends}} chess legends.",
@@ -870,6 +872,12 @@
     "white": "White",
     "black": "Black",
     "whiteRepertoire": "As White",
-    "blackRepertoire": "As Black"
+    "blackRepertoire": "As Black",
+    "opening": "Opening",
+    "similarity": "match",
+    "retry": "Try again",
+    "noRepertoire": "Not enough to compare yet: the match needs at least {{count}} games with one colour whose opening the book recognises.",
+    "overlap": "{{value}}% alike",
+    "barsLabel": "Share of the games played with each opening as {{color}}, you and {{name}}"
   }
 }
