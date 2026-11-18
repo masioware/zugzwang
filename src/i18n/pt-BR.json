@@ -6,7 +6,8 @@
     "language": "Idioma",
     "puzzles": "Puzzles",
     "friends": "Amigos",
-    "play": "Jogar"
+    "play": "Jogar",
+    "train": "Treino"
   },
   "common": {
     "loading": "Carregando…",
@@ -503,7 +504,11 @@
     "title": "Problemas às cegas",
     "intro": "O tabuleiro fica oculto. Guarde a posição na cabeça, ouça os lances do adversário e responda digitando (ou falando) o seu lance: \"Nf3\", \"e2e4\", \"cavalo f3\", \"O-O\". Só problemas curtos; a dificuldade acompanha seus resultados.",
     "level": "Nível",
-    "levels": { "list": "Listado", "peek": "Espiar", "blind": "Cego" },
+    "levels": {
+      "list": "Listado",
+      "peek": "Espiar",
+      "blind": "Cego"
+    },
     "levelHints": {
       "list": "O tabuleiro fica oculto; as peças ficam listadas em texto o tempo todo.",
       "peek": "O tabuleiro aparece por alguns segundos e depois some.",
@@ -549,19 +554,49 @@
       "level": "Nível {{level}}",
       "quit": "Sair da rodada",
       "readAloud": "Ler os lances em voz alta",
-      "options": { "light": "Clara", "dark": "Escura", "yes": "Sim", "no": "Não", "empty": "Vazia" },
-      "color": { "name": "Cor da casa", "hint": "Clara ou escura?", "question": "{{a}} é uma casa clara ou escura?" },
-      "knight": { "name": "Saltos do cavalo", "hint": "Um cavalo vai de uma casa à outra?", "question": "Um cavalo em {{a}} vai para {{b}} em um lance?" },
-      "bishop": { "name": "Diagonais", "hint": "Duas casas estão na mesma diagonal?", "question": "{{a}} e {{b}} estão na mesma diagonal?" },
-      "board": { "name": "O que há na casa?", "hint": "Acompanhe os lances desde a posição inicial. As linhas crescem conforme você melhora.", "question": "Depois desses lances, o que há em {{a}}?" }
+      "options": {
+        "light": "Clara",
+        "dark": "Escura",
+        "yes": "Sim",
+        "no": "Não",
+        "empty": "Vazia"
+      },
+      "color": {
+        "name": "Cor da casa",
+        "hint": "Clara ou escura?",
+        "question": "{{a}} é uma casa clara ou escura?"
+      },
+      "knight": {
+        "name": "Saltos do cavalo",
+        "hint": "Um cavalo vai de uma casa à outra?",
+        "question": "Um cavalo em {{a}} vai para {{b}} em um lance?"
+      },
+      "bishop": {
+        "name": "Diagonais",
+        "hint": "Duas casas estão na mesma diagonal?",
+        "question": "{{a}} e {{b}} estão na mesma diagonal?"
+      },
+      "board": {
+        "name": "O que há na casa?",
+        "hint": "Acompanhe os lances desde a posição inicial. As linhas crescem conforme você melhora.",
+        "question": "Depois desses lances, o que há em {{a}}?"
+      }
     },
     "noPuzzles": "Não achei um problema curto neste nível. Conecte-se à internet ao menos uma vez para guardar problemas para uso offline."
   },
   "sprint": {
     "title": "Sprint",
     "intro": "Resolva o máximo de puzzles que conseguir. Eles começam fáceis e ficam mais difíceis a cada um. Um lance errado custa um erro e passa para o próximo puzzle; {{strikes}} erros encerram a partida. Seu rating não muda.",
-    "modes": { "3min": "3 minutos", "5min": "5 minutos", "survival": "Sobrevivência" },
-    "modeHints": { "3min": "Velocidade pura", "5min": "Um pouco de tempo para pensar", "survival": "Sem relógio, só os erros" },
+    "modes": {
+      "3min": "3 minutos",
+      "5min": "5 minutos",
+      "survival": "Sobrevivência"
+    },
+    "modeHints": {
+      "3min": "Velocidade pura",
+      "5min": "Um pouco de tempo para pensar",
+      "survival": "Sem relógio, só os erros"
+    },
     "best": "Recorde: {{score}}",
     "score": "Resolvidos",
     "strike": "Errou!",
@@ -879,5 +914,30 @@
     "noRepertoire": "Ainda não dá para comparar: é preciso ao menos {{count}} partidas com uma das cores cuja abertura o livro reconheça.",
     "overlap": "{{value}}% parecido",
     "barsLabel": "Parcela das partidas jogadas com cada abertura de {{color}}, você e {{name}}"
+  },
+  "train": {
+    "title": "Treino",
+    "subtitle": "O que você insiste em errar, encontrado nos seus jogos analisados.",
+    "loading": "Olhando seus jogos…",
+    "empty": "Nada recorrente ainda. Analise mais jogos seus (algumas dezenas de lances com erros) e aparecerá aqui.",
+    "rate": "{{rate}} a cada 100 lances",
+    "count": "{{count}} erros · {{loss}} win% perdidos",
+    "example": "Partida, lance {{move}}",
+    "worst": "Piores momentos",
+    "tactic": {
+      "hungPiece": "Deixar peças penduradas",
+      "missedMate": "Perder mates",
+      "missedCapture": "Perder material de graça",
+      "missedFork": "Perder garfos"
+    },
+    "phase": {
+      "opening": "Erros na abertura",
+      "middlegame": "Erros no meio-jogo",
+      "endgame": "Erros no final"
+    },
+    "time": {
+      "lowClock": "Erros com pouco tempo"
+    },
+    "openingLabel": "Erros na {{name}}"
   }
 }

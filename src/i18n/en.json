@@ -6,7 +6,8 @@
     "language": "Language",
     "puzzles": "Puzzles",
     "friends": "Friends",
-    "play": "Play"
+    "play": "Play",
+    "train": "Train"
   },
   "common": {
     "loading": "Loading…",
@@ -503,7 +504,11 @@
     "title": "Blindfold puzzles",
     "intro": "The board is hidden. Hold the position in your head, listen to the opponent's moves and answer by typing (or saying) your move: \"Nf3\", \"e2e4\", \"cavalo f3\", \"O-O\". Short puzzles only; the difficulty follows your results.",
     "level": "Level",
-    "levels": { "list": "Listed", "peek": "Peek", "blind": "Blind" },
+    "levels": {
+      "list": "Listed",
+      "peek": "Peek",
+      "blind": "Blind"
+    },
     "levelHints": {
       "list": "The board is hidden; the pieces are listed in text all the time.",
       "peek": "The board shows for a few seconds, then it disappears.",
@@ -549,19 +554,49 @@
       "level": "Level {{level}}",
       "quit": "Quit round",
       "readAloud": "Read the moves aloud",
-      "options": { "light": "Light", "dark": "Dark", "yes": "Yes", "no": "No", "empty": "Empty" },
-      "color": { "name": "Square colour", "hint": "Light or dark?", "question": "Is {{a}} a light or a dark square?" },
-      "knight": { "name": "Knight jumps", "hint": "Can a knight go from one square to the other?", "question": "Can a knight on {{a}} go to {{b}} in one move?" },
-      "bishop": { "name": "Diagonals", "hint": "Are two squares on the same diagonal?", "question": "Are {{a}} and {{b}} on the same diagonal?" },
-      "board": { "name": "What is on the square?", "hint": "Follow the moves from the start position. Lines grow as you improve.", "question": "After these moves, what is on {{a}}?" }
+      "options": {
+        "light": "Light",
+        "dark": "Dark",
+        "yes": "Yes",
+        "no": "No",
+        "empty": "Empty"
+      },
+      "color": {
+        "name": "Square colour",
+        "hint": "Light or dark?",
+        "question": "Is {{a}} a light or a dark square?"
+      },
+      "knight": {
+        "name": "Knight jumps",
+        "hint": "Can a knight go from one square to the other?",
+        "question": "Can a knight on {{a}} go to {{b}} in one move?"
+      },
+      "bishop": {
+        "name": "Diagonals",
+        "hint": "Are two squares on the same diagonal?",
+        "question": "Are {{a}} and {{b}} on the same diagonal?"
+      },
+      "board": {
+        "name": "What is on the square?",
+        "hint": "Follow the moves from the start position. Lines grow as you improve.",
+        "question": "After these moves, what is on {{a}}?"
+      }
     },
     "noPuzzles": "Couldn't find a short puzzle at this level. Connect to the internet at least once to keep puzzles for offline use."
   },
   "sprint": {
     "title": "Sprint",
     "intro": "Solve as many puzzles as you can. They start easy and get harder with each one. A wrong move costs a strike and moves on to the next puzzle; {{strikes}} strikes end the run. Your rating doesn't change.",
-    "modes": { "3min": "3 minutes", "5min": "5 minutes", "survival": "Survival" },
-    "modeHints": { "3min": "Pure speed", "5min": "A little time to think", "survival": "No clock, only strikes" },
+    "modes": {
+      "3min": "3 minutes",
+      "5min": "5 minutes",
+      "survival": "Survival"
+    },
+    "modeHints": {
+      "3min": "Pure speed",
+      "5min": "A little time to think",
+      "survival": "No clock, only strikes"
+    },
     "best": "Best: {{score}}",
     "score": "Solved",
     "strike": "Strike!",
@@ -879,5 +914,30 @@
     "noRepertoire": "Not enough to compare yet: the match needs at least {{count}} games with one colour whose opening the book recognises.",
     "overlap": "{{value}}% alike",
     "barsLabel": "Share of the games played with each opening as {{color}}, you and {{name}}"
+  },
+  "train": {
+    "title": "Training",
+    "subtitle": "What you keep getting wrong, found in your analysed games.",
+    "loading": "Looking through your games…",
+    "empty": "Nothing recurring yet. Analyse more of your games (at least a few dozen moves with mistakes) and it will show up here.",
+    "rate": "{{rate}} per 100 moves",
+    "count": "{{count}} mistakes · {{loss}} win% lost",
+    "example": "Game, move {{move}}",
+    "worst": "Worst moments",
+    "tactic": {
+      "hungPiece": "Leaving pieces hanging",
+      "missedMate": "Missing checkmate",
+      "missedCapture": "Missing free material",
+      "missedFork": "Missing forks"
+    },
+    "phase": {
+      "opening": "Mistakes in the opening",
+      "middlegame": "Mistakes in the middlegame",
+      "endgame": "Mistakes in the endgame"
+    },
+    "time": {
+      "lowClock": "Mistakes in time trouble"
+    },
+    "openingLabel": "Mistakes in the {{name}}"
   }
 }
