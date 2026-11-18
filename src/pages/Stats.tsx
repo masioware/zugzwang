@@ -6,11 +6,12 @@ import { friendPath } from './Friends';
 import { Deferred } from './stats/layout';
 import { useAnalysisQueue } from '../engine/queue';
 import FilterBar from '../components/FilterBar';
-import { BoardIcon, BookIcon, CalendarIcon, TargetIcon } from '../components/icons';
+import { BoardIcon, BookIcon, CalendarIcon, TargetIcon, UserIcon } from '../components/icons';
 import type { StatsData } from './stats/shared';
 import { OverviewPanel, PhasePanel, ResultsPanel } from './stats/GamesPanels';
 import { MasteryPanel, PerformancePanel } from './stats/OpeningPanels';
 import { CastlingPanel, ClockPanel, PiecesPanel, QualityPanel } from './stats/MovePanels';
+import StylePanel from './stats/StylePanel';
 import { TimeOfDayPanel, WeekdayPanel } from './stats/CalendarPanels';
 
 type Icon = (p: { className?: string }) => React.JSX.Element;
@@ -21,6 +22,7 @@ const SECTIONS: { id: string; icon: Icon }[] = [
   { id: 'openings', icon: BookIcon },
   { id: 'moves', icon: TargetIcon },
   { id: 'calendar', icon: CalendarIcon },
+  { id: 'style', icon: UserIcon },
 ];
 
 export default function Stats() {
@@ -51,7 +53,7 @@ export default function Stats() {
 
   const pending = data.games.filter((g) => !data.analyses.has(g.id)).map((g) => g.id);
   // The calendar needs neither engine analysis nor replayed facts.
-  const needsAnalysis = section !== 'calendar';
+  const needsAnalysis = section !== 'calendar' && section !== 'style';
 
   return (
     <div className="space-y-5">
@@ -130,6 +132,7 @@ export default function Stats() {
               <Deferred><ClockPanel {...data} /></Deferred>
             </>
           )}
+          {section === 'style' && <StylePanel games={data.games} />}
           {section === 'calendar' && (
             <>
               <TimeOfDayPanel {...data} />

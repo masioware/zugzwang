@@ -7,3 +7,4 @@ public/boards/local
 chess_assets
 data-src/lichess_db_puzzle*
 *.tsbuildinfo
+data-src/legends
