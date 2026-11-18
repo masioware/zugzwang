@@ -7,11 +7,14 @@
     "puzzles": "Puzzles",
     "friends": "Friends",
     "play": "Play",
-    "train": "Train"
+    "more": "More",
+    "settings": "Settings",
+    "train": "Plan"
   },
   "common": {
     "loading": "Loading…",
     "cancel": "Cancel",
+    "confirm": "Confirm",
     "white": "White",
     "black": "Black",
     "win": "Win",
@@ -79,6 +82,36 @@
     "opening": "Opening",
     "middlegame": "Middlegame",
     "endgame": "Endgame"
+  },
+  "highlights": {
+    "title": "Highlights",
+    "form": "Last {{count}} days",
+    "formGames_one": "{{count}} game",
+    "formGames_other": "{{count}} games",
+    "formDiff": "{{diff}} points vs. the 30 days before",
+    "phase": "Weakest phase",
+    "phaseSub": "{{accuracy}}% accuracy in its moves",
+    "opening": "Toughest opening",
+    "openingSub": "{{score}}% in {{games}} games as {{color}}",
+    "dayPart": "Best time of day",
+    "dayPartSub": "{{score}}% over {{games}} games"
+  },
+  "dashboard": {
+    "title": "Overview",
+    "subtitle_one": "{{count}} game imported",
+    "subtitle_other": "{{count}} games imported",
+    "pending_one": "{{count}} game is waiting for analysis.",
+    "pending_other": "{{count}} games are waiting for analysis.",
+    "lastDays": "Last {{count}} days",
+    "score": "Score",
+    "noRecent": "No games in this period. Update your accounts to bring the latest ones.",
+    "ratings": "Ratings",
+    "noRatings": "No rated games yet.",
+    "puzzles": "Puzzle rating",
+    "noPuzzles": "No rated puzzle yet.",
+    "solve": "Solve puzzles",
+    "latest": "Latest games",
+    "allGames": "All games"
   },
   "home": {
     "title": "Analyze your chess games",
@@ -154,10 +187,17 @@
     "next": "Next",
     "count_one": "{{count}} game",
     "count_other": "{{count}} games",
-    "platformAccuracyHint": "Accuracy reported by the platform (game not analyzed here yet)"
+    "platformAccuracyHint": "Accuracy reported by the platform (game not analyzed here yet)",
+    "analysed": "Analyzed with the engine",
+    "sortBy": "Sort by",
+    "sortAsc": "Ascending",
+    "sortDesc": "Descending",
+    "sort": { "date": "Date", "accuracy": "Accuracy", "opponent": "Opponent rating", "moves": "Moves" }
   },
   "review": {
     "notFound": "Game not found.",
+    "moreInfo": "Details",
+    "lessInfo": "Hide",
     "analyzeGame": "Analyze game",
     "analyzing": "Analyzing… {{done}}/{{total}}",
     "queued": "Queued for analysis",
@@ -317,6 +357,12 @@
     "rate": "{{rate}} positions/s"
   },
   "settings": {
+    "title": "Settings",
+    "subtitle": "Accounts, engine, language and data. Set up once.",
+    "sections": { "accounts": "My accounts", "friends": "Friends' accounts", "preferences": "Preferences", "data": "Data & app" },
+    "friendsHint": "Add the accounts of friends to see how you do against them. Their statistics live in the Friends tab.",
+    "viewStats": "View statistics",
+    "appearanceHint": "Board colours and pieces, also available from the gear in a game review.",
     "depth": "Engine depth"
   },
   "appearance": {
@@ -414,7 +460,7 @@
     "solvedCount": "{{solved}}/{{total}} solved",
     "failed": "Failed",
     "tabs": {
-      "train": "Train",
+      "train": "Solve",
       "sprint": "Sprint",
       "woodpecker": "Woodpecker",
       "blindfold": "Blindfold",
@@ -743,6 +789,8 @@
     "namePlaceholder": "friend's name",
     "usernamePlaceholder": "friend's username",
     "add": "Add friend",
+    "manage": "Add or remove",
+    "empty": "No friends yet. Add a friend's Chess.com or Lichess account in Settings to compare your games.",
     "yourFriends": "Your friends",
     "versus_one": "{{count}} game against you",
     "versus_other": "{{count}} games against you",
@@ -916,7 +964,7 @@
     "barsLabel": "Share of the games played with each opening as {{color}}, you and {{name}}"
   },
   "train": {
-    "title": "Training",
+    "title": "Training plan",
     "subtitle": "What you keep getting wrong, found in your analysed games.",
     "loading": "Looking through your games…",
     "empty": "Nothing recurring yet. Training only looks at your rated games: analyse more of them (a few dozen moves with mistakes) and it will show up here.",
@@ -950,6 +998,8 @@
     "missed": "Not this time",
     "ownMissedSub": "Replay it: this is the move that cost you.",
     "pathHint": "One lesson at a time: pass the drills ({{count}} clean solves in a row), then prove it in your own games, to unlock the next.",
+    "examples_one": "See {{count}} example",
+    "examples_other": "See {{count}} examples",
     "status": {
       "done": "Drills passed",
       "active": "Open",

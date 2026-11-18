@@ -20,13 +20,7 @@ function label(id: string) {
 export default function AppearancePanel({ placement = 'up' }: { placement?: 'up' | 'down' }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
-  const [local, setLocal] = useState<LocalAssets>({ pieces: [], boards: [] });
   const ref = useRef<HTMLDivElement>(null);
-  const { boardTheme, setBoardTheme, pieceSet, setPieceSet } = useSettings();
-
-  useEffect(() => {
-    void loadLocalAssets().then(setLocal);
-  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -39,10 +33,6 @@ export default function AppearancePanel({ placement = 'up' }: { placement?: 'up'
       document.removeEventListener('keydown', esc);
     };
   }, [open]);
-
-  const boards = [...Object.keys(BOARD_THEMES), ...local.boards.map((b) => `local:${b}`)];
-  const sets = [...PIECE_SETS, ...local.pieces.map((p) => `local:${p}`)];
-  const previewBg = BOARD_THEMES[boardTheme]?.light ?? BOARD_THEMES.graphite.light;
 
   return (
     <div ref={ref} className="relative">
@@ -64,53 +54,72 @@ export default function AppearancePanel({ placement = 'up' }: { placement?: 'up'
           // On small screens it can open past the fold; bring it into view.
           ref={(el) => el?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })}
         >
-          <div>
-            <div className="eyebrow mb-2">{t('appearance.board')}</div>
-            <div className="grid grid-cols-6 gap-2">
-              {boards.map((k) => {
-                const img = boardImageUrl(k);
-                const name = BOARD_THEMES[k] ? t(`appearance.themes.${k}`) : label(k);
-                return (
-                  <button
-                    key={k}
-                    onClick={() => setBoardTheme(k)}
-                    aria-pressed={boardTheme === k}
-                    title={name}
-                    aria-label={name}
-                    className={`grid aspect-square grid-cols-2 overflow-hidden rounded-md bg-cover ring-2 ${boardTheme === k ? 'ring-accent' : 'ring-transparent hover:ring-line'}`}
-                    style={img ? { backgroundImage: `url("${img}")`, backgroundSize: '400%' } : undefined}
-                  >
-                    {!img &&
-                      [0, 1, 2, 3].map((i) => (
-                        <span key={i} style={{ background: i === 0 || i === 3 ? BOARD_THEMES[k].light : BOARD_THEMES[k].dark }} />
-                      ))}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-          <div>
-            <div className="eyebrow mb-2">{t('appearance.pieces')}</div>
-            <div className="grid grid-cols-5 gap-2">
-              {sets.map((set) => (
-                <button
-                  key={set}
-                  onClick={() => setPieceSet(set)}
-                  aria-pressed={pieceSet === set}
-                  title={label(set)}
-                  aria-label={label(set)}
-                  className={`flex aspect-square items-center justify-center rounded-md p-1 ring-2 ${
-                    pieceSet === set ? 'ring-accent' : 'ring-transparent hover:ring-line'
-                  }`}
-                  style={{ background: previewBg }}
-                >
-                  <img src={pieceUrl(set, 'wN')} alt="" className="h-full w-full object-contain" />
-                </button>
-              ))}
-            </div>
-          </div>
+          <AppearancePicker />
         </div>
       )}
+    </div>
+  );
+}
+
+/** Board colours and piece set: the body of the popover, also used as a section of the settings page. */
+export function AppearancePicker() {
+  const { t } = useTranslation();
+  const [local, setLocal] = useState<LocalAssets>({ pieces: [], boards: [] });
+  const { boardTheme, setBoardTheme, pieceSet, setPieceSet } = useSettings();
+  useEffect(() => {
+    void loadLocalAssets().then(setLocal);
+  }, []);
+  const boards = [...Object.keys(BOARD_THEMES), ...local.boards.map((b) => `local:${b}`)];
+  const sets = [...PIECE_SETS, ...local.pieces.map((p) => `local:${p}`)];
+  const previewBg = BOARD_THEMES[boardTheme]?.light ?? BOARD_THEMES.graphite.light;
+
+  return (
+    <div className="space-y-4">
+  <div>
+    <div className="eyebrow mb-2">{t('appearance.board')}</div>
+    <div className="grid grid-cols-6 gap-2">
+      {boards.map((k) => {
+        const img = boardImageUrl(k);
+        const name = BOARD_THEMES[k] ? t(`appearance.themes.${k}`) : label(k);
+        return (
+          <button
+            key={k}
+            onClick={() => setBoardTheme(k)}
+            aria-pressed={boardTheme === k}
+            title={name}
+            aria-label={name}
+            className={`grid aspect-square grid-cols-2 overflow-hidden rounded-md bg-cover ring-2 ${boardTheme === k ? 'ring-accent' : 'ring-transparent hover:ring-line'}`}
+            style={img ? { backgroundImage: `url("${img}")`, backgroundSize: '400%' } : undefined}
+          >
+            {!img &&
+              [0, 1, 2, 3].map((i) => (
+                <span key={i} style={{ background: i === 0 || i === 3 ? BOARD_THEMES[k].light : BOARD_THEMES[k].dark }} />
+              ))}
+          </button>
+        );
+      })}
+    </div>
+  </div>
+  <div>
+    <div className="eyebrow mb-2">{t('appearance.pieces')}</div>
+    <div className="grid grid-cols-5 gap-2">
+      {sets.map((set) => (
+        <button
+          key={set}
+          onClick={() => setPieceSet(set)}
+          aria-pressed={pieceSet === set}
+          title={label(set)}
+          aria-label={label(set)}
+          className={`flex aspect-square items-center justify-center rounded-md p-1 ring-2 ${
+            pieceSet === set ? 'ring-accent' : 'ring-transparent hover:ring-line'
+          }`}
+          style={{ background: previewBg }}
+        >
+          <img src={pieceUrl(set, 'wN')} alt="" className="h-full w-full object-contain" />
+        </button>
+      ))}
+    </div>
+  </div>
     </div>
   );
 }

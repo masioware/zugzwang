@@ -1,3 +1,4 @@
+import { confirmDialog } from './ConfirmDialog';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -131,7 +132,7 @@ export function AccountList({ accounts }: { accounts: Account[] }) {
   }, [accounts]);
 
   async function remove(a: Account) {
-    if (confirm(t('home.removeConfirm', { name: a.username }))) await removeAccount(a.id);
+    if (await confirmDialog(t('home.removeConfirm', { name: a.username }), { danger: true, confirmLabel: t('home.remove') })) await removeAccount(a.id);
   }
 
   return (

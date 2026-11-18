@@ -8,11 +8,10 @@ export function Panel({ id, icon: Icon, actions, children }: { id: string; icon:
   const { t } = useTranslation();
   return (
     <section id={id} data-panel className="panel scroll-mt-32 overflow-hidden">
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-4">
-        <h3 className="flex items-center gap-2.5 text-lg font-bold">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent/10 text-accent ring-1 ring-accent/20 ring-inset">
-            <Icon className="h-4 w-4" />
-          </span>
+      {/* A quiet section label: the blocks inside carry the real headings. */}
+      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-white/[0.015] px-5 py-3">
+        <h3 className="flex items-center gap-2 text-sm font-semibold text-ink-2">
+          <Icon className="h-4 w-4 text-ink-3" />
           {t(`statsNav.${id}`)}
         </h3>
         {actions}
@@ -28,7 +27,7 @@ export function Block({ title, subtitle, aside, children }: { title: string; sub
     <div className="space-y-3 px-5 py-5">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h4 className="font-display font-semibold">{title}</h4>
+          <h4 className="font-display text-base font-bold">{title}</h4>
           {subtitle && <p className="text-xs text-ink-3">{subtitle}</p>}
         </div>
         {aside}

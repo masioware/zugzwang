@@ -1,3 +1,4 @@
+import { EmptyState, Loading } from '../components/State';
 import { useMemo } from 'react';
 import { Link, NavLink, Outlet, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -27,12 +28,12 @@ export default function Friend() {
   const accounts = useLiveQuery(() => db.accounts.filter((a) => a.friend === name).toArray(), [name]);
   const tab = 'segmented-item';
 
-  if (!accounts) return <p className="text-ink-3">{t('common.loading')}</p>;
+  if (!accounts) return <Loading />;
   if (!accounts.length)
     return (
-      <div className="panel p-8 text-center text-ink-2">
+      <EmptyState>
         {t('friends.notFound')} <Link className="text-accent underline" to="/friends">{t('nav.friends')}</Link>
-      </div>
+      </EmptyState>
     );
 
   return (
@@ -40,7 +41,7 @@ export default function Friend() {
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line pb-3">
         <div>
           <Link to="/friends" className="text-xs text-ink-3 hover:text-ink">← {t('nav.friends')}</Link>
-          <h1 className="font-display text-3xl font-bold">{name}</h1>
+          <h1 className="page-title">{name}</h1>
         </div>
         <nav className="segmented max-sm:w-full">
           <NavLink to="" end className={tab}>{t('friends.headToHead')}</NavLink>
@@ -78,7 +79,7 @@ export function HeadToHeadView() {
     };
   }, [accounts, myGames, analyses]);
 
-  if (!d || !accounts) return <p className="text-ink-3">{t('common.loading')}</p>;
+  if (!d || !accounts) return <Loading />;
   const { games, h2h } = d;
   const date = new Intl.DateTimeFormat(i18n.resolvedLanguage, { dateStyle: 'medium' });
   const fmt = (v?: number) => (v === undefined ? '–' : v.toFixed(1));
@@ -87,7 +88,7 @@ export function HeadToHeadView() {
     <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
       <div className="min-w-0 space-y-5">
         {!games.length ? (
-          <p className="panel p-6 text-center text-ink-2">{t('friends.noGamesTogetherHint', { name })}</p>
+          <EmptyState compact>{t('friends.noGamesTogetherHint', { name })}</EmptyState>
         ) : (
           <>
             <section className="panel divide-y divide-line overflow-hidden">

@@ -1,3 +1,5 @@
+import { EmptyState, Loading } from '../components/State';
+import { confirmDialog } from '../components/ConfirmDialog';
 import { useMemo } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -27,8 +29,8 @@ export default function WoodpeckerSet() {
   const stats = useMemo(() => cycleStats(cycles ?? []), [cycles]);
   const tracks = useMemo(() => puzzleTracks(cycles ?? [], attempts ?? []), [cycles, attempts]);
 
-  if (set === null || !cycles || !attempts) return <p className="text-ink-3">{t('common.loading')}</p>;
-  if (!set) return <p className="panel p-6 text-center text-ink-2">{t('woodpecker.notFound')}</p>;
+  if (set === null || !cycles || !attempts) return <Loading />;
+  if (!set) return <EmptyState compact>{t('woodpecker.notFound')}</EmptyState>;
 
   const last = cycles[cycles.length - 1];
   const open = last && !last.finishedAt ? last : undefined;
@@ -44,7 +46,7 @@ export default function WoodpeckerSet() {
   }
 
   async function remove() {
-    if (!confirm(t('woodpecker.confirmDelete', { name: set!.name }))) return;
+    if (!(await confirmDialog(t('woodpecker.confirmDelete', { name: set!.name }), { danger: true, confirmLabel: t('woodpecker.delete') }))) return;
     await deleteSet(id);
     navigate('/puzzles/woodpecker');
   }

@@ -1,3 +1,4 @@
+import { EmptyState } from '../components/State';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -32,7 +33,7 @@ export default function Woodpecker() {
             <h1 className="text-xl font-bold text-ink">{t('woodpecker.title')}</h1>
             <p>{t('woodpecker.intro')}</p>
           </div>
-          {sets?.length === 0 && <p className="panel p-6 text-center text-ink-3">{t('woodpecker.noSets')}</p>}
+          {sets?.length === 0 && <EmptyState compact>{t('woodpecker.noSets')}</EmptyState>}
           {sets?.map((s) => <SetCard key={s.id} set={s} cycles={bySet.get(s.id) ?? []} />)}
         </div>
         <CreateSet />

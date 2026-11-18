@@ -1,3 +1,4 @@
+import { EmptyState, Loading } from '../components/State';
 import TrainBanner from '../components/TrainBanner';
 import { useMemo } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
@@ -7,10 +8,13 @@ import { useAnalysisQueue } from '../engine/queue';
 import FilterBar from '../components/FilterBar';
 import PlatformIcon from '../components/PlatformIcon';
 import ResultBadge from '../components/ResultBadge';
-import { TimeClassIcon } from '../components/icons';
+import { CpuIcon, TimeClassIcon } from '../components/icons';
 import type { Game } from '../types';
 
 const PAGE_SIZE = 50;
+
+type SortKey = 'date' | 'accuracy' | 'opponent' | 'moves';
+const SORT_KEYS: SortKey[] = ['date', 'accuracy', 'opponent', 'moves'];
 
 export default function Games() {
   const { t, i18n } = useTranslation();
@@ -32,22 +36,61 @@ export default function Games() {
       return out;
     });
 
+  // Sorting lives in the URL too (?sort=accuracy&dir=asc); the default, newest first, leaves it clean.
+  const sortParam = params.get('sort') as SortKey | null;
+  const sort: SortKey = sortParam && SORT_KEYS.includes(sortParam) ? sortParam : 'date';
+  const asc = params.get('dir') === 'asc';
+  const setSort = (key: SortKey, ascending: boolean) =>
+    setParams((prev) => {
+      const out = new URLSearchParams(prev);
+      out.delete('page');
+      if (key === 'date' && !ascending) {
+        out.delete('sort');
+        out.delete('dir');
+      } else {
+        out.set('sort', key);
+        out.set('dir', ascending ? 'asc' : 'desc');
+      }
+      return out;
+    });
+  /** Clicking the active column flips the direction; another column starts descending. */
+  const toggleSort = (key: SortKey) => setSort(key, key === sort ? !asc : false);
+
+  const sorted = useMemo(() => {
+    if (!games) return [];
+    const value = (g: Game): number | undefined => {
+      if (sort === 'date') return g.endTime;
+      if (sort === 'moves') return g.moves.length;
+      if (sort === 'opponent') return (g.userColor === 'white' ? g.black : g.white).rating ?? undefined;
+      const a = analyses?.get(g.id);
+      return (a ? a.accuracy[g.userColor] : g.platformAccuracy?.[g.userColor]) ?? undefined;
+    };
+    const dir = asc ? 1 : -1;
+    // Games without a value always go last, whichever the direction.
+    return [...games].sort((x, y) => {
+      const a = value(x);
+      const b = value(y);
+      if (a === undefined || b === undefined) return a === b ? 0 : a === undefined ? 1 : -1;
+      return (a - b) * dir || y.endTime - x.endTime;
+    });
+  }, [games, analyses, sort, asc]);
+
   const pending = useMemo(
     () => (games && analysedIds ? games.filter((g) => !analysedIds.has(g.id)) : []),
     [games, analysedIds],
   );
 
-  if (!all || !games) return <p className="text-ink-3">{t('common.loading')}</p>;
+  if (!all || !games) return <Loading />;
   if (!all.length)
     return (
-      <div className="panel p-8 text-center text-ink-2">
-        {t('games.empty')} <Link className="text-accent underline" to={scope ? '/friends' : '/accounts'}>{t(scope ? 'nav.friends' : 'nav.accounts')}</Link>
-      </div>
+      <EmptyState>
+        {t('games.empty')} <Link className="text-accent underline" to={scope ? '/friends' : '/settings#accounts'}>{t(scope ? 'nav.friends' : 'nav.accounts')}</Link>
+      </EmptyState>
     );
 
   const pages = Math.max(1, Math.ceil(games.length / PAGE_SIZE));
   const current = Math.min(page, pages - 1);
-  const shown = games.slice(current * PAGE_SIZE, (current + 1) * PAGE_SIZE);
+  const shown = sorted.slice(current * PAGE_SIZE, (current + 1) * PAGE_SIZE);
   const date = new Intl.DateTimeFormat(i18n.resolvedLanguage, { dateStyle: 'medium' });
   const short = new Intl.DateTimeFormat(i18n.resolvedLanguage, { day: 'numeric', month: 'short' });
 
@@ -65,7 +108,8 @@ export default function Games() {
     if (!acc) return <span className="text-ink-3">–</span>;
     const mine = acc[g.userColor];
     return (
-      <span className={`tabular ${acc.platform ? 'text-ink-3 italic' : 'font-semibold text-ink'}`} title={acc.platform ? t('games.platformAccuracyHint') : undefined}>
+      <span className={`tabular inline-flex items-center gap-1 ${acc.platform ? 'text-ink-3 italic' : 'font-semibold text-ink'}`} title={t(acc.platform ? 'games.platformAccuracyHint' : 'games.analysed')}>
+        {!acc.platform && <CpuIcon className="h-3 w-3 text-accent" />}
         {mine?.toFixed(1) ?? '–'}
       </span>
     );
@@ -75,7 +119,7 @@ export default function Games() {
     <div className="space-y-5">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-bold">{t('games.title')}</h1>
+          <h1 className="page-title">{t('games.title')}</h1>
           <p className="text-sm text-ink-3">{t('games.count', { count: games.length })}</p>
         </div>
         <button className="btn-primary" disabled={!pending.length} onClick={() => enqueue(pending.map((g) => g.id))}>
@@ -85,8 +129,25 @@ export default function Games() {
       {!scope && <TrainBanner />}
       <FilterBar show={['rated', 'source', 'timeClass', 'color', 'outcome', 'period', 'search']} />
 
+      {/* Phones have no column headers: a select and a direction button do the same. */}
+      {!!games.length && (
+        <div className="flex items-center gap-2 md:hidden">
+          <label className="flex flex-1 items-center gap-2 text-xs text-ink-3">
+            <span className="shrink-0">{t('games.sortBy')}</span>
+            <select className="input min-w-0 flex-1" value={sort} onChange={(e) => setSort(e.target.value as SortKey, asc)}>
+              {SORT_KEYS.map((k) => (
+                <option key={k} value={k}>{t(`games.sort.${k}`)}</option>
+              ))}
+            </select>
+          </label>
+          <button className="btn-ghost h-[38px] w-10 px-0" aria-label={t(asc ? 'games.sortAsc' : 'games.sortDesc')} onClick={() => setSort(sort, !asc)}>
+            {asc ? '↑' : '↓'}
+          </button>
+        </div>
+      )}
+
       {!games.length ? (
-        <p className="panel p-6 text-center text-ink-2">{t('games.noMatch')}</p>
+        <EmptyState compact>{t('games.noMatch')}</EmptyState>
       ) : (
         <>
           {/* Phones: one card per game. */}
@@ -99,7 +160,7 @@ export default function Games() {
                     <ResultBadge outcome={g.outcome} />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5">
-                        <span className={`h-2.5 w-2.5 shrink-0 rounded-[3px] ${g.userColor === 'white' ? 'bg-panel ring-1 ring-ink-3' : 'bg-ink'}`} />
+                        <span className={`h-2.5 w-2.5 shrink-0 rounded-[3px] ${g.userColor === 'white' ? 'bg-ink' : 'bg-panel ring-1 ring-ink-3'}`} />
                         <span className="truncate font-semibold">{opp.name}</span>
                         {opp.rating && <span className="tabular text-xs text-ink-3">{opp.rating}</span>}
                       </div>
@@ -123,12 +184,12 @@ export default function Games() {
               <thead className="text-left">
                 <tr className="border-b border-line">
                   <th className="w-20 px-4 py-3" />
-                  <th className="eyebrow px-3 py-3">{t('games.players')}</th>
+                  <SortTh k="opponent" label={t('games.players')} sort={sort} asc={asc} onSort={toggleSort} />
                   <th className="eyebrow px-3 py-3">{t('games.result')}</th>
-                  <th className="eyebrow px-3 py-3 text-right">{t('common.accuracy')}</th>
+                  <SortTh k="accuracy" label={t('common.accuracy')} sort={sort} asc={asc} onSort={toggleSort} right />
                   <th className="eyebrow px-3 py-3">{t('games.opening')}</th>
-                  <th className="eyebrow px-3 py-3 text-right">{t('common.moves')}</th>
-                  <th className="eyebrow px-4 py-3 text-right">{t('games.date')}</th>
+                  <SortTh k="moves" label={t('common.moves')} sort={sort} asc={asc} onSort={toggleSort} right />
+                  <SortTh k="date" label={t('games.date')} sort={sort} asc={asc} onSort={toggleSort} right last />
                 </tr>
               </thead>
               <tbody>
@@ -179,5 +240,20 @@ export default function Games() {
         </div>
       )}
     </div>
+  );
+}
+
+function SortTh({ k, label, sort, asc, onSort, right, last }: { k: SortKey; label: string; sort: SortKey; asc: boolean; onSort: (k: SortKey) => void; right?: boolean; last?: boolean }) {
+  const active = sort === k;
+  return (
+    <th className={`py-3 ${last ? 'px-4' : 'px-3'} ${right ? 'text-right' : ''}`} aria-sort={active ? (asc ? 'ascending' : 'descending') : 'none'}>
+      <button
+        className={`eyebrow inline-flex items-center gap-1 transition-colors hover:text-ink ${active ? 'text-ink' : ''}`}
+        onClick={() => onSort(k)}
+      >
+        {label}
+        <span aria-hidden className={active ? 'text-accent' : 'opacity-0'}>{asc ? '↑' : '↓'}</span>
+      </button>
+    </th>
   );
 }

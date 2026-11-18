@@ -25,7 +25,7 @@ export default function Train() {
   return (
     <div className="space-y-5">
       <header>
-        <h1 className="font-display text-2xl font-bold">{t('train.title')}</h1>
+        <h1 className="page-title">{t('train.title')}</h1>
         <p className="text-ink-3">{t('train.subtitle')}</p>
       </header>
       {!path ? (
@@ -35,32 +35,38 @@ export default function Train() {
       ) : (
         <>
           <p className="text-sm text-ink-3">{t('train.pathHint', { count: DRILL_STREAK })}</p>
-          <ol className="space-y-3">
+          <ol>
             {path.map(({ weakness: w, status }, i) => {
               const record = progress?.find((p) => p.id === w.id);
               const streak = cleanStreak((attempts ?? []).filter((a) => a.weaknessId === w.id && a.startedAt > (record?.resetAt ?? 0)));
               const seen = Math.min(VERIFY_GAMES, measures.get(w.id)?.games ?? 0);
+              // The one number that says how far along this step is.
+              const progressNow = status === 'active' ? { value: streak, total: DRILL_STREAK, text: t('train.streak', { streak, target: DRILL_STREAK }) }
+                : status === 'verifying' ? { value: seen, total: VERIFY_GAMES, text: t('train.verifyProgress', { seen, total: VERIFY_GAMES }) }
+                : undefined;
               return (
-                <li key={w.id} className={`panel flex gap-4 p-5 ${status === 'locked' ? 'opacity-60' : ''}`}>
-                  <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${NODE_STYLE[status]}`} title={t(`train.status.${status}`)}>
-                    {status === 'done' ? <CheckIcon className="h-5 w-5" /> : status === 'verifying' ? <EyeIcon className="h-5 w-5" /> : status === 'locked' ? <LockIcon className="h-5 w-5" /> : <span className="tabular font-bold">{i + 1}</span>}
-                  </span>
-                  <div className="min-w-0 flex-1 space-y-3">
+                <li key={w.id} className="flex gap-4 pb-3 last:pb-0">
+                  {/* The path: each node hangs on a line that runs down to the next one. */}
+                  <div className="flex flex-col items-center">
+                    <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${NODE_STYLE[status]}`} title={t(`train.status.${status}`)}>
+                      {status === 'done' ? <CheckIcon className="h-5 w-5" /> : status === 'verifying' ? <EyeIcon className="h-5 w-5" /> : status === 'locked' ? <LockIcon className="h-5 w-5" /> : <span className="tabular font-bold">{i + 1}</span>}
+                    </span>
+                    {i < path.length - 1 && <span className={`mt-1 w-0.5 flex-1 rounded-full ${status === 'done' ? 'bg-good/40' : 'bg-line-2'}`} aria-hidden />}
+                  </div>
+                  <div className={`panel min-w-0 flex-1 space-y-3 p-4 ${status === 'locked' ? 'border-dashed' : ''} ${status === 'active' ? 'border-accent/40' : ''}`}>
                     <div className="flex flex-wrap items-baseline justify-between gap-2">
-                      <h2 className="font-display font-semibold">{weaknessLabel(t, w)}</h2>
+                      <h2 className={`font-display font-semibold ${status === 'locked' ? 'text-ink-2' : ''}`}>{weaknessLabel(t, w)}</h2>
                       <span className="chip tabular">{t('train.rate', { rate: w.rate.toFixed(1) })}</span>
                     </div>
-                    <p className="text-xs text-ink-3">
-                      {t('train.count', { count: w.count, loss: Math.round(w.loss) })}
-                      {status === 'active' && streak > 0 && ` · ${t('train.streak', { streak, target: DRILL_STREAK })}`}
-                    </p>
+                    <p className="-mt-2 text-xs text-ink-3">{t('train.count', { count: w.count, loss: Math.round(w.loss) })}</p>
                     {status === 'active' && record?.status === 'redo' && (
                       <p className="text-xs text-loss">{t(record.reason === 'relapse' ? 'train.reasonRelapse' : 'train.reasonUnproven')}</p>
                     )}
-                    {status === 'verifying' && (
-                      <div className="space-y-1">
-                        <p className="text-sm text-ink-2">{t('train.verifying', { count: VERIFY_GAMES })}</p>
-                        <p className="tabular text-xs text-ink-3">{t('train.verifyProgress', { seen, total: VERIFY_GAMES })}</p>
+                    {progressNow && (
+                      <div className="space-y-1.5">
+                        {status === 'verifying' && <p className="text-sm text-ink-2">{t('train.verifying', { count: VERIFY_GAMES })}</p>}
+                        <div className="meter"><div style={{ width: `${(progressNow.value / progressNow.total) * 100}%` }} /></div>
+                        <p className="tabular text-xs text-ink-3">{progressNow.text}</p>
                       </div>
                     )}
                     {status === 'done' && record?.masteredAt && (
@@ -73,11 +79,20 @@ export default function Train() {
                         <Link to={`/train/${encodeURIComponent(w.id)}`} className={`${status === 'active' ? 'btn-primary' : 'btn-ghost'} h-9 px-4 text-sm`}>
                           {t(status === 'active' ? 'train.practice' : 'train.again')}
                         </Link>
-                        {w.examples.slice(0, 3).map((e) => (
-                          <Link key={`${e.gameId}:${e.ply}`} to={`/game/${encodeURIComponent(e.gameId)}?ply=${e.ply}`} className="btn-ghost text-xs">
-                            {t('train.example', { move: Math.floor(e.ply / 2) + 1 })}
-                          </Link>
-                        ))}
+                        {!!w.examples.length && (
+                          <details className="group ml-auto text-xs text-ink-3">
+                            <summary className="cursor-pointer list-none rounded-lg px-2 py-1.5 select-none hover:text-ink">
+                              {t('train.examples', { count: Math.min(3, w.examples.length) })} <span aria-hidden className="inline-block transition-transform group-open:rotate-180">▾</span>
+                            </summary>
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              {w.examples.slice(0, 3).map((e) => (
+                                <Link key={`${e.gameId}:${e.ply}`} to={`/game/${encodeURIComponent(e.gameId)}?ply=${e.ply}`} className="btn-ghost text-xs">
+                                  {t('train.example', { move: Math.floor(e.ply / 2) + 1 })}
+                                </Link>
+                              ))}
+                            </div>
+                          </details>
+                        )}
                       </div>
                     )}
                   </div>

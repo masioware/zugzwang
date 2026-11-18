@@ -1,3 +1,4 @@
+import { EmptyState, Loading } from '../components/State';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -73,6 +74,7 @@ export default function GameReview() {
   const [flipped, setFlipped] = useState<boolean | null>(null);
   const [tab, setTab] = useState<'moves' | 'summary'>(() => (urlPly > 0 ? 'moves' : 'summary'));
   const [help, setHelp] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
   const [copied, setCopied] = useState<'fen' | 'pgn' | null>(null);
   const isFlipped = flipped ?? game?.userColor === 'black';
 
@@ -159,8 +161,8 @@ export default function GameReview() {
     [fen, variation, plies, ply, setPly],
   );
 
-  if (game === null) return <p className="text-ink-3">{t('common.loading')}</p>;
-  if (!game) return <p className="panel p-6 text-center text-ink-2">{t('review.notFound')}</p>;
+  if (game === null) return <Loading />;
+  if (!game) return <EmptyState compact>{t('review.notFound')}</EmptyState>;
 
   const progress = active[game.id];
   const analysing = !!progress;
@@ -204,54 +206,68 @@ export default function GameReview() {
 
   const header = (
     <div className="panel space-y-2 p-4">
-      <div className="flex items-center gap-2 text-sm text-ink-2">
-        <PlatformIcon source={game.source} />
-        {/* Training games against the bot have no time control and no page elsewhere. */}
-        {game.source === 'bot' ? (
-          <span>{t('play.trainingGame')}</span>
-        ) : (
-          <>
-            <TimeClassIcon timeClass={game.timeClass} />
-            <span>{t(`timeClass.${game.timeClass}`)}</span>
-          </>
-        )}
-        <span className="text-ink-3">·</span>
-        <span>{new Date(game.endTime).toLocaleDateString(i18n.resolvedLanguage)}</span>
-        {game.url && <a
-          className="ml-auto inline-flex items-center gap-1 text-xs text-ink-3 hover:text-accent"
-          href={game.url}
-          target="_blank"
-          rel="noreferrer"
-          title={t('review.openOn', { platform: t(`platform.${game.source}`) })}
-        >
-          {t(`platform.${game.source}`)} <ExternalIcon className="h-3.5 w-3.5" />
-        </a>}
-      </div>
       <div className="flex items-center gap-2">
         <ResultBadge outcome={game.outcome} />
         <span className="font-semibold">{t(`common.${game.outcome}`)}</span>
-        <span className="text-sm text-ink-3">· {t(`termination.${game.termination}`)}</span>
+        <span className="min-w-0 truncate text-sm text-ink-3">· {t(`termination.${game.termination}`)}</span>
+        <button
+          className="btn-ghost ml-auto h-8 shrink-0 px-2 text-xs"
+          aria-expanded={showInfo}
+          onClick={() => setShowInfo(!showInfo)}
+        >
+          {t(showInfo ? 'review.lessInfo' : 'review.moreInfo')}
+          <svg viewBox="0 0 24 24" className={`h-3.5 w-3.5 transition-transform ${showInfo ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </button>
       </div>
       <div className="truncate text-sm text-ink-2" title={game.opening.name}>
         {game.opening.eco && <span className="mr-1.5 text-ink-3">{game.opening.eco}</span>}
         {game.opening.name ?? t('common.unknown')}
       </div>
-      <div className="flex flex-wrap items-center gap-1 border-t border-line pt-2 text-xs">
-        {(['fen', 'pgn'] as const).map((w) => (
-          <button key={w} className="btn-ghost px-2 py-1 text-xs" onClick={() => copy(w)}>
-            {copied === w ? t('review.copied') : t(w === 'fen' ? 'review.copyFen' : 'review.copyPgn')}
-          </button>
-        ))}
-        <a
-          className="btn-ghost ml-auto inline-flex items-center gap-1 px-2 py-1 text-xs"
-          href={lichessAnalysis}
-          target="_blank"
-          rel="noreferrer"
-          title={t('review.lichessAnalysisHint')}
-        >
-          {t('review.lichessAnalysis')} <ExternalIcon className="h-3.5 w-3.5" />
-        </a>
-      </div>
+      {showInfo && (
+        <>
+          <div className="flex items-center gap-2 border-t border-line pt-2 text-sm text-ink-2">
+            <PlatformIcon source={game.source} />
+            {/* Training games against the bot have no time control and no page elsewhere. */}
+            {game.source === 'bot' ? (
+              <span>{t('play.trainingGame')}</span>
+            ) : (
+              <>
+                <TimeClassIcon timeClass={game.timeClass} />
+                <span>{t(`timeClass.${game.timeClass}`)}</span>
+              </>
+            )}
+            <span className="text-ink-3">·</span>
+            <span>{new Date(game.endTime).toLocaleDateString(i18n.resolvedLanguage)}</span>
+            {game.url && <a
+              className="ml-auto inline-flex items-center gap-1 text-xs text-ink-3 hover:text-accent"
+              href={game.url}
+              target="_blank"
+              rel="noreferrer"
+              title={t('review.openOn', { platform: t(`platform.${game.source}`) })}
+            >
+              {t(`platform.${game.source}`)} <ExternalIcon className="h-3.5 w-3.5" />
+            </a>}
+          </div>
+          <div className="flex flex-wrap items-center gap-1 text-xs">
+            {(['fen', 'pgn'] as const).map((w) => (
+              <button key={w} className="btn-ghost px-2 py-1 text-xs" onClick={() => copy(w)}>
+                {copied === w ? t('review.copied') : t(w === 'fen' ? 'review.copyFen' : 'review.copyPgn')}
+              </button>
+            ))}
+            <a
+              className="btn-ghost ml-auto inline-flex items-center gap-1 px-2 py-1 text-xs"
+              href={lichessAnalysis}
+              target="_blank"
+              rel="noreferrer"
+              title={t('review.lichessAnalysisHint')}
+            >
+              {t('review.lichessAnalysis')} <ExternalIcon className="h-3.5 w-3.5" />
+            </a>
+          </div>
+        </>
+      )}
     </div>
   );
 
@@ -384,7 +400,7 @@ export default function GameReview() {
               <div className="border-b border-line p-3">
                 <EngineLines fen={fen} lines={lines} onPlay={(uci) => playMove(uci.slice(0, 2), uci.slice(2, 4), uci[4])} />
               </div>
-              <MoveList plies={plies} analysis={upToDate ? analysis?.moves : undefined} current={variation ? variation.base : ply} onSelect={goTo} />
+              <MoveList className="h-52 lg:h-[clamp(13rem,calc(100vh-36rem),32rem)]" plies={plies} analysis={upToDate ? analysis?.moves : undefined} current={variation ? variation.base : ply} onSelect={goTo} />
             </>
           )}
 

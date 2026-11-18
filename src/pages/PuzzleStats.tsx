@@ -1,3 +1,4 @@
+import { EmptyState, Loading } from '../components/State';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -56,14 +57,14 @@ export default function PuzzleStats() {
   }, [scoped, theme]);
   const themeName = (k: string) => t(`puzzleTheme.${k}`, { defaultValue: k });
 
-  if (!all) return <p className="text-ink-3">{t('common.loading')}</p>;
+  if (!all) return <Loading />;
 
   return (
     <>
       <PuzzleTabs />
       <div className="space-y-4">
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <h1 className="text-3xl font-bold">{t('puzzleStats.title')}</h1>
+          <h1 className="page-title">{t('puzzleStats.title')}</h1>
           {/* Phones: the mode switch on its own row, theme and period side by side below it. */}
           <div className="grid w-full grid-cols-2 gap-3 sm:flex sm:w-auto sm:flex-wrap sm:items-center sm:gap-4">
             <div className="col-span-2 [&>div]:flex [&>div]:w-full sm:[&>div]:w-auto">
@@ -103,10 +104,10 @@ export default function PuzzleStats() {
         )}
 
         {!attempts.length ? (
-          <div className="panel p-8 text-center text-ink-2">
+          <EmptyState>
             {theme ? t('puzzleStats.emptyTheme', { theme: themeName(theme) }) : t('puzzleStats.empty')}{' '}
             <Link className="text-accent underline" to="/puzzles">{t('puzzles.tabs.train')}</Link>
-          </div>
+          </EmptyState>
         ) : (
           <Panels attempts={attempts} baseline={scoped} theme={theme} onTheme={setTheme} period={period} />
         )}

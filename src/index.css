@@ -18,7 +18,7 @@
 
   --color-ink: #f6f5f1;
   --color-ink-2: #b9b8b1;
-  --color-ink-3: #7a7a80;
+  --color-ink-3: #8d8d94;
 
   /* Brand yellow; text on it uses accent-ink. */
   --color-accent: #ffd60a;
@@ -165,6 +165,11 @@ select.input option {
 }
 
 /* Small uppercase label above a value. */
+/* Page heading: one size for every top-level screen. */
+@utility page-title {
+  @apply font-display text-3xl font-bold;
+}
+
 @utility eyebrow {
   @apply text-[11px] font-semibold tracking-[0.08em] text-ink-3 uppercase;
 }

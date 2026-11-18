@@ -7,11 +7,14 @@
     "puzzles": "Puzzles",
     "friends": "Amigos",
     "play": "Jogar",
-    "train": "Treino"
+    "more": "Mais",
+    "settings": "Configurações",
+    "train": "Plano"
   },
   "common": {
     "loading": "Carregando…",
     "cancel": "Cancelar",
+    "confirm": "Confirmar",
     "white": "Brancas",
     "black": "Pretas",
     "win": "Vitória",
@@ -79,6 +82,36 @@
     "opening": "Abertura",
     "middlegame": "Meio-jogo",
     "endgame": "Final"
+  },
+  "highlights": {
+    "title": "Destaques",
+    "form": "Últimos {{count}} dias",
+    "formGames_one": "{{count}} partida",
+    "formGames_other": "{{count}} partidas",
+    "formDiff": "{{diff}} pontos vs. os 30 dias anteriores",
+    "phase": "Fase mais fraca",
+    "phaseSub": "{{accuracy}}% de precisão nos lances",
+    "opening": "Abertura mais difícil",
+    "openingSub": "{{score}}% em {{games}} partidas de {{color}}",
+    "dayPart": "Melhor horário",
+    "dayPartSub": "{{score}}% em {{games}} partidas"
+  },
+  "dashboard": {
+    "title": "Visão geral",
+    "subtitle_one": "{{count}} partida importada",
+    "subtitle_other": "{{count}} partidas importadas",
+    "pending_one": "{{count}} partida aguarda análise.",
+    "pending_other": "{{count}} partidas aguardam análise.",
+    "lastDays": "Últimos {{count}} dias",
+    "score": "Aproveitamento",
+    "noRecent": "Nenhuma partida neste período. Atualize suas contas para trazer as mais recentes.",
+    "ratings": "Ratings",
+    "noRatings": "Nenhuma partida valendo rating ainda.",
+    "puzzles": "Rating de puzzles",
+    "noPuzzles": "Nenhum puzzle valendo rating ainda.",
+    "solve": "Resolver puzzles",
+    "latest": "Últimas partidas",
+    "allGames": "Todas as partidas"
   },
   "home": {
     "title": "Analise suas partidas de xadrez",
@@ -154,10 +187,17 @@
     "next": "Próxima",
     "count_one": "{{count}} partida",
     "count_other": "{{count}} partidas",
-    "platformAccuracyHint": "Precisão informada pela plataforma (partida ainda não analisada aqui)"
+    "platformAccuracyHint": "Precisão informada pela plataforma (partida ainda não analisada aqui)",
+    "analysed": "Analisada com o motor",
+    "sortBy": "Ordenar por",
+    "sortAsc": "Crescente",
+    "sortDesc": "Decrescente",
+    "sort": { "date": "Data", "accuracy": "Precisão", "opponent": "Rating do adversário", "moves": "Lances" }
   },
   "review": {
     "notFound": "Partida não encontrada.",
+    "moreInfo": "Detalhes",
+    "lessInfo": "Ocultar",
     "analyzeGame": "Analisar partida",
     "analyzing": "Analisando… {{done}}/{{total}}",
     "queued": "Na fila de análise",
@@ -317,6 +357,12 @@
     "rate": "{{rate}} posições/s"
   },
   "settings": {
+    "title": "Configurações",
+    "subtitle": "Contas, motor, idioma e dados. Para configurar uma vez.",
+    "sections": { "accounts": "Minhas contas", "friends": "Contas de amigos", "preferences": "Preferências", "data": "Dados e app" },
+    "friendsHint": "Adicione contas de amigos para ver como você se sai contra eles. As estatísticas deles ficam na aba Amigos.",
+    "viewStats": "Ver estatísticas",
+    "appearanceHint": "Cores do tabuleiro e peças, também disponíveis na engrenagem da revisão de partida.",
     "depth": "Profundidade do motor"
   },
   "appearance": {
@@ -414,7 +460,7 @@
     "solvedCount": "{{solved}}/{{total}} resolvidos",
     "failed": "Errado",
     "tabs": {
-      "train": "Treinar",
+      "train": "Resolver",
       "sprint": "Sprint",
       "woodpecker": "Pica-pau",
       "blindfold": "Às cegas",
@@ -743,6 +789,8 @@
     "namePlaceholder": "nome do amigo",
     "usernamePlaceholder": "usuário do amigo",
     "add": "Adicionar amigo",
+    "manage": "Adicionar ou remover",
+    "empty": "Nenhum amigo ainda. Adicione a conta de um amigo do Chess.com ou Lichess em Configurações para comparar suas partidas.",
     "yourFriends": "Seus amigos",
     "versus_one": "{{count}} partida contra você",
     "versus_other": "{{count}} partidas contra você",
@@ -916,7 +964,7 @@
     "barsLabel": "Parcela das partidas jogadas com cada abertura de {{color}}, você e {{name}}"
   },
   "train": {
-    "title": "Treino",
+    "title": "Plano de treino",
     "subtitle": "O que você insiste em errar, encontrado nos seus jogos analisados.",
     "loading": "Olhando seus jogos…",
     "empty": "Nada recorrente ainda. O treino só olha suas partidas rankeadas: analise mais delas (algumas dezenas de lances com erros) e aparecerá aqui.",
@@ -950,6 +998,8 @@
     "missed": "Desta vez não",
     "ownMissedSub": "Veja de novo: este é o lance que lhe custou caro.",
     "pathHint": "Uma lição por vez: passe nos exercícios ({{count}} acertos limpos seguidos) e depois prove isso nos seus próprios jogos para liberar a próxima.",
+    "examples_one": "Ver {{count}} exemplo",
+    "examples_other": "Ver {{count}} exemplos",
     "status": {
       "done": "Exercícios concluídos",
       "active": "Aberta",
