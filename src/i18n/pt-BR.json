@@ -348,7 +348,9 @@
     "calendar": "Calendário",
     "calendarQuestion": "Quando você joga o seu melhor?",
     "timeOfDay": "Hora do dia",
-    "weekday": "Dia da semana"
+    "weekday": "Dia da semana",
+    "style": "Estilo",
+    "styleQuestion": "De quais lendas do xadrez o seu jogo mais se aproxima?"
   },
   "pieces": {
     "p": "Peão",
@@ -824,7 +826,7 @@
   },
   "style": {
     "loadError": "Não foi possível carregar os dados das lendas.",
-    "computing": "Lendo suas partidas… {{done}}/{{total}}",
+    "computing": "Lendo as aberturas das suas partidas…",
     "needGames": "Jogue pelo menos {{count}} partidas para ver seu estilo (você tem {{have}} neste filtro).",
     "closest": "Seu estilo é mais próximo de…",
     "basedOn": "Com base em {{count}} das suas partidas, comparadas às de {{legends}} lendas do xadrez.",
@@ -870,6 +872,12 @@
     "white": "brancas",
     "black": "pretas",
     "whiteRepertoire": "Com as brancas",
-    "blackRepertoire": "Com as pretas"
+    "blackRepertoire": "Com as pretas",
+    "opening": "Abertura",
+    "similarity": "afinidade",
+    "retry": "Tentar de novo",
+    "noRepertoire": "Ainda não dá para comparar: é preciso ao menos {{count}} partidas com uma das cores cuja abertura o livro reconheça.",
+    "overlap": "{{value}}% parecido",
+    "barsLabel": "Parcela das partidas jogadas com cada abertura de {{color}}, você e {{name}}"
   }
 }

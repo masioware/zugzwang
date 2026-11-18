@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAnalyses, useFilteredGames, useGameFacts, useGames, useScope } from '../lib/hooks';
@@ -37,6 +37,11 @@ export default function Stats() {
   const { facts, done, total } = useGameFacts(games);
   const enqueue = useAnalysisQueue((s) => s.enqueue);
   const base = scope ? `${friendPath(scope)}/stats` : '/stats';
+  // On a phone the tabs scroll sideways: bring the active one into view, as soon as the bar exists (a new callback per section re-runs it for the new tab).
+  const nav = useCallback(
+    (el: HTMLElement | null) => el?.querySelector('[aria-current="page"]')?.scrollIntoView({ inline: 'center', block: 'nearest' }),
+    [section],
+  );
 
   const data = useMemo<StatsData | null>(() => {
     if (!games || !analyses) return null;
@@ -65,7 +70,7 @@ export default function Stats() {
         <FilterBar show={['rated', 'source', 'timeClass', 'color', 'period']} />
       </div>
 
-      <nav className="sticky top-[var(--header-h)] z-10 -mx-3 overflow-x-auto bg-bg/85 px-3 py-2 backdrop-blur-xl [scrollbar-width:none] sm:mx-0 sm:px-0">
+      <nav ref={nav} className="sticky top-[var(--header-h)] z-10 -mx-3 overflow-x-auto bg-bg/85 px-3 py-2 backdrop-blur-xl [scrollbar-width:none] sm:mx-0 sm:px-0">
         <div className="segmented w-max min-w-full sm:min-w-0">
           {SECTIONS.map((s) => (
             <Link
