@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
 import { useAnalyses, useGames } from '../lib/hooks';
-import { me } from '../stats/aggregate';
 import type { Game, GameAnalysis } from '../types';
+import { isTrainable } from './diagnose';
 import { measure, type Measure } from './measure';
 import { settle, type Progress } from './path';
 
@@ -26,7 +26,7 @@ export function useVerification(): { progress: Progress[] | undefined; measures:
 
   useEffect(() => {
     if (!games || !analyses || !progress) return;
-    const own = games.filter((g) => me(g));
+    const own = games.filter(isTrainable);
     const id = setTimeout(() => {
       const out = new Map<string, Measure>();
       const measureFor = (wid: string, since: number, latest?: number) => {

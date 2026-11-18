@@ -919,7 +919,7 @@
     "title": "Treino",
     "subtitle": "O que você insiste em errar, encontrado nos seus jogos analisados.",
     "loading": "Olhando seus jogos…",
-    "empty": "Nada recorrente ainda. Analise mais jogos seus (algumas dezenas de lances com erros) e aparecerá aqui.",
+    "empty": "Nada recorrente ainda. O treino só olha suas partidas rankeadas: analise mais delas (algumas dezenas de lances com erros) e aparecerá aqui.",
     "rate": "{{rate}} a cada 100 lances",
     "count": "{{count}} erros · {{loss}} win% perdidos",
     "example": "Partida, lance {{move}}",

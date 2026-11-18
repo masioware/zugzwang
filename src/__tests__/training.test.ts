@@ -36,7 +36,7 @@ const mv = (ply: number, over: Partial<MoveAnalysis>): MoveAnalysis => ({
 describe('diagnose', () => {
   it('only reports contexts clearly worse than the baseline, with enough samples', () => {
     const moves = ['e4', 'e5', 'Nf3', 'Nc6', 'Bb5', 'a6', 'Ba4', 'Nf6'];
-    const game = { id: 'g', userColor: 'white', moves, opening: { name: 'Ruy Lopez: Morphy' } } as unknown as Game;
+    const game = { id: 'g', userColor: 'white', rated: true, moves, opening: { name: 'Ruy Lopez: Morphy' } } as unknown as Game;
     const ms: MoveAnalysis[] = [];
     for (let i = 1; i <= 8; i += 2) ms.push(mv(i, { phase: i < 5 ? 'opening' : 'endgame', classification: i < 5 ? 'good' : 'blunder', winAfter: 20 }));
     const analysis = { gameId: 'g', moves: ms } as unknown as GameAnalysis;
@@ -83,7 +83,7 @@ describe('exercises', () => {
 describe('diagnose examples', () => {
   it('points at the position before the mistaken move and carries the opponent setup move', () => {
     const moves = ['e4', 'e5', 'Nf3', 'Nc6', 'Bb5', 'a6'];
-    const game = { id: 'g', userColor: 'white', moves, opening: { name: 'Ruy Lopez' } } as unknown as Game;
+    const game = { id: 'g', userColor: 'white', rated: true, moves, opening: { name: 'Ruy Lopez' } } as unknown as Game;
     // White's third move (index 4, Bb5) is flagged as a blunder.
     const ms = moves.map((_, i) => mv(i, { color: i % 2 ? 'black' : 'white', san: moves[i], uci: 'x', phase: i < 4 ? 'opening' : 'middlegame', classification: i === 4 ? 'blunder' : 'good', winAfter: i === 4 ? 10 : 50 }));
     const games = Array.from({ length: 5 }, (_, i) => ({ ...game, id: `g${i}` }) as Game);
@@ -173,7 +173,7 @@ describe('verification', () => {
 describe('measure', () => {
   const moves = ['e4', 'e5', 'Nf3', 'Nc6', 'Bb5', 'a6'];
   const mk = (n: number, bad: boolean) => {
-    const game = { id: `m${n}`, userColor: 'white', moves, opening: { name: 'Ruy Lopez' }, endTime: n } as unknown as Game;
+    const game = { id: `m${n}`, userColor: 'white', rated: true, moves, opening: { name: 'Ruy Lopez' }, endTime: n } as unknown as Game;
     const ms = moves.map((_, i) => mv(i, { color: i % 2 ? 'black' : 'white', phase: i < 4 ? 'opening' : 'middlegame', classification: bad && i === 4 ? 'blunder' : 'good', winAfter: bad && i === 4 ? 10 : 50 }));
     return [game, { gameId: game.id, moves: ms } as unknown as GameAnalysis] as const;
   };
@@ -192,5 +192,23 @@ describe('measure', () => {
     const rows = [10, 11, 12].map((n) => mk(n, false));
     const m = measure('phase:middlegame', rows.map((r) => r[0]), new Map(rows.map((r) => [r[0].id, r[1]])));
     expect(m).toMatchObject({ games: 3, count: 0, rate: 0 });
+  });
+});
+
+describe('rated games only', () => {
+  const moves = ['e4', 'e5', 'Nf3', 'Nc6', 'Bb5', 'a6'];
+  const row = (n: number, rated: boolean) => {
+    const g = { id: `r${n}`, userColor: 'white', rated, moves, opening: { name: 'Ruy Lopez' }, endTime: n } as unknown as Game;
+    const ms = moves.map((_, i) => mv(i, { color: i % 2 ? 'black' : 'white', phase: i < 4 ? 'opening' : 'middlegame', classification: i === 4 ? 'blunder' : 'good', winAfter: i === 4 ? 10 : 50 }));
+    return [g, { gameId: g.id, moves: ms } as unknown as GameAnalysis] as const;
+  };
+  it('ignores casual games in the diagnosis and in the measurement', () => {
+    const rows = [1, 2, 3, 4, 5, 6].map((n) => row(n, false));
+    const games = rows.map((r) => r[0]);
+    const analyses = new Map(rows.map((r) => [r[0].id, r[1]]));
+    expect(diagnose(games, analyses)).toEqual([]);
+    expect(measure('phase:middlegame', games, analyses)).toMatchObject({ games: 0, count: 0 });
+    const mixed = rows.map((r, i) => (i < 3 ? row(i + 10, true) : r));
+    expect(measure('phase:middlegame', mixed.map((r) => r[0]), new Map(mixed.map((r) => [r[0].id, r[1]]))).games).toBe(3);
   });
 });

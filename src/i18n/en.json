@@ -919,7 +919,7 @@
     "title": "Training",
     "subtitle": "What you keep getting wrong, found in your analysed games.",
     "loading": "Looking through your games…",
-    "empty": "Nothing recurring yet. Analyse more of your games (at least a few dozen moves with mistakes) and it will show up here.",
+    "empty": "Nothing recurring yet. Training only looks at your rated games: analyse more of them (a few dozen moves with mistakes) and it will show up here.",
     "rate": "{{rate}} per 100 moves",
     "count": "{{count}} mistakes · {{loss}} win% lost",
     "example": "Game, move {{move}}",

@@ -1,7 +1,7 @@
 import type { Game, GameAnalysis } from '../types';
 import { replay } from '../lib/chess';
 import { openingFamily } from '../analysis/openings';
-import { isLowClock, isMistake } from './diagnose';
+import { isLowClock, isMistake, isTrainable } from './diagnose';
 import { tacticTags, type TacticTag } from './tags';
 
 export interface Measure {
@@ -27,7 +27,7 @@ export function measure(id: string, games: Game[], analyses: Map<string, GameAna
 
   for (const game of games) {
     const analysis = analyses.get(game.id);
-    if (!analysis) continue;
+    if (!analysis || !isTrainable(game)) continue;
     analysed++;
     const family = openingFamily(game.opening.name);
     let plies: ReturnType<typeof replay> | undefined;

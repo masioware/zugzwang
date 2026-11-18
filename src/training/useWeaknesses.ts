@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAnalyses, useGames } from '../lib/hooks';
-import { me } from '../stats/aggregate';
-import { diagnose, type Weakness } from './diagnose';
+import { diagnose, isTrainable, type Weakness } from './diagnose';
 
 /** The user's recurring mistakes; undefined while loading or computing. */
 export function useWeaknesses(): Weakness[] | undefined {
@@ -11,7 +10,7 @@ export function useWeaknesses(): Weakness[] | undefined {
   useEffect(() => {
     if (!games || !analyses) return;
     // Replaying every mistake is CPU work: let the page paint first.
-    const id = setTimeout(() => setWeaknesses(diagnose(games.filter((g) => me(g)), analyses)), 0);
+    const id = setTimeout(() => setWeaknesses(diagnose(games.filter(isTrainable), analyses)), 0);
     return () => clearTimeout(id);
   }, [games, analyses]);
   return weaknesses;
