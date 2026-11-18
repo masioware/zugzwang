@@ -8,7 +8,7 @@
     "friends": "Friends",
     "play": "Play",
     "more": "More",
-    "train": "Train"
+    "train": "Plan"
   },
   "common": {
     "loading": "Loading…",
@@ -81,6 +81,36 @@
     "opening": "Opening",
     "middlegame": "Middlegame",
     "endgame": "Endgame"
+  },
+  "highlights": {
+    "title": "Highlights",
+    "form": "Last {{count}} days",
+    "formGames_one": "{{count}} game",
+    "formGames_other": "{{count}} games",
+    "formDiff": "{{diff}} points vs. the 30 days before",
+    "phase": "Weakest phase",
+    "phaseSub": "{{accuracy}}% accuracy in its moves",
+    "opening": "Toughest opening",
+    "openingSub": "{{score}}% in {{games}} games as {{color}}",
+    "dayPart": "Best time of day",
+    "dayPartSub": "{{score}}% over {{games}} games"
+  },
+  "dashboard": {
+    "title": "Overview",
+    "subtitle_one": "{{count}} game imported",
+    "subtitle_other": "{{count}} games imported",
+    "pending_one": "{{count}} game is waiting for analysis.",
+    "pending_other": "{{count}} games are waiting for analysis.",
+    "lastDays": "Last {{count}} days",
+    "score": "Score",
+    "noRecent": "No games in this period. Update your accounts to bring the latest ones.",
+    "ratings": "Ratings",
+    "noRatings": "No rated games yet.",
+    "puzzles": "Puzzle rating",
+    "noPuzzles": "No rated puzzle yet.",
+    "solve": "Solve puzzles",
+    "latest": "Latest games",
+    "allGames": "All games"
   },
   "home": {
     "title": "Analyze your chess games",
@@ -326,6 +356,7 @@
     "rate": "{{rate}} positions/s"
   },
   "settings": {
+    "title": "Settings",
     "depth": "Engine depth"
   },
   "appearance": {
@@ -423,7 +454,7 @@
     "solvedCount": "{{solved}}/{{total}} solved",
     "failed": "Failed",
     "tabs": {
-      "train": "Train",
+      "train": "Solve",
       "sprint": "Sprint",
       "woodpecker": "Woodpecker",
       "blindfold": "Blindfold",
@@ -925,7 +956,7 @@
     "barsLabel": "Share of the games played with each opening as {{color}}, you and {{name}}"
   },
   "train": {
-    "title": "Training",
+    "title": "Training plan",
     "subtitle": "What you keep getting wrong, found in your analysed games.",
     "loading": "Looking through your games…",
     "empty": "Nothing recurring yet. Training only looks at your rated games: analyse more of them (a few dozen moves with mistakes) and it will show up here.",
@@ -959,6 +990,8 @@
     "missed": "Not this time",
     "ownMissedSub": "Replay it: this is the move that cost you.",
     "pathHint": "One lesson at a time: pass the drills ({{count}} clean solves in a row), then prove it in your own games, to unlock the next.",
+    "examples_one": "See {{count}} example",
+    "examples_other": "See {{count}} examples",
     "status": {
       "done": "Drills passed",
       "active": "Open",

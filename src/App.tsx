@@ -1,12 +1,13 @@
 import { Loading } from './components/State';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
-import { BrowserRouter, Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter, NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from './db';
 import Logo from './components/Logo';
 import { BoardIcon, ChartIcon, MoreIcon, PlayIcon, PuzzleIcon, TargetIcon, UserIcon, UsersIcon } from './components/icons';
 import { useTranslation } from 'react-i18next';
 import Home from './pages/Home';
+import Dashboard from './pages/Dashboard';
 import Games from './pages/Games';
 
 const GameReview = lazy(() => import('./pages/GameReview'));
@@ -29,8 +30,7 @@ import QueueIndicator from './components/QueueIndicator';
 import SyncIndicator from './components/SyncIndicator';
 import { InstallButton, PwaToast } from './components/Pwa';
 import { autoSync } from './api/sync';
-import LanguageSelect from './components/LanguageSelect';
-import EngineSettings from './components/EngineSettings';
+import SettingsMenu from './components/SettingsMenu';
 import ConfirmHost from './components/ConfirmDialog';
 
 const NAV = [
@@ -104,11 +104,11 @@ function MobileTabBar() {
   );
 }
 
-/** "/" sends returning users straight to their games; first-time visitors get the import screen. */
+/** Returning users land on the dashboard; first-time visitors get the import screen. */
 function Landing() {
   const own = useLiveQuery(() => db.accounts.filter((a) => !a.friend).count(), []);
   if (own === undefined) return null;
-  return own ? <Navigate to="/games" replace /> : <Home />;
+  return own ? <Dashboard /> : <Home />;
 }
 
 export default function App() {
@@ -144,8 +144,7 @@ export default function App() {
               <InstallButton />
               <SyncIndicator />
               <QueueIndicator />
-              <EngineSettings />
-              <LanguageSelect />
+              <SettingsMenu />
               <NavLink
                 to="/accounts"
                 title={t('nav.accounts')}

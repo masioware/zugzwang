@@ -13,6 +13,7 @@ import { OverviewPanel, PhasePanel, ResultsPanel } from './stats/GamesPanels';
 import { MasteryPanel, PerformancePanel } from './stats/OpeningPanels';
 import { CastlingPanel, ClockPanel, PiecesPanel, QualityPanel } from './stats/MovePanels';
 import StylePanel from './stats/StylePanel';
+import Highlights from './stats/Highlights';
 import { TimeOfDayPanel, WeekdayPanel } from './stats/CalendarPanels';
 
 type Icon = (p: { className?: string }) => React.JSX.Element;
@@ -119,6 +120,7 @@ export default function Stats() {
 
           {section === 'games' && (
             <>
+              <Highlights games={data.games} analyses={data.analyses} base={base} search={search} />
               <OverviewPanel {...data} />
               <Deferred><ResultsPanel {...data} /></Deferred>
               <Deferred><PhasePanel {...data} /></Deferred>

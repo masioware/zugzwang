@@ -2,13 +2,15 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSettings } from '../lib/settings';
 import { defaultWorkers, maxWorkers } from '../engine/pool';
-import { CpuIcon } from './icons';
+import { LANGUAGES } from '../i18n';
+import { SlidersIcon } from './icons';
 
 const DEPTHS = [10, 12, 14, 16, 18, 20];
 
-/** Header popover with the engine depth and how many parallel workers to use. */
-export default function EngineSettings() {
-  const { t } = useTranslation();
+/** Header popover with the preferences that are rarely touched: language, engine depth and parallel workers. */
+export default function SettingsMenu() {
+  const { t, i18n } = useTranslation();
+  const current = i18n.resolvedLanguage?.startsWith('pt') ? 'pt-BR' : 'en';
   const { depth, setDepth, workers, setWorkers } = useSettings();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -28,12 +30,23 @@ export default function EngineSettings() {
 
   return (
     <div ref={ref} className="relative">
-      <button className="btn-ghost h-9 px-2.5 text-xs" aria-expanded={open} onClick={() => setOpen(!open)} title={t('engine.title')}>
-        <CpuIcon className="h-4 w-4" />
+      <button className="btn-ghost h-9 px-2.5 text-xs" aria-expanded={open} aria-haspopup="dialog" onClick={() => setOpen(!open)} title={t('settings.title')} aria-label={t('settings.title')}>
+        <SlidersIcon className="h-4 w-4" />
         <span className="tabular hidden lg:inline">{t('engine.short', { depth, workers })}</span>
       </button>
       {open && (
         <div className="panel absolute right-0 top-11 z-30 w-72 space-y-4 bg-panel-2 p-4 text-sm shadow-2xl">
+          <div className="space-y-1.5">
+            <span className="text-xs font-semibold uppercase tracking-wide text-ink-3">{t('nav.language')}</span>
+            <div className="segmented flex w-full" role="radiogroup" aria-label={t('nav.language')}>
+              {LANGUAGES.map((l) => (
+                <button key={l.code} role="radio" aria-checked={current === l.code} className="segmented-item" onClick={() => void i18n.changeLanguage(l.code)}>
+                  {l.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="border-t border-line pt-3 text-xs font-semibold uppercase tracking-wide text-ink-3">{t('engine.title')}</div>
           <label className="block space-y-1.5">
             <span className="text-xs font-semibold uppercase tracking-wide text-ink-3">{t('settings.depth')}</span>
             <select className="input w-full" value={depth} onChange={(e) => setDepth(Number(e.target.value))}>
