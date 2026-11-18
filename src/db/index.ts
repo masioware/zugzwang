@@ -1,6 +1,7 @@
 import Dexie, { type EntityTable } from 'dexie';
 import type { Account, AnalysisLines, DrillRun, Game, GameAnalysis, Puzzle, PuzzleAttempt, SprintRun, WoodpeckerCycle, WoodpeckerSet } from '../types';
 import type { StoredFacts } from '../stats/facts';
+import type { Progress } from '../training/path';
 import { puzzleFacts } from '../puzzles/solve';
 
 export const db = new Dexie('zugzwang') as Dexie & {
@@ -14,6 +15,8 @@ export const db = new Dexie('zugzwang') as Dexie & {
   woodpeckerCycles: EntityTable<WoodpeckerCycle, 'id'>;
   sprintRuns: EntityTable<SprintRun, 'id'>;
   drillRuns: EntityTable<DrillRun, 'id'>;
+  /** Weaknesses whose drills were passed (see training/path). */
+  trainProgress: EntityTable<Progress, 'id'>;
   /** Replay-derived facts per game (see stats/factsStore); a cache that can be dropped at any time. */
   facts: EntityTable<StoredFacts, 'gameId'>;
 };
@@ -75,4 +78,8 @@ db.version(6).stores({
 
 db.version(7).stores({
   drillRuns: '++id, kind, startedAt',
+});
+
+db.version(8).stores({
+  trainProgress: 'id, passedAt',
 });
