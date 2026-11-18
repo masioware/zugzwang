@@ -138,12 +138,12 @@ export interface Puzzle {
   themes: string[];
   /** Lichess opening tag (e.g. "Sicilian_Defense"), when the puzzle comes from the opening. */
   opening?: string;
-  /** Where it came from: the bundled subset or the Lichess API. */
-  origin: 'local' | 'lichess';
+  /** Where it came from: the bundled subset, the Lichess API, or one of the player's own games (training). */
+  origin: 'local' | 'lichess' | 'own';
   addedAt: number;
 }
 
-export type PuzzleMode = 'rated' | 'practice' | 'woodpecker' | 'sprint' | 'blindfold';
+export type PuzzleMode = 'rated' | 'practice' | 'woodpecker' | 'sprint' | 'blindfold' | 'train';
 
 export interface PuzzleAttempt {
   id?: number;
@@ -177,6 +177,8 @@ export interface PuzzleAttempt {
   color?: Color;
   /** Number of player moves in the solution. */
   length?: number;
+  /** Training lesson (a weakness id, see training/diagnose.ts) the attempt belongs to. */
+  weaknessId?: string;
   /** Woodpecker set and cycle the attempt belongs to. */
   setId?: string;
   cycleId?: number;

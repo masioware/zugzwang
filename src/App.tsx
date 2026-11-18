@@ -14,6 +14,7 @@ const Friends = lazy(() => import('./pages/Friends'));
 const Friend = lazy(() => import('./pages/Friend'));
 const HeadToHeadView = lazy(() => import('./pages/Friend').then((m) => ({ default: m.HeadToHeadView })));
 const Train = lazy(() => import('./pages/Train'));
+const TrainLesson = lazy(() => import('./pages/TrainLesson'));
 const Puzzles = lazy(() => import('./pages/Puzzles'));
 const PuzzleStats = lazy(() => import('./pages/PuzzleStats'));
 const Play = lazy(() => import('./pages/Play'));
@@ -110,6 +111,7 @@ export default function App() {
             </Route>
             <Route path="/play" element={<Play />} />
             <Route path="/train" element={<Train />} />
+            <Route path="/train/:id" element={<TrainLesson />} />
             <Route path="/puzzles" element={<Puzzles />} />
             <Route path="/puzzles/p/:id" element={<Puzzles />} />
             <Route path="/puzzles/stats" element={<PuzzleStats />} />

@@ -10,9 +10,12 @@ export type WeaknessId = `${WeaknessKind}:${string}`;
 
 export interface MistakeExample {
   gameId: string;
+  /** Index of the move in the game (0-based, as MoveAnalysis.ply): the position before it is `ply` plies in. */
   ply: number;
   /** Position before the move, so an exercise can be built without replaying. */
   fenBefore: string;
+  /** The opponent's move that led here and the position before it; absent when the mistake is the first move. */
+  setup?: { fen: string; uci: string };
   playedUci: string;
   bestUci?: string;
   /** Win% the mover threw away. */
@@ -95,12 +98,14 @@ export function diagnose(games: Game[], analyses: Map<string, GameAnalysis>): We
       mistakes++;
       const loss = Math.max(0, m.winBefore - m.winAfter);
       plies ??= replay(game.moves);
-      const ply = plies[m.ply - 1] ?? plies[m.ply];
+      const ply = plies[m.ply];
       if (!ply) continue;
+      const prev = plies[m.ply - 1];
       const example: MistakeExample = {
         gameId: game.id,
         ply: m.ply,
         fenBefore: ply.fenBefore,
+        setup: prev && { fen: prev.fenBefore, uci: prev.uci },
         playedUci: m.uci,
         bestUci: m.bestUci,
         loss,

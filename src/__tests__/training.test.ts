@@ -49,3 +49,49 @@ describe('diagnose', () => {
     expect(found.map((w) => w.id)).not.toContain('phase:opening');
   });
 });
+
+import { ownPuzzle, solutionLine, themeFor } from '../training/exercises';
+import { judgeMove } from '../puzzles/solve';
+
+describe('exercises', () => {
+  const example = {
+    gameId: 'g', ply: 2, fenBefore: 'x', playedUci: 'a2a3', bestUci: 'd5c7', loss: 30,
+    setup: { fen: 'r3k3/8/8/3N4/8/8/8/4K3 b - - 0 1', uci: 'a8a7' },
+  };
+  it('builds a puzzle that lands on the position of the mistake and accepts the best move', () => {
+    const p = ownPuzzle(example, ['fork'])!;
+    expect(p.moves).toEqual(['a8a7', 'd5c7']);
+    expect(p.origin).toBe('own');
+    expect(judgeMove(p.fen, p.moves, 1, 'd5c7')).toBe('solved');
+    expect(judgeMove(p.fen, p.moves, 1, 'e1e2')).toBe('wrong');
+  });
+  it('has nothing to solve without a setup move or an engine move', () => {
+    expect(ownPuzzle({ ...example, setup: undefined }, [])).toBeUndefined();
+    expect(ownPuzzle({ ...example, bestUci: undefined }, [])).toBeUndefined();
+  });
+  it('keeps the forced mate as the solution, ending on the player move', () => {
+    const top = { mate: 2, pv: ['d5c7', 'e8d8', 'c7a8', 'd8e8'], depth: 16 };
+    expect(solutionLine(example, top)).toEqual(['d5c7', 'e8d8', 'c7a8']);
+    expect(solutionLine(example, { cp: 300, pv: ['d5c7'], depth: 16 })).toEqual(['d5c7']);
+  });
+  it('maps weaknesses to Lichess themes', () => {
+    expect(themeFor({ kind: 'tactic', key: 'missedFork' })).toBe('fork');
+    expect(themeFor({ kind: 'time', key: 'lowClock' })).toBeUndefined();
+  });
+});
+
+describe('diagnose examples', () => {
+  it('points at the position before the mistaken move and carries the opponent setup move', () => {
+    const moves = ['e4', 'e5', 'Nf3', 'Nc6', 'Bb5', 'a6'];
+    const game = { id: 'g', userColor: 'white', moves, opening: { name: 'Ruy Lopez' } } as unknown as Game;
+    // White's third move (index 4, Bb5) is flagged as a blunder.
+    const ms = moves.map((_, i) => mv(i, { color: i % 2 ? 'black' : 'white', san: moves[i], uci: 'x', phase: i < 4 ? 'opening' : 'middlegame', classification: i === 4 ? 'blunder' : 'good', winAfter: i === 4 ? 10 : 50 }));
+    const games = Array.from({ length: 5 }, (_, i) => ({ ...game, id: `g${i}` }) as Game);
+    const map = new Map(games.map((g) => [g.id, { gameId: g.id, moves: ms } as unknown as GameAnalysis]));
+    const found = diagnose(games, map).find((w) => w.id === 'phase:middlegame');
+    const e = found?.examples[0];
+    expect(e?.ply).toBe(4);
+    expect(e?.fenBefore.split(' ')[1]).toBe('w');
+    expect(e?.setup?.uci).toBe('b8c6');
+  });
+});

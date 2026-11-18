@@ -938,6 +938,16 @@
     "time": {
       "lowClock": "Mistakes in time trouble"
     },
-    "openingLabel": "Mistakes in the {{name}}"
+    "openingLabel": "Mistakes in the {{name}}",
+    "practice": "Practice",
+    "lessonGone": "This lesson is not on your list anymore.",
+    "back": "Back to training",
+    "noExercises": "No exercises could be built for this one yet.",
+    "lessonDone": "Lesson finished: {{solved}} of {{total}} solved.",
+    "yourMistake": "Your mistake",
+    "practiceTag": "Practice",
+    "progress": "Progress",
+    "missed": "Not this time",
+    "ownMissedSub": "Replay it: this is the move that cost you."
   }
 }
