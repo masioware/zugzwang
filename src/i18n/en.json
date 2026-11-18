@@ -8,6 +8,7 @@
     "friends": "Friends",
     "play": "Play",
     "more": "More",
+    "settings": "Settings",
     "train": "Plan"
   },
   "common": {
@@ -357,6 +358,11 @@
   },
   "settings": {
     "title": "Settings",
+    "subtitle": "Accounts, engine, language and data. Set up once.",
+    "sections": { "accounts": "My accounts", "friends": "Friends' accounts", "preferences": "Preferences", "data": "Data & app" },
+    "friendsHint": "Add the accounts of friends to see how you do against them. Their statistics live in the Friends tab.",
+    "viewStats": "View statistics",
+    "appearanceHint": "Board colours and pieces, also available from the gear in a game review.",
     "depth": "Engine depth"
   },
   "appearance": {
@@ -783,6 +789,8 @@
     "namePlaceholder": "friend's name",
     "usernamePlaceholder": "friend's username",
     "add": "Add friend",
+    "manage": "Add or remove",
+    "empty": "No friends yet. Add a friend's Chess.com or Lichess account in Settings to compare your games.",
     "yourFriends": "Your friends",
     "versus_one": "{{count}} game against you",
     "versus_other": "{{count}} games against you",

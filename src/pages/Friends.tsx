@@ -1,11 +1,11 @@
-import { Loading } from '../components/State';
+import { EmptyState, Loading } from '../components/State';
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
 import { useAnalyses, useScopeGames } from '../lib/hooks';
-import { ImportForm, SyncAllButton } from '../components/AccountManager';
+import { SyncAllButton } from '../components/AccountManager';
 import PlatformIcon from '../components/PlatformIcon';
 import WdlBar from '../components/charts/WdlBar';
 import { scorePct } from '../stats/aggregate';
@@ -35,16 +35,22 @@ export default function Friends() {
         <p className="text-ink-2">{t('friends.subtitle')}</p>
       </section>
 
-      <ImportForm friends={friends ? [...friends.keys()] : []} />
-
       {!rows ? (
         <Loading />
       ) : (
-        !!rows.length && (
+        !rows.length ? (
+          <EmptyState>
+            <p>{t('friends.empty')}</p>
+            <Link to="/settings#friends" className="btn-primary mt-4">{t('friends.add')}</Link>
+          </EmptyState>
+        ) : (
           <section className="space-y-3">
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-lg font-semibold">{t('friends.yourFriends')}</h2>
-              <SyncAllButton accounts={rows.flatMap((r) => r.accounts)} />
+              <div className="flex items-center gap-2">
+                <SyncAllButton accounts={rows.flatMap((r) => r.accounts)} />
+                <Link to="/settings#friends" className="btn-ghost text-xs">{t('friends.manage')}</Link>
+              </div>
             </div>
             <ul className="space-y-2">
               {rows.map(({ name, accounts: accs, h2h }) => (

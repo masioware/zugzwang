@@ -84,7 +84,7 @@ export default function Games() {
   if (!all.length)
     return (
       <EmptyState>
-        {t('games.empty')} <Link className="text-accent underline" to={scope ? '/friends' : '/accounts'}>{t(scope ? 'nav.friends' : 'nav.accounts')}</Link>
+        {t('games.empty')} <Link className="text-accent underline" to={scope ? '/friends' : '/settings#accounts'}>{t(scope ? 'nav.friends' : 'nav.accounts')}</Link>
       </EmptyState>
     );
 

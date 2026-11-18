@@ -1,10 +1,10 @@
 import { Loading } from './components/State';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
-import { BrowserRouter, NavLink, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter, Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from './db';
 import Logo from './components/Logo';
-import { BoardIcon, ChartIcon, MoreIcon, PlayIcon, PuzzleIcon, TargetIcon, UserIcon, UsersIcon } from './components/icons';
+import { BoardIcon, ChartIcon, MoreIcon, PlayIcon, PuzzleIcon, SlidersIcon, TargetIcon, UsersIcon } from './components/icons';
 import { useTranslation } from 'react-i18next';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
@@ -12,6 +12,7 @@ import Games from './pages/Games';
 
 const GameReview = lazy(() => import('./pages/GameReview'));
 const Stats = lazy(() => import('./pages/Stats'));
+const Settings = lazy(() => import('./pages/Settings'));
 const Friends = lazy(() => import('./pages/Friends'));
 const Friend = lazy(() => import('./pages/Friend'));
 const HeadToHeadView = lazy(() => import('./pages/Friend').then((m) => ({ default: m.HeadToHeadView })));
@@ -30,7 +31,6 @@ import QueueIndicator from './components/QueueIndicator';
 import SyncIndicator from './components/SyncIndicator';
 import { InstallButton, PwaToast } from './components/Pwa';
 import { autoSync } from './api/sync';
-import SettingsMenu from './components/SettingsMenu';
 import ConfirmHost from './components/ConfirmDialog';
 
 const NAV = [
@@ -44,7 +44,7 @@ const NAV = [
 
 /** Phones: four sections stay one tap away; the rest live behind "More" so the labels have room. */
 const TAB_BAR = NAV.filter((n) => ['games', 'stats', 'train', 'puzzles'].includes(n.key));
-const MORE = [...NAV.filter((n) => !TAB_BAR.includes(n)), { to: '/accounts', key: 'accounts', icon: UserIcon } as const];
+const MORE = [...NAV.filter((n) => !TAB_BAR.includes(n)), { to: '/settings', key: 'settings', icon: SlidersIcon } as const];
 
 const TAB_CLASS = (active: boolean) =>
   `flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-semibold transition-colors ${active ? 'text-accent' : 'text-ink-3'}`;
@@ -144,15 +144,14 @@ export default function App() {
               <InstallButton />
               <SyncIndicator />
               <QueueIndicator />
-              <SettingsMenu />
               <NavLink
-                to="/accounts"
-                title={t('nav.accounts')}
-                aria-label={t('nav.accounts')}
-                className={({ isActive }) => `btn-ghost hidden h-9 px-2.5 md:inline-flex ${isActive ? 'text-accent' : ''}`}
+                to="/settings"
+                title={t('nav.settings')}
+                aria-label={t('nav.settings')}
+                className={({ isActive }) => `btn-ghost h-9 px-2.5 ${isActive ? 'text-accent' : ''}`}
               >
-                <UserIcon className="h-4 w-4" />
-                <span className="hidden lg:inline">{t('nav.accounts')}</span>
+                <SlidersIcon className="h-4 w-4" />
+                <span className="hidden lg:inline">{t('nav.settings')}</span>
               </NavLink>
             </div>
           </div>
@@ -162,7 +161,8 @@ export default function App() {
           <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<Landing />} />
-            <Route path="/accounts" element={<Home />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/accounts" element={<Navigate to="/settings#accounts" replace />} />
             <Route path="/games" element={<Games />} />
             <Route path="/game/:id" element={<GameReview />} />
             <Route path="/stats/:section?" element={<Stats />} />

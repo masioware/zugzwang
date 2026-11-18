@@ -59,7 +59,7 @@ export default function Dashboard() {
           <h1 className="page-title">{t('dashboard.title')}</h1>
           <p className="text-sm text-ink-3">{t('dashboard.subtitle', { count: games.length })}</p>
         </div>
-        <Link to="/accounts" className="btn-ghost">{t('nav.accounts')}</Link>
+        <Link to="/settings#accounts" className="btn-ghost">{t('nav.accounts')}</Link>
       </header>
 
       <TrainBanner />

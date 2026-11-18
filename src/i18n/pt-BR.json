@@ -8,6 +8,7 @@
     "friends": "Amigos",
     "play": "Jogar",
     "more": "Mais",
+    "settings": "Configurações",
     "train": "Plano"
   },
   "common": {
@@ -357,6 +358,11 @@
   },
   "settings": {
     "title": "Configurações",
+    "subtitle": "Contas, motor, idioma e dados. Para configurar uma vez.",
+    "sections": { "accounts": "Minhas contas", "friends": "Contas de amigos", "preferences": "Preferências", "data": "Dados e app" },
+    "friendsHint": "Adicione contas de amigos para ver como você se sai contra eles. As estatísticas deles ficam na aba Amigos.",
+    "viewStats": "Ver estatísticas",
+    "appearanceHint": "Cores do tabuleiro e peças, também disponíveis na engrenagem da revisão de partida.",
     "depth": "Profundidade do motor"
   },
   "appearance": {
@@ -783,6 +789,8 @@
     "namePlaceholder": "nome do amigo",
     "usernamePlaceholder": "usuário do amigo",
     "add": "Adicionar amigo",
+    "manage": "Adicionar ou remover",
+    "empty": "Nenhum amigo ainda. Adicione a conta de um amigo do Chess.com ou Lichess em Configurações para comparar suas partidas.",
     "yourFriends": "Seus amigos",
     "versus_one": "{{count}} partida contra você",
     "versus_other": "{{count}} partidas contra você",
