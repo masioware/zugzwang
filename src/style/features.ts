@@ -99,36 +99,32 @@ export const FEATURE_GROUP: Record<FeatureKey, FeatureGroup> = {
 };
 
 /**
- * Features that mostly reflect how strong a player is and how fast the game is played, not style: shorter
- * games, more captures and queen trades, fewer draws and so on are what weaker or faster play looks like.
- * They are shown but left out of the comparison, so an amateur is matched on habits, not on rating.
- * (Measured on real games: with them, a 1500-rated rapid player lands next to 19th-century masters.)
+ * The features that describe the player and not the whole game: only these differ between the two sides of a
+ * game, so only these are left once a player is compared with their opponent (see pairedFeatures). Whole-game
+ * features (length, trades, pieces left, draws) are zero then and are not used for style.
  */
-export const LEVEL_SENSITIVE: ReadonlySet<FeatureKey> = new Set<FeatureKey>([
-  'length',
-  'draws',
+export const HABITS: readonly FeatureKey[] = [
   'captures',
   'checks',
-  'pawnCaptures',
-  'kingMoves',
+  'pawnMoves',
+  'knightMoves',
+  'bishopMoves',
   'rookMoves',
-  'earlyQueenMove',
-  'queensOff',
-  'firstCapturePly',
+  'queenMoves',
+  'kingMoves',
+  'pawnAdvance',
+  'pawnCaptures',
+  'castleKing',
+  'castleQueen',
   'castlePly',
-  'queenTradePly',
-  'pieces30',
-  'pieces50',
-  'kingAdvance50',
+  'earlyQueenMove',
+  'pawnSpace30',
+  'bishopPairEdge30',
+  'bishopsOverKnights30',
   'isolatedPawns30',
   'doubledPawns30',
-]);
-
-/**
- * Openings are the most reliable signal of a player, but a ranking decided by them alone says little about
- * how someone plays: their weight is cut to this share, so the other groups count for as much.
- */
-export const OPENING_WEIGHT = 0.5;
+  'kingAdvance50',
+];
 export type FeatureValues = Record<FeatureKey, number>;
 
 export type GameResult = 'win' | 'draw' | 'loss';
@@ -334,4 +330,17 @@ export function aggregate(records: FeatureValues[]): Profile {
     if (n) values[k] = sum / n;
   }
   return { games: records.length, values };
+}
+
+/**
+ * Each feature of the player minus the same feature of the opponent in the same game. Whatever the game
+ * does to both sides (length, pace, how many pieces get traded, the platform) cancels out, and so does most
+ * of the gap in strength when the opponent is a peer; what is left is how this player differs from the
+ * other one. Features that describe the whole position or the game come out near zero and carry nothing.
+ */
+export function pairedFeatures(moves: string[], color: 'white' | 'black', result: GameResult): FeatureValues | null {
+  const mine = gameFeatures(moves, color, result);
+  const theirs = gameFeatures(moves, color === 'white' ? 'black' : 'white', result === 'win' ? 'loss' : result === 'loss' ? 'win' : 'draw');
+  if (!mine || !theirs) return null;
+  return Object.fromEntries(FEATURES.map((k) => [k, mine[k] - theirs[k]])) as FeatureValues;
 }
