@@ -2,22 +2,53 @@
 //
 //   mkdir -p data-src/legends && cd data-src/legends
 //   for p in Fischer Kasparov Tal ...; do curl -LO https://www.pgnmentor.com/players/$p.zip; done; unzip '*.zip'
-//   node --experimental-strip-types scripts/build-styles.mjs [data-src/legends] [maxGamesPerPlayer]
+//   node --experimental-strip-types scripts/build-styles.mjs [data-src/legends] [maxGamesPerPlayer] [onlyNames]
 //
 // Each <Name>.pgn holds the games of one player (PGN Mentor layout). A game counts for the player when
-// the file name is the surname in the White or Black header. Games are replayed with the same feature code
+// the file name is the surname that starts the White or Black header ("Tal, Mikhail"). Games are replayed with the same feature code
 // the app runs on the user's games, so the two are comparable.
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { aggregate, FEATURES, gameFeatures, MIN_PLIES } from '../src/style/features.ts';
 
 const dir = process.argv[2] ?? 'data-src/legends';
-const MAX_GAMES = Number(process.argv[3] ?? 600);
+const MAX_GAMES = Number(process.argv[3] ?? 2000);
 const MIN_GAMES = 40;
+// Optional comma-separated file names: rebuild only those and keep the other legends from the existing file.
+const ONLY = process.argv[4]?.split(',');
 const OUT = 'public/data';
 
 // Display names; the file name is the surname used to find the player in each game.
 const NAMES = {
   Alekhine: 'Alexander Alekhine',
+  Adams: 'Michael Adams',
+  Aronian: 'Levon Aronian',
+  Bronstein: 'David Bronstein',
+  Chigorin: 'Mikhail Chigorin',
+  Euwe: 'Max Euwe',
+  Flohr: 'Salo Flohr',
+  Geller: 'Efim Geller',
+  Gelfand: 'Boris Gelfand',
+  Giri: 'Anish Giri',
+  Grischuk: 'Alexander Grischuk',
+  Gukesh: 'Gukesh Dommaraju',
+  Keres: 'Paul Keres',
+  Leko: 'Peter Leko',
+  Mamedyarov: 'Shakhriyar Mamedyarov',
+  Maroczy: 'Géza Maróczy',
+  Marshall: 'Frank Marshall',
+  Nepomniachtchi: 'Ian Nepomniachtchi',
+  Pillsbury: 'Harry Pillsbury',
+  PolgarJ: 'Judit Polgár',
+  Polugaevsky: 'Lev Polugaevsky',
+  Portisch: 'Lajos Portisch',
+  Radjabov: 'Teimour Radjabov',
+  Reshevsky: 'Samuel Reshevsky',
+  Reti: 'Richard Réti',
+  Stein: 'Leonid Stein',
+  Svidler: 'Peter Svidler',
+  Taimanov: 'Mark Taimanov',
+  Tarrasch: 'Siegbert Tarrasch',
+  Timman: 'Jan Timman',
   Anand: 'Viswanathan Anand',
   Anderssen: 'Adolf Anderssen',
   Botvinnik: 'Mikhail Botvinnik',
@@ -48,6 +79,9 @@ const NAMES = {
   Topalov: 'Veselin Topalov',
 };
 
+// How the player is written in the headers when the file name is not enough.
+const HEADER = { PolgarJ: 'Polgar, Judit' };
+
 const RESULTS = { '1-0': 'white', '0-1': 'black', '1/2-1/2': 'draw' };
 
 /** Games of a PGN file as { headers, moves } (SAN, variations and comments removed). */
@@ -68,14 +102,16 @@ function* games(text) {
   }
 }
 
-const legends = [];
+const legends = ONLY ? JSON.parse(readFileSync(`${OUT}/styles.json`, 'utf8')).legends.filter((l) => !ONLY.some((n) => n.toLowerCase() === l.id)) : [];
 for (const file of readdirSync(dir).filter((f) => f.endsWith('.pgn')).sort()) {
   const surname = file.replace(/\.pgn$/, '');
+  if (ONLY && !ONLY.includes(surname)) continue;
   const name = NAMES[surname];
   if (!name) continue;
   const mine = [];
   for (const g of games(readFileSync(`${dir}/${file}`, 'latin1'))) {
-    const side = g.headers.White?.startsWith(surname) ? 'white' : g.headers.Black?.startsWith(surname) ? 'black' : null;
+    const is = (header) => header !== undefined && (HEADER[surname] ? header.startsWith(HEADER[surname]) : header === surname || header.startsWith(`${surname},`) || header.startsWith(`${surname} `));
+    const side = is(g.headers.White) ? 'white' : is(g.headers.Black) ? 'black' : null;
     const winner = RESULTS[g.headers.Result];
     if (!side || !winner || g.moves.length < MIN_PLIES) continue;
     mine.push({ ...g, side, result: winner === 'draw' ? 'draw' : winner === side ? 'win' : 'loss' });

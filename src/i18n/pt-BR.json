@@ -823,11 +823,23 @@
     "offlineReady": "Pronto: o app agora funciona offline."
   },
   "style": {
+    "radar": "Radar de estilo",
+    "radarHint": "50 é a média das lendas; quanto mais longe do centro, mais disso.",
+    "radarLabel": "Gráfico de radar do seu estilo contra {{name}}",
+    "axisCol": "Eixo",
+    "axis": {
+      "aggression": "Agressividade",
+      "risk": "Risco",
+      "simplification": "Simplificação",
+      "activity": "Jogo de peças",
+      "openness": "Jogo aberto",
+      "endurance": "Resistência"
+    },
     "loadError": "Não foi possível carregar os dados das lendas.",
     "computing": "Lendo suas partidas… {{done}}/{{total}}",
     "needGames": "Jogue pelo menos {{count}} partidas para ver seu estilo (você tem {{have}} neste filtro).",
     "closest": "Seu estilo é mais próximo de…",
-    "basedOn": "Com base em {{count}} das suas partidas, comparadas às de 29 lendas do xadrez.",
+    "basedOn": "Com base em {{count}} das suas partidas, comparadas às de 58 lendas do xadrez.",
     "ranking": "Lendas mais próximas",
     "rankingHint": "Clique em uma para comparar.",
     "compare": "Você vs {{name}}",

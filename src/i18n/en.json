@@ -823,11 +823,23 @@
     "offlineReady": "Done: the app now works offline."
   },
   "style": {
+    "radar": "Style radar",
+    "radarHint": "50 is the average of the legends; further out means more of it.",
+    "radarLabel": "Radar chart of your style against {{name}}",
+    "axisCol": "Axis",
+    "axis": {
+      "aggression": "Aggression",
+      "risk": "Risk",
+      "simplification": "Simplifying",
+      "activity": "Piece play",
+      "openness": "Open play",
+      "endurance": "Endurance"
+    },
     "loadError": "Could not load the legends' data.",
     "computing": "Reading your games… {{done}}/{{total}}",
     "needGames": "Play at least {{count}} games to see your style (you have {{have}} in this filter).",
     "closest": "Your style is closest to…",
-    "basedOn": "Based on {{count}} of your games, compared with the games of 29 chess legends.",
+    "basedOn": "Based on {{count}} of your games, compared with the games of 58 chess legends.",
     "ranking": "Closest legends",
     "rankingHint": "Click one to compare.",
     "compare": "You vs {{name}}",

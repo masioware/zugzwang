@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Panel, Block } from './layout';
 import { Empty } from './shared';
 import { UserIcon } from '../../components/icons';
+import StyleRadar from '../../components/charts/StyleRadar';
+import { axisScores } from '../../style/axes';
 import { aggregate, FEATURES, gameFeatures, type FeatureKey, type FeatureValues, type Profile } from '../../style/features';
 import { matchStyle, MIN_GAMES, zscore, type Match, type StyleData } from '../../style/match';
 import type { Game } from '../../types';
@@ -73,6 +75,13 @@ export default function StylePanel({ games }: { games: Game[] }) {
       <>
         <Block title={t('style.closest')} subtitle={t('style.basedOn', { count: profile.games })}>
           <Hero match={shown} />
+        </Block>
+        <Block title={t('style.radar')} subtitle={t('style.radarHint')}>
+          <StyleRadar
+            you={axisScores(profile.values, data.scale)}
+            legend={axisScores(shown.legend.values, data.scale)}
+            legendName={shown.legend.name.split(' ').at(-1)!}
+          />
         </Block>
         <Block title={t('style.ranking')} subtitle={t('style.rankingHint')}>
           <ol className="grid gap-1.5 sm:grid-cols-2">

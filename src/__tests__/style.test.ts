@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { aggregate, FEATURES, gameFeatures, type FeatureValues } from '../style/features';
 import { matchStyle, type StyleData } from '../style/match';
+import { axisScores } from '../style/axes';
 
 // A quiet 1.e4 e5 game of 30 plies where both sides castle kingside and nothing is sacrificed.
 const QUIET = 'e4 e5 Nf3 Nc6 Bc4 Bc5 c3 Nf6 d3 d6 O-O O-O Re1 a6 Bb3 Ba7 Nbd2 Be6 Nf1 Bxb3 axb3 h6 Ng3 Re8 h3 Qd7 Bd2 Rad8 Qc2 Nh7'.split(' ');
@@ -73,5 +74,27 @@ describe('matchStyle', () => {
   it('ignores features the player has no data for', () => {
     const values = { ...flat(0.8), whiteE4: undefined } as Partial<FeatureValues>;
     expect(matchStyle({ games: 50, values }, data)[0].legend.id).toBe('high');
+  });
+});
+
+describe('axisScores', () => {
+  const flat = (v: number): FeatureValues => Object.fromEntries(FEATURES.map((k) => [k, v])) as FeatureValues;
+  const scale = Object.fromEntries(FEATURES.map((k) => [k, { mean: 0.5, std: 0.2 }])) as StyleData['scale'];
+
+  it('sits at 50 for an average player', () => {
+    for (const score of Object.values(axisScores(flat(0.5), scale))) expect(score).toBe(50);
+  });
+
+  it('lets opposing features cancel and signs pull axes down', () => {
+    const s = axisScores(flat(0.7), scale); // +1 sd on everything
+    expect(s.aggression).toBe(70);
+    expect(s.risk).toBe(43); // +1 for sacrifices, -1 for draws, -1 for early queen trades: mean -1/3 sd
+    expect(s.openness).toBe(50 + Math.round((20 * (3 - 4)) / 7));
+  });
+
+  it('leaves out axes without data and stays within 0-100', () => {
+    const s = axisScores({ length: 100, kingMoves: 100 }, scale);
+    expect(s.endurance).toBe(100);
+    expect(s.aggression).toBeUndefined();
   });
 });
