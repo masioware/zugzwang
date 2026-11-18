@@ -1,0 +1,5 @@
+{
+  "note": "Subjective but widely repeated characterisations of the legends' style, used only to check that the match groups similar players together (face validity). Legends described as universal or with no clear label are left out.",
+  "attacking": ["tal", "alekhine", "morphy", "anderssen", "kasparov", "shirov", "topalov", "bronstein", "nakamura", "firouzja", "short", "chigorin", "pillsbury", "marshall", "stein", "geller", "polgarj", "nepomniachtchi"],
+  "positional": ["karpov", "petrosian", "capablanca", "smyslov", "kramnik", "botvinnik", "steinitz", "rubinstein", "nimzowitsch", "tarrasch", "flohr", "portisch", "ding", "giri", "euwe", "gelfand", "leko", "adams"]
+}

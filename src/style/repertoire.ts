@@ -11,6 +11,9 @@ import { Chess } from 'chess.js';
 /** Position key -> [eco, name] for named positions, null for intermediate book positions (public/data/openings.json). */
 export type OpeningBook = Record<string, [string, string] | null>;
 
+/** Shortest game worth profiling, in plies. */
+export const MIN_PLIES = 20;
+
 /** Plies replayed to find the opening: enough to tell the main systems apart, before the game is its own. */
 export const REPERTOIRE_PLIES = 16;
 
@@ -104,14 +107,78 @@ export function overlap(p: Distribution, q: Distribution): number {
 /** Weight of the family level against the variation level: variations are finer but sparser. */
 const FAMILY_SHARE = 0.5;
 
-/** How alike two repertoires are, 0-1, averaged over the colours both have; undefined when none is shared. */
-export function repertoireSimilarity(a: Repertoire, b: Repertoire): { overall: number; white?: number; black?: number } | undefined {
+/** What the average legend plays, per colour: the baseline that "common" is measured against. */
+export type RepertoireMean = Partial<Record<'white' | 'black', { family: Distribution; variation: Distribution }>>;
+
+/** The average of the repertoires, per colour (a colour a repertoire lacks counts as nothing played). */
+export function meanRepertoire(reps: Repertoire[]): RepertoireMean {
+  const out: RepertoireMean = {};
+  for (const color of ['white', 'black'] as const) {
+    const have = reps.filter((r) => r[color]);
+    if (!have.length) continue;
+    const avg = (level: 'family' | 'variation'): Distribution => {
+      const sum: Distribution = {};
+      for (const r of have) for (const [k, v] of Object.entries(r[color]![level])) sum[k] = (sum[k] ?? 0) + v;
+      return Object.fromEntries(Object.entries(sum).map(([k, v]) => [k, +(v / have.length).toFixed(5)]));
+    };
+    out[color] = { family: avg('family'), variation: avg('variation') };
+  }
+  return out;
+}
+
+/**
+ * How much of `p` is unusual: the square root of each share minus the square root of the average share.
+ * Everyone plays 1.e4 and 1...e5 sometimes; what tells players apart is how far they go from the usual.
+ */
+function unusual(p: Distribution, mean: Distribution): Distribution {
+  const out: Distribution = {};
+  for (const k of new Set([...Object.keys(p), ...Object.keys(mean)])) out[k] = Math.sqrt(p[k] ?? 0) - Math.sqrt(mean[k] ?? 0);
+  return out;
+}
+
+function cosine(a: Distribution, b: Distribution): number {
+  let dot = 0;
+  let x = 0;
+  let y = 0;
+  for (const [k, v] of Object.entries(a)) {
+    x += v * v;
+    if (k in b) dot += v * b[k];
+  }
+  for (const v of Object.values(b)) y += v * v;
+  return x && y ? dot / Math.sqrt(x * y) : 0;
+}
+
+/**
+ * Openings both play that are NOT the usual ones, the ones that add most first: product of how far each is
+ * above the average (square-root scale), so a line both favour that most legends avoid ranks above 1.e4.
+ */
+export function distinctiveShared(a: ColourRepertoire, b: ColourRepertoire, mean: Distribution): { family: string; you: number; legend: number; score: number }[] {
+  const out: { family: string; you: number; legend: number; score: number }[] = [];
+  for (const [family, p] of Object.entries(a.family)) {
+    const q = b.family[family];
+    if (q === undefined) continue;
+    const m = Math.sqrt(mean[family] ?? 0);
+    const score = (Math.sqrt(p) - m) * (Math.sqrt(q) - m);
+    if (Math.sqrt(p) > m && Math.sqrt(q) > m) out.push({ family, you: p, legend: q, score });
+  }
+  return out.sort((x, y) => y.score - x.score);
+}
+
+/**
+ * How alike two repertoires are, 0-1, averaged over the colours both have; undefined when none is shared.
+ * With `mean` the shares are first taken relative to the average repertoire (cosine of the unusual parts,
+ * floored at 0), so the openings everybody plays count for little; without it, plain overlap.
+ */
+export function repertoireSimilarity(a: Repertoire, b: Repertoire, mean?: RepertoireMean): { overall: number; white?: number; black?: number } | undefined {
   const parts: { white?: number; black?: number } = {};
   for (const color of ['white', 'black'] as const) {
     const x = a[color];
     const y = b[color];
     if (!x || !y) continue;
-    parts[color] = FAMILY_SHARE * overlap(x.family, y.family) + (1 - FAMILY_SHARE) * overlap(x.variation, y.variation);
+    const m = mean?.[color];
+    parts[color] = m
+      ? Math.max(0, FAMILY_SHARE * cosine(unusual(x.family, m.family), unusual(y.family, m.family)) + (1 - FAMILY_SHARE) * cosine(unusual(x.variation, m.variation), unusual(y.variation, m.variation)))
+      : FAMILY_SHARE * overlap(x.family, y.family) + (1 - FAMILY_SHARE) * overlap(x.variation, y.variation);
   }
   const values = Object.values(parts);
   if (!values.length) return undefined;
