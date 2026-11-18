@@ -948,6 +948,18 @@
     "practiceTag": "Prática",
     "progress": "Progresso",
     "missed": "Desta vez não",
-    "ownMissedSub": "Veja de novo: este é o lance que lhe custou caro."
+    "ownMissedSub": "Veja de novo: este é o lance que lhe custou caro.",
+    "pathHint": "Uma lição por vez: passe nos exercícios ({{count}} acertos limpos seguidos) para liberar a próxima.",
+    "status": {
+      "done": "Exercícios concluídos",
+      "active": "Aberta",
+      "locked": "Bloqueada"
+    },
+    "streak": "{{streak}}/{{target}} seguidos",
+    "lockedHint": "Abre quando a lição anterior for concluída.",
+    "again": "Treinar de novo",
+    "lockedLesson": "Conclua a lição anterior para abrir esta.",
+    "lessonPassed": "Exercícios concluídos! A próxima lição está aberta.",
+    "lessonRetry": "{{solved}} de {{total}} resolvidos, mas a lição pede {{target}} acertos limpos seguidos. Tente outra rodada."
   }
 }

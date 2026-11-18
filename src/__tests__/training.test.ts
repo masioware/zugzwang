@@ -95,3 +95,42 @@ describe('diagnose examples', () => {
     expect(e?.setup?.uci).toBe('b8c6');
   });
 });
+
+import { buildPath, cleanStreak, drillTarget, DRILL_STREAK } from '../training/path';
+import type { Weakness } from '../training/diagnose';
+
+const weak = (id: string): Weakness => ({ id: id as Weakness['id'], kind: 'tactic', key: id, count: 5, opportunities: 100, rate: 5, loss: 50, examples: [] });
+
+describe('path', () => {
+  it('counts only the clean solves at the end', () => {
+    const a = (solved: boolean, startedAt: number) => ({ solved, startedAt });
+    expect(cleanStreak([a(true, 1), a(false, 2), a(true, 3), a(true, 4)])).toBe(2);
+    expect(cleanStreak([a(true, 4), a(false, 5)])).toBe(0);
+    expect(cleanStreak([])).toBe(0);
+  });
+  it('asks for fewer solves when the lesson is short, never none', () => {
+    expect(drillTarget(20)).toBe(DRILL_STREAK);
+    expect(drillTarget(3)).toBe(3);
+    expect(drillTarget(0)).toBe(1);
+  });
+  it('opens one lesson at a time, in ranking order', () => {
+    const ws = [weak('a'), weak('b'), weak('c')];
+    expect(buildPath(ws, []).map((n) => n.status)).toEqual(['active', 'locked', 'locked']);
+    const b = { id: 'a', passedAt: 1, baseline: { rate: 5, count: 5, opportunities: 100 } };
+    const path = buildPath(ws, [b]);
+    expect(path.map((n) => [n.weakness.id, n.status])).toEqual([['a', 'done'], ['b', 'active'], ['c', 'locked']]);
+  });
+  it('keeps drilled lessons in place when the ranking changes, and drops those no longer found', () => {
+    const progress = [
+      { id: 'c', passedAt: 1, baseline: { rate: 1, count: 1, opportunities: 1 } },
+      { id: 'gone', passedAt: 2, baseline: { rate: 1, count: 1, opportunities: 1 } },
+    ];
+    const path = buildPath([weak('a'), weak('b'), weak('c')], progress);
+    expect(path.map((n) => n.weakness.id)).toEqual(['c', 'a', 'b']);
+    expect(path.map((n) => n.status)).toEqual(['done', 'active', 'locked']);
+  });
+  it('has nothing locked when everything is drilled', () => {
+    const p = { passedAt: 1, baseline: { rate: 1, count: 1, opportunities: 1 } };
+    expect(buildPath([weak('a')], [{ id: 'a', ...p }]).map((n) => n.status)).toEqual(['done']);
+  });
+});

@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { db } from '../db';
+import { LockIcon } from '../components/icons';
 import ClassificationIcon from '../components/ClassificationIcon';
 import { Progress } from '../components/puzzle/Section';
 import { ThemeChips } from '../components/puzzle/Bits';
@@ -10,6 +12,7 @@ import { useSolver, type FinishResult } from '../puzzles/useSolver';
 import { puzzleFacts } from '../puzzles/solve';
 import { savePuzzle } from '../puzzles/source';
 import { buildLesson } from '../training/exercises';
+import { baselineOf, buildPath, cleanStreak, drillTarget } from '../training/path';
 import { useWeaknesses, weaknessLabel } from '../training/useWeaknesses';
 import type { Puzzle, PuzzleAttempt } from '../types';
 
@@ -21,18 +24,24 @@ export default function TrainLesson() {
   const id = decodeURIComponent(useParams().id ?? '');
   const weaknesses = useWeaknesses();
   const weakness = weaknesses?.find((w) => w.id === id);
+  const progress = useLiveQuery(() => db.trainProgress.toArray(), []);
+  const node = weaknesses && progress ? buildPath(weaknesses, progress).find((n) => n.weakness.id === id) : undefined;
+  const status = node?.status;
 
   const [queue, setQueue] = useState<Puzzle[]>();
   const [ownCount, setOwnCount] = useState(0);
   const [position, setPosition] = useState(0);
   const [solved, setSolved] = useState(0);
   const [last, setLast] = useState<FinishResult | null>(null);
+  /** Bumped to build a fresh round of exercises for the same lesson. */
+  const [round, setRound] = useState(0);
+  const [passedNow, setPassedNow] = useState(false);
   const advanceTimer = useRef<number | undefined>(undefined);
 
   // The lesson is built once per weakness, not rebuilt when the games list refreshes.
-  const weaknessId = weakness?.id;
+  const weaknessId = status === 'locked' ? undefined : weakness?.id;
   useEffect(() => {
-    if (!weakness) return;
+    if (!weakness || !weaknessId) return;
     let cancelled = false;
     void buildLesson(weakness).then((l) => {
       if (cancelled) return;
@@ -40,12 +49,14 @@ export default function TrainLesson() {
       setQueue([...l.own, ...l.practice]);
       setPosition(0);
       setSolved(0);
+      setLast(null);
+      setPassedNow(false);
     });
     return () => {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [weaknessId]);
+  }, [weaknessId, round]);
 
   useEffect(() => () => clearTimeout(advanceTimer.current), []);
 
@@ -79,13 +90,30 @@ export default function TrainLesson() {
       puzzleRating: puzzle.rating,
       ...puzzleFacts(puzzle),
     };
-    void db.puzzleAttempts.add(attempt);
+    void (async () => {
+      await db.puzzleAttempts.add(attempt);
+      if (status === 'done' || !queue) return;
+      const mine = await db.puzzleAttempts.where('mode').equals('train').filter((a) => a.weaknessId === weakness.id).toArray();
+      if (cleanStreak(mine) < drillTarget(queue.length)) return;
+      await db.trainProgress.put({ id: weakness.id, passedAt: Date.now(), baseline: baselineOf(weakness) });
+      // Drilled: nothing more to play in this lesson.
+      setQueue(queue.slice(0, position + 1));
+      setPassedNow(true);
+    })();
     if (r.solved) advanceTimer.current = window.setTimeout(advance, ADVANCE_DELAY);
   }
 
   const solver = useSolver(puzzle, { retry: false, onFinish });
 
   if (!weaknesses || (weakness && !queue)) return <p className="text-ink-3">{t('train.loading')}</p>;
+  if (weakness && status === 'locked')
+    return (
+      <div className="panel mx-auto max-w-lg space-y-4 p-6 text-center">
+        <LockIcon className="mx-auto h-8 w-8 text-ink-3" />
+        <p className="text-ink-2">{t('train.lockedLesson')}</p>
+        <Link to="/train" className="btn-primary h-10 w-full">{t('train.back')}</Link>
+      </div>
+    );
   if (!weakness)
     return (
       <div className="panel mx-auto max-w-lg space-y-4 p-6 text-center">
@@ -103,10 +131,15 @@ export default function TrainLesson() {
         <h1 className="font-display text-xl font-bold">{label}</h1>
         {total === 0 ? (
           <p className="text-ink-2">{t('train.noExercises')}</p>
+        ) : passedNow || status === 'done' ? (
+          <p className="text-good">{t(passedNow ? 'train.lessonPassed' : 'train.lessonDone', { solved, total })}</p>
         ) : (
-          <p className="text-ink-2">{t('train.lessonDone', { solved, total })}</p>
+          <p className="text-ink-2">{t('train.lessonRetry', { solved, total, target: drillTarget(total) })}</p>
         )}
-        <Link to="/train" className="btn-primary h-10 w-full">{t('train.back')}</Link>
+        {total > 0 && !passedNow && (
+          <button className="btn-primary h-10 w-full" onClick={() => setRound((r) => r + 1)}>{t('train.again')}</button>
+        )}
+        <Link to="/train" className="btn-ghost h-10 w-full">{t('train.back')}</Link>
       </div>
     );
 

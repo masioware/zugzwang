@@ -66,3 +66,5 @@ export const PuzzleIcon = base(<path d="M10 3h4v2.5a1.5 1.5 0 003 0V3h4v7h-2.5a1
 export const UsersIcon = base(<><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20a6.5 6.5 0 0113 0" /><path d="M16 4.6a3.5 3.5 0 010 6.8M18 14a6.5 6.5 0 013.5 6" /></>);
 export const UserIcon = base(<><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0116 0" /></>);
 export const CpuIcon = base(<><rect x="6" y="6" width="12" height="12" rx="2" /><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4" /></>);
+export const LockIcon = base(<><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V8a4 4 0 018 0v3" /></>);
+export const CheckIcon = base(<path d="M5 12.5l4.5 4.5L19 7.5" />);
