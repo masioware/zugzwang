@@ -3,7 +3,7 @@ import { BrowserRouter, Navigate, NavLink, Route, Routes } from 'react-router-do
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from './db';
 import Logo from './components/Logo';
-import { BoardIcon, ChartIcon, PlayIcon, PuzzleIcon, UserIcon, UsersIcon } from './components/icons';
+import { BoardIcon, ChartIcon, PlayIcon, PuzzleIcon, TargetIcon, UserIcon, UsersIcon } from './components/icons';
 import { useTranslation } from 'react-i18next';
 import Home from './pages/Home';
 import Games from './pages/Games';
@@ -13,6 +13,7 @@ const Stats = lazy(() => import('./pages/Stats'));
 const Friends = lazy(() => import('./pages/Friends'));
 const Friend = lazy(() => import('./pages/Friend'));
 const HeadToHeadView = lazy(() => import('./pages/Friend').then((m) => ({ default: m.HeadToHeadView })));
+const Train = lazy(() => import('./pages/Train'));
 const Puzzles = lazy(() => import('./pages/Puzzles'));
 const PuzzleStats = lazy(() => import('./pages/PuzzleStats'));
 const Play = lazy(() => import('./pages/Play'));
@@ -32,6 +33,7 @@ import EngineSettings from './components/EngineSettings';
 const NAV = [
   { to: '/games', key: 'games', icon: BoardIcon },
   { to: '/stats', key: 'stats', icon: ChartIcon },
+  { to: '/train', key: 'train', icon: TargetIcon },
   { to: '/puzzles', key: 'puzzles', icon: PuzzleIcon },
   { to: '/play', key: 'play', icon: PlayIcon },
   { to: '/friends', key: 'friends', icon: UsersIcon },
@@ -107,6 +109,7 @@ export default function App() {
               <Route path="stats/:section?" element={<Stats />} />
             </Route>
             <Route path="/play" element={<Play />} />
+            <Route path="/train" element={<Train />} />
             <Route path="/puzzles" element={<Puzzles />} />
             <Route path="/puzzles/p/:id" element={<Puzzles />} />
             <Route path="/puzzles/stats" element={<PuzzleStats />} />
@@ -124,7 +127,7 @@ export default function App() {
 
         {/* Phones: the sections live in a bottom tab bar, within thumb reach. */}
         <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-bg/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden">
-          <div className="grid grid-cols-6">
+          <div className="grid grid-cols-7">
             {[...NAV, { to: '/accounts', key: 'accounts', icon: UserIcon } as const].map(({ to, key, icon: Icon }) => (
               <NavLink
                 key={to}
