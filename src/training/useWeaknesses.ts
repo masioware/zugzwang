@@ -20,3 +20,9 @@ export function useWeaknesses(): Weakness[] | undefined {
 export function weaknessLabel(t: (k: string, o?: Record<string, unknown>) => string, w: Pick<Weakness, 'kind' | 'key'>): string {
   return w.kind === 'opening' ? t('train.openingLabel', { name: w.key }) : t(`train.${w.kind}.${w.key}`);
 }
+
+/** Label from a bare weakness id (`kind:key`), for places that have no Weakness at hand. */
+export function weaknessLabelOfId(t: (k: string, o?: Record<string, unknown>) => string, id: string): string {
+  const cut = id.indexOf(':');
+  return weaknessLabel(t, { kind: id.slice(0, cut) as Weakness['kind'], key: id.slice(cut + 1) });
+}

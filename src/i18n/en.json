@@ -949,17 +949,26 @@
     "progress": "Progress",
     "missed": "Not this time",
     "ownMissedSub": "Replay it: this is the move that cost you.",
-    "pathHint": "One lesson at a time: pass the drills ({{count}} clean solves in a row) to unlock the next.",
+    "pathHint": "One lesson at a time: pass the drills ({{count}} clean solves in a row), then prove it in your own games, to unlock the next.",
     "status": {
       "done": "Drills passed",
       "active": "Open",
-      "locked": "Locked"
+      "locked": "Locked",
+      "verifying": "Being checked in your games"
     },
     "streak": "{{streak}}/{{target}} in a row",
     "lockedHint": "Unlocks when the lesson before it is passed.",
     "again": "Practice again",
     "lockedLesson": "Pass the lesson before this one to open it.",
-    "lessonPassed": "Drills passed! The next lesson is open.",
-    "lessonRetry": "{{solved}} of {{total}} solved, but the lesson needs {{target}} clean solves in a row. Try another round."
+    "lessonPassed": "Drills passed! To open the next lesson, show it in {{count}} new analysed games.",
+    "lessonRetry": "{{solved}} of {{total}} solved, but the lesson needs {{target}} clean solves in a row. Try another round.",
+    "verifying": "Drills passed. Now it has to show in your games: play {{count}} more analysed games and the mistake should drop by half.",
+    "verifyProgress": "{{seen}}/{{total}} new games analysed",
+    "reasonUnproven": "The mistake did not drop in your new games. Back to drills.",
+    "reasonRelapse": "The mistake came back in your recent games. Back to drills.",
+    "masteredNote": "Fixed: {{from}} → {{to}} per 100 moves.",
+    "bannerVerifying": "Checking “{{name}}”: {{seen}}/{{total}} new games",
+    "bannerRedo": "Back to drills: “{{name}}”",
+    "bannerGo": "Open training"
   }
 }

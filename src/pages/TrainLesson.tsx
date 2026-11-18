@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { db } from '../db';
@@ -12,8 +11,9 @@ import { useSolver, type FinishResult } from '../puzzles/useSolver';
 import { puzzleFacts } from '../puzzles/solve';
 import { savePuzzle } from '../puzzles/source';
 import { buildLesson } from '../training/exercises';
-import { baselineOf, buildPath, cleanStreak, drillTarget } from '../training/path';
+import { baselineOf, buildPath, cleanStreak, drillTarget, VERIFY_GAMES } from '../training/path';
 import { useWeaknesses, weaknessLabel } from '../training/useWeaknesses';
+import { useVerification } from '../training/useVerification';
 import type { Puzzle, PuzzleAttempt } from '../types';
 
 /** Pause after a clean solve before the next exercise comes up. */
@@ -24,7 +24,7 @@ export default function TrainLesson() {
   const id = decodeURIComponent(useParams().id ?? '');
   const weaknesses = useWeaknesses();
   const weakness = weaknesses?.find((w) => w.id === id);
-  const progress = useLiveQuery(() => db.trainProgress.toArray(), []);
+  const { progress } = useVerification();
   const node = weaknesses && progress ? buildPath(weaknesses, progress).find((n) => n.weakness.id === id) : undefined;
   const status = node?.status;
 
@@ -92,10 +92,16 @@ export default function TrainLesson() {
     };
     void (async () => {
       await db.puzzleAttempts.add(attempt);
-      if (status === 'done' || !queue) return;
-      const mine = await db.puzzleAttempts.where('mode').equals('train').filter((a) => a.weaknessId === weakness.id).toArray();
+      // Only an open lesson can be passed; replaying one being verified or mastered changes nothing.
+      if (status !== 'active' || !queue) return;
+      const since = progress?.find((p) => p.id === weakness.id)?.resetAt ?? 0;
+      const mine = await db.puzzleAttempts
+        .where('mode')
+        .equals('train')
+        .filter((a) => a.weaknessId === weakness.id && a.startedAt > since)
+        .toArray();
       if (cleanStreak(mine) < drillTarget(queue.length)) return;
-      await db.trainProgress.put({ id: weakness.id, passedAt: Date.now(), baseline: baselineOf(weakness) });
+      await db.trainProgress.put({ id: weakness.id, status: 'verifying', passedAt: Date.now(), baseline: baselineOf(weakness) });
       // Drilled: nothing more to play in this lesson.
       setQueue(queue.slice(0, position + 1));
       setPassedNow(true);
@@ -131,8 +137,10 @@ export default function TrainLesson() {
         <h1 className="font-display text-xl font-bold">{label}</h1>
         {total === 0 ? (
           <p className="text-ink-2">{t('train.noExercises')}</p>
-        ) : passedNow || status === 'done' ? (
-          <p className="text-good">{t(passedNow ? 'train.lessonPassed' : 'train.lessonDone', { solved, total })}</p>
+        ) : passedNow || status !== 'active' ? (
+          <p className={passedNow ? 'text-good' : 'text-ink-2'}>
+            {t(passedNow ? 'train.lessonPassed' : 'train.lessonDone', { solved, total, count: VERIFY_GAMES })}
+          </p>
         ) : (
           <p className="text-ink-2">{t('train.lessonRetry', { solved, total, target: drillTarget(total) })}</p>
         )}

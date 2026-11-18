@@ -49,7 +49,7 @@ const MAX_EXAMPLES = 5;
 const LOW_SHARE = 0.1;
 const LOW_SECONDS = 15;
 
-const isMistake = (m: MoveAnalysis) => MISTAKES.has(m.classification);
+export const isMistake = (m: MoveAnalysis) => MISTAKES.has(m.classification);
 
 export function isLowClock(m: MoveAnalysis, initialTime?: number): boolean {
   if (m.clockBefore === undefined) return false;
