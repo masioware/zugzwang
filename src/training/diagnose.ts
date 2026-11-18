@@ -39,6 +39,9 @@ export interface Weakness {
   examples: MistakeExample[];
 }
 
+/** Only rated games feed training: casual and bot games are played with different stakes and would blur the picture. */
+export const isTrainable = (g: Game) => g.rated;
+
 export const MISTAKES = new Set(['mistake', 'miss', 'blunder']);
 export const MIN_TACTIC = 3;
 export const MIN_CONTEXT = 5;
@@ -49,7 +52,7 @@ const MAX_EXAMPLES = 5;
 const LOW_SHARE = 0.1;
 const LOW_SECONDS = 15;
 
-const isMistake = (m: MoveAnalysis) => MISTAKES.has(m.classification);
+export const isMistake = (m: MoveAnalysis) => MISTAKES.has(m.classification);
 
 export function isLowClock(m: MoveAnalysis, initialTime?: number): boolean {
   if (m.clockBefore === undefined) return false;
@@ -84,7 +87,7 @@ export function diagnose(games: Game[], analyses: Map<string, GameAnalysis>): We
 
   for (const game of games) {
     const analysis = analyses.get(game.id);
-    if (!analysis || game.userColor === undefined) continue;
+    if (!analysis || game.userColor === undefined || !isTrainable(game)) continue;
     const family = openingFamily(game.opening.name);
     const mine = analysis.moves.filter((m) => m.color === game.userColor);
     let plies: ReturnType<typeof replay> | undefined;

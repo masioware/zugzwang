@@ -1,3 +1,4 @@
+import TrainBanner from '../components/TrainBanner';
 import { useMemo } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -81,6 +82,7 @@ export default function Games() {
           {pending.length ? t('games.analyzePending', { count: pending.length }) : t('games.allAnalyzed')}
         </button>
       </div>
+      {!scope && <TrainBanner />}
       <FilterBar show={['rated', 'source', 'timeClass', 'color', 'outcome', 'period', 'search']} />
 
       {!games.length ? (

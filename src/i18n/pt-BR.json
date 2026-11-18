@@ -919,7 +919,7 @@
     "title": "Treino",
     "subtitle": "O que você insiste em errar, encontrado nos seus jogos analisados.",
     "loading": "Olhando seus jogos…",
-    "empty": "Nada recorrente ainda. Analise mais jogos seus (algumas dezenas de lances com erros) e aparecerá aqui.",
+    "empty": "Nada recorrente ainda. O treino só olha suas partidas rankeadas: analise mais delas (algumas dezenas de lances com erros) e aparecerá aqui.",
     "rate": "{{rate}} a cada 100 lances",
     "count": "{{count}} erros · {{loss}} win% perdidos",
     "example": "Partida, lance {{move}}",
@@ -949,17 +949,26 @@
     "progress": "Progresso",
     "missed": "Desta vez não",
     "ownMissedSub": "Veja de novo: este é o lance que lhe custou caro.",
-    "pathHint": "Uma lição por vez: passe nos exercícios ({{count}} acertos limpos seguidos) para liberar a próxima.",
+    "pathHint": "Uma lição por vez: passe nos exercícios ({{count}} acertos limpos seguidos) e depois prove isso nos seus próprios jogos para liberar a próxima.",
     "status": {
       "done": "Exercícios concluídos",
       "active": "Aberta",
-      "locked": "Bloqueada"
+      "locked": "Bloqueada",
+      "verifying": "Sendo verificada nos seus jogos"
     },
     "streak": "{{streak}}/{{target}} seguidos",
     "lockedHint": "Abre quando a lição anterior for concluída.",
     "again": "Treinar de novo",
     "lockedLesson": "Conclua a lição anterior para abrir esta.",
-    "lessonPassed": "Exercícios concluídos! A próxima lição está aberta.",
-    "lessonRetry": "{{solved}} de {{total}} resolvidos, mas a lição pede {{target}} acertos limpos seguidos. Tente outra rodada."
+    "lessonPassed": "Exercícios concluídos! Para abrir a próxima lição, mostre isso em {{count}} partidas novas analisadas.",
+    "lessonRetry": "{{solved}} de {{total}} resolvidos, mas a lição pede {{target}} acertos limpos seguidos. Tente outra rodada.",
+    "verifying": "Exercícios concluídos. Agora precisa aparecer nos seus jogos: jogue mais {{count}} partidas analisadas e o erro deve cair pela metade.",
+    "verifyProgress": "{{seen}}/{{total}} partidas novas analisadas",
+    "reasonUnproven": "O erro não caiu nas suas partidas novas. De volta aos exercícios.",
+    "reasonRelapse": "O erro voltou nas suas partidas recentes. De volta aos exercícios.",
+    "masteredNote": "Corrigido: {{from}} → {{to}} a cada 100 lances.",
+    "bannerVerifying": "Verificando “{{name}}”: {{seen}}/{{total}} partidas novas",
+    "bannerRedo": "De volta aos exercícios: “{{name}}”",
+    "bannerGo": "Abrir treino"
   }
 }

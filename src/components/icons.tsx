@@ -68,3 +68,4 @@ export const UserIcon = base(<><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8
 export const CpuIcon = base(<><rect x="6" y="6" width="12" height="12" rx="2" /><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4" /></>);
 export const LockIcon = base(<><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V8a4 4 0 018 0v3" /></>);
 export const CheckIcon = base(<path d="M5 12.5l4.5 4.5L19 7.5" />);
+export const EyeIcon = base(<><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></>);
