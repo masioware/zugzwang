@@ -102,6 +102,7 @@ function* games(text) {
   }
 }
 
+const within = {}; // feature -> { ss, n } : squared deviations of games from their own player's mean
 const legends = ONLY ? JSON.parse(readFileSync(`${OUT}/styles.json`, 'utf8')).legends.filter((l) => !ONLY.some((n) => n.toLowerCase() === l.id)) : [];
 for (const file of readdirSync(dir).filter((f) => f.endsWith('.pgn')).sort()) {
   const surname = file.replace(/\.pgn$/, '');
@@ -125,17 +126,35 @@ for (const file of readdirSync(dir).filter((f) => f.endsWith('.pgn')).sort()) {
     continue;
   }
   const { games: n, values } = aggregate(records);
+  for (const k of FEATURES) {
+    const w = (within[k] ??= { ss: 0, n: 0 });
+    for (const r of records) {
+      if (Number.isNaN(r[k])) continue;
+      w.ss += (r[k] - values[k]) ** 2;
+      w.n++;
+    }
+  }
   legends.push({ id: surname.toLowerCase(), name, games: n, values });
   console.log(`${surname.padEnd(12)} ${String(n).padStart(4)} games`);
 }
 
 // Features are compared in units of how much legends differ from each other on them.
+//
+// Each feature also gets a weight in 0-1 for how reliably it tells players apart: the spread between
+// players against the noise of one player's average over PROFILE_GAMES games, as r / (1 + r). A feature that
+// varies a lot between players but little between one player's games counts for more. When only some
+// players are rebuilt (ONLY) the weights of the others are kept.
+const PROFILE_GAMES = 60;
+const previous = ONLY ? JSON.parse(readFileSync(`${OUT}/styles.json`, 'utf8')).scale : {};
 const scale = {};
 for (const k of FEATURES) {
   const xs = legends.map((l) => l.values[k]);
   const mean = xs.reduce((a, b) => a + b, 0) / xs.length;
-  const std = Math.sqrt(xs.reduce((a, b) => a + (b - mean) ** 2, 0) / xs.length);
-  scale[k] = { mean: +mean.toFixed(5), std: +std.toFixed(5) };
+  const variance = xs.reduce((a, b) => a + (b - mean) ** 2, 0) / xs.length;
+  const noise = within[k] && within[k].n ? within[k].ss / within[k].n : 0;
+  const r = noise ? (variance * PROFILE_GAMES) / noise : undefined;
+  const weight = ONLY || r === undefined ? previous[k]?.weight ?? 1 : r / (1 + r);
+  scale[k] = { mean: +mean.toFixed(5), std: +Math.sqrt(variance).toFixed(5), weight: +weight.toFixed(3) };
 }
 for (const l of legends) for (const k of FEATURES) l.values[k] = +l.values[k].toFixed(5);
 

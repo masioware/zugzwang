@@ -829,11 +829,10 @@
     "axisCol": "Axis",
     "axis": {
       "aggression": "Aggression",
-      "risk": "Risk",
-      "simplification": "Simplifying",
-      "activity": "Piece play",
+      "closedPlay": "Closed play",
+      "pieceplay": "Piece play",
       "openness": "Open play",
-      "endurance": "Endurance"
+      "kingSafety": "King safety"
     },
     "loadError": "Could not load the legends' data.",
     "computing": "Reading your games… {{done}}/{{total}}",
@@ -850,7 +849,7 @@
     "unlike": "You differ in:",
     "more": "more than they do",
     "less": "less than they do",
-    "disclaimer": "This compares playing habits (openings, captures, castling, sacrifices, game length…), not strength: it says whose games look most like yours, not how good you are. Sacrifices are detected from material alone, so they are approximate.",
+    "disclaimer": "This compares playing habits (openings, which pieces you move, pawn structure, castling), not strength: it says whose games look most like yours, not how good you are. Things that mostly reflect level or game pace (game length, draws, captures, trades) are left out of the match. Features that tell players apart more reliably count for more, and openings count for half. Even so it is a hint: the legends' styles changed over their careers, and the match is much weaker on games from another period of theirs.",
     "feature": {
       "captures": "Captures",
       "checks": "Checks",
@@ -861,7 +860,6 @@
       "queenMoves": "Queen moves",
       "kingMoves": "King moves",
       "pawnAdvance": "Pawns pushed past the middle",
-      "sacrifices": "Material sacrifices",
       "castleKing": "Castles kingside",
       "castleQueen": "Castles queenside",
       "oppositeCastling": "Opposite-side castling",
@@ -875,7 +873,22 @@
       "blackVsE4E5": "Answers 1.e4 with …e5",
       "blackVsE4C5": "Answers 1.e4 with …c5",
       "blackVsD4D5": "Answers 1.d4 with …d5",
-      "blackVsD4Nf6": "Answers 1.d4 with …Nf6"
+      "blackVsD4Nf6": "Answers 1.d4 with …Nf6",
+      "pieces30": "Pieces left at move 15",
+      "pieces50": "Pieces left at move 25",
+      "pawns30": "Pawns left at move 15",
+      "openFiles30": "Open files at move 15",
+      "centerPawns30": "Pawns in the centre at move 15",
+      "pawnSpace30": "Pawn advancement at move 15",
+      "bishopPairEdge30": "Has the bishop pair at move 15",
+      "bishopsOverKnights30": "Bishops over knights at move 15",
+      "isolatedPawns30": "Isolated pawns at move 15",
+      "doubledPawns30": "Doubled pawns at move 15",
+      "kingAdvance50": "King advanced at move 25",
+      "firstCapturePly": "First capture (how late)",
+      "castlePly": "Castling (how late)",
+      "queenTradePly": "Queen trade (how late)",
+      "pawnCaptures": "Captures made by pawns"
     },
     "legend": {
       "alekhine": "Attacking chess of ferocious complexity, with deep preparation.",
@@ -907,6 +920,14 @@
       "steinitz": "Founder of positional play: accumulates small advantages.",
       "tal": "The Magician from Riga: sacrifices and wild attacks that overwhelm opponents.",
       "topalov": "Aggressive and relentless, always pressing for the initiative."
-    }
+    },
+    "group": {
+      "openings": "Openings",
+      "moves": "Moves",
+      "structure": "Flow of the game",
+      "positions": "Positions reached"
+    },
+    "groupHint": "Where you are alike, by kind of evidence: openings are only one part.",
+    "notCounted": "Not counted in the match: these mostly reflect your level and the pace of the game, not your style."
   }
 }

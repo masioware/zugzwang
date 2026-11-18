@@ -5,8 +5,8 @@ import { Empty } from './shared';
 import { UserIcon } from '../../components/icons';
 import StyleRadar from '../../components/charts/StyleRadar';
 import { axisScores } from '../../style/axes';
-import { aggregate, FEATURES, gameFeatures, type FeatureKey, type FeatureValues, type Profile } from '../../style/features';
-import { matchStyle, MIN_GAMES, zscore, type Match, type StyleData } from '../../style/match';
+import { aggregate, FEATURES, FEATURE_GROUP, gameFeatures, LEVEL_SENSITIVE, type FeatureGroup, type FeatureKey, type FeatureValues, type Profile } from '../../style/features';
+import { hasFeature, matchStyle, MIN_GAMES, zscore, type Match, type StyleData } from '../../style/match';
 import type { Game } from '../../types';
 
 let dataPromise: Promise<StyleData> | null = null;
@@ -46,6 +46,9 @@ function useProfile(games: Game[]): { profile: Profile | undefined; done: number
   }, [games]);
   return state;
 }
+
+/** Order the groups are shown in. */
+const GROUPS: FeatureGroup[] = ['openings', 'moves', 'structure', 'positions'];
 
 const PERCENT = (v: number) => `${(v * 100).toFixed(v < 0.1 ? 1 : 0)}%`;
 function format(key: FeatureKey, v: number): string {
@@ -116,22 +119,35 @@ export default function StylePanel({ games }: { games: Game[] }) {
                   <th className="py-1 text-right font-medium">{t('style.legendsAvg')}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-line">
-                {FEATURES.filter((k) => profile.values[k] !== undefined).map((k) => {
-                  const close = shown.closest.includes(k);
-                  const far = shown.furthest.includes(k);
-                  return (
-                    <tr key={k} className={close ? 'text-win' : far ? 'text-loss' : ''}>
-                      <td className="py-1.5 pr-3">{feature(k)}</td>
-                      <td className="tabular py-1.5 pr-4 text-right">{format(k, profile.values[k]!)}</td>
-                      <td className="tabular py-1.5 pr-4 text-right">{format(k, shown.legend.values[k])}</td>
-                      <td className="tabular py-1.5 text-right text-ink-3">{format(k, data.scale[k].mean)}</td>
+              {GROUPS.map((g) => {
+                const rows = FEATURES.filter((k) => FEATURE_GROUP[k] === g && profile.values[k] !== undefined && hasFeature(k, data));
+                if (!rows.length) return null;
+                return (
+                  <tbody key={g} className="divide-y divide-line">
+                    <tr>
+                      <th colSpan={4} className="pt-4 pb-1 text-left text-xs font-semibold tracking-wide text-ink-3 uppercase">
+                        {t(`style.group.${g}`)}
+                      </th>
                     </tr>
-                  );
-                })}
-              </tbody>
+                    {rows.map((k) => {
+                      const close = shown.closest.includes(k);
+                      const far = shown.furthest.includes(k);
+                      const counted = !LEVEL_SENSITIVE.has(k);
+                      return (
+                        <tr key={k} className={close ? 'text-win' : far ? 'text-loss' : counted ? '' : 'text-ink-3'} title={counted ? undefined : t('style.notCounted')}>
+                          <td className="py-1.5 pr-3">{feature(k)}{!counted && ' *'}</td>
+                          <td className="tabular py-1.5 pr-4 text-right">{format(k, profile.values[k]!)}</td>
+                          <td className="tabular py-1.5 pr-4 text-right">{format(k, shown.legend.values[k])}</td>
+                          <td className="tabular py-1.5 text-right text-ink-3">{format(k, data.scale[k].mean)}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                );
+              })}
             </table>
           </div>
+          <p className="text-xs text-ink-3">* {t('style.notCounted')}</p>
         </Block>
         <p className="px-5 py-4 text-xs text-ink-3">{t('style.disclaimer')}</p>
       </>
@@ -152,6 +168,13 @@ export default function StylePanel({ games }: { games: Game[] }) {
         <div className="font-display text-5xl font-bold text-accent">{match.similarity}%</div>
         <div className="min-w-60 flex-1 space-y-1">
           <div className="text-xl font-bold">{match.legend.name}</div>
+          <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-3" aria-label={t('style.groupHint')}>
+            {GROUPS.filter((g) => match.byGroup[g] !== undefined).map((g) => (
+              <li key={g}>
+                {t(`style.group.${g}`)} <span className="tabular font-semibold text-ink-2">{match.byGroup[g]}%</span>
+              </li>
+            ))}
+          </ul>
           <p className="text-sm text-ink-2">{t(`style.legend.${match.legend.id}`, { defaultValue: '' })}</p>
           <p className="text-sm text-ink-2">
             {t('style.alike')} <span className="text-win">{text(match.closest)}</span>

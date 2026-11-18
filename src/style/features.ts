@@ -17,7 +17,6 @@ export const FEATURES = [
   'queenMoves',
   'kingMoves',
   'pawnAdvance',
-  'sacrifices',
   // Structure of the game
   'castleKing',
   'castleQueen',
@@ -27,6 +26,23 @@ export const FEATURES = [
   'length',
   'draws',
   // Openings
+  // Kind of position reached (snapshots after ply 30 and ply 50)
+  'pieces30',
+  'pieces50',
+  'pawns30',
+  'openFiles30',
+  'centerPawns30',
+  'pawnSpace30',
+  'bishopPairEdge30',
+  'bishopsOverKnights30',
+  'isolatedPawns30',
+  'doubledPawns30',
+  'kingAdvance50',
+  // When things happen
+  'firstCapturePly',
+  'castlePly',
+  'queenTradePly',
+  'pawnCaptures',
   'whiteE4',
   'whiteD4',
   'whiteFlank',
@@ -37,11 +53,86 @@ export const FEATURES = [
 ] as const;
 
 export type FeatureKey = (typeof FEATURES)[number];
+
+export type FeatureGroup = 'openings' | 'moves' | 'structure' | 'positions';
+
+/** Where each feature belongs, for showing and weighing them by kind. */
+export const FEATURE_GROUP: Record<FeatureKey, FeatureGroup> = {
+  captures: 'moves',
+  checks: 'moves',
+  pawnMoves: 'moves',
+  knightMoves: 'moves',
+  bishopMoves: 'moves',
+  rookMoves: 'moves',
+  queenMoves: 'moves',
+  kingMoves: 'moves',
+  pawnAdvance: 'moves',
+  pawnCaptures: 'moves',
+  castleKing: 'structure',
+  castleQueen: 'structure',
+  oppositeCastling: 'structure',
+  earlyQueenMove: 'structure',
+  queensOff: 'structure',
+  length: 'structure',
+  draws: 'structure',
+  firstCapturePly: 'structure',
+  castlePly: 'structure',
+  queenTradePly: 'structure',
+  pieces30: 'positions',
+  pieces50: 'positions',
+  pawns30: 'positions',
+  openFiles30: 'positions',
+  centerPawns30: 'positions',
+  pawnSpace30: 'positions',
+  bishopPairEdge30: 'positions',
+  bishopsOverKnights30: 'positions',
+  isolatedPawns30: 'positions',
+  doubledPawns30: 'positions',
+  kingAdvance50: 'positions',
+  whiteE4: 'openings',
+  whiteD4: 'openings',
+  whiteFlank: 'openings',
+  blackVsE4E5: 'openings',
+  blackVsE4C5: 'openings',
+  blackVsD4D5: 'openings',
+  blackVsD4Nf6: 'openings',
+};
+
+/**
+ * Features that mostly reflect how strong a player is and how fast the game is played, not style: shorter
+ * games, more captures and queen trades, fewer draws and so on are what weaker or faster play looks like.
+ * They are shown but left out of the comparison, so an amateur is matched on habits, not on rating.
+ * (Measured on real games: with them, a 1500-rated rapid player lands next to 19th-century masters.)
+ */
+export const LEVEL_SENSITIVE: ReadonlySet<FeatureKey> = new Set<FeatureKey>([
+  'length',
+  'draws',
+  'captures',
+  'checks',
+  'pawnCaptures',
+  'kingMoves',
+  'rookMoves',
+  'earlyQueenMove',
+  'queensOff',
+  'firstCapturePly',
+  'castlePly',
+  'queenTradePly',
+  'pieces30',
+  'pieces50',
+  'kingAdvance50',
+  'isolatedPawns30',
+  'doubledPawns30',
+]);
+
+/**
+ * Openings are the most reliable signal of a player, but a ranking decided by them alone says little about
+ * how someone plays: their weight is cut to this share, so the other groups count for as much.
+ */
+export const OPENING_WEIGHT = 0.5;
 export type FeatureValues = Record<FeatureKey, number>;
 
 export type GameResult = 'win' | 'draw' | 'loss';
 
-const VALUE: Record<string, number> = { p: 1, n: 3, b: 3, r: 5, q: 9 };
 const PIECE_KEY: Record<string, FeatureKey | undefined> = {
   p: 'pawnMoves',
   n: 'knightMoves',
@@ -51,9 +142,6 @@ const PIECE_KEY: Record<string, FeatureKey | undefined> = {
   k: 'kingMoves',
 };
 
-/** Material down by at least this much, and still down 4 plies later, counts as a sacrifice. */
-const SACRIFICE_MATERIAL = 2;
-const SACRIFICE_HORIZON = 5;
 /** Own moves (not plies) in which a queen move counts as early. */
 const EARLY_MOVES = 10;
 /** The queens are "off" when both are gone before this ply. */
@@ -61,6 +149,54 @@ const QUEENS_OFF_BY_PLY = 40;
 
 /** Shortest game worth profiling, in plies. */
 export const MIN_PLIES = 20;
+
+type Board = ReturnType<Chess['board']>;
+
+/** Counts of what the board looks like, from `me`'s side (pieces are non-pawn, non-king). */
+function snapshot(board: Board, me: 'w' | 'b') {
+  const own = { pawns: 0, n: 0, b: 0, pieces: 0 };
+  const theirB = { b: 0 };
+  let pieces = 0;
+  let pawns = 0;
+  let center = 0;
+  const filePawns = { w: Array(8).fill(0), b: Array(8).fill(0) } as Record<'w' | 'b', number[]>;
+  let advance = 0;
+  let king: { file: number; rank: number } | undefined;
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      const sq = board[r][c];
+      if (!sq) continue;
+      const rank = 8 - r; // 1..8 from White's side
+      if (sq.type === 'p') {
+        pawns++;
+        filePawns[sq.color][c]++;
+        if (c === 3 || c === 4) center++;
+        if (sq.color === me) {
+          own.pawns++;
+          advance += (me === 'w' ? rank : 9 - rank) - 2;
+        }
+      } else if (sq.type === 'k') {
+        if (sq.color === me) king = { file: c, rank: me === 'w' ? rank : 9 - rank };
+      } else {
+        pieces++;
+        if (sq.color === me) {
+          if (sq.type === 'n') own.n++;
+          if (sq.type === 'b') own.b++;
+        } else if (sq.type === 'b') theirB.b++;
+      }
+    }
+  }
+  let open = 0;
+  let isolated = 0;
+  let doubled = 0;
+  for (let c = 0; c < 8; c++) {
+    if (!filePawns.w[c] && !filePawns.b[c]) open++;
+    const mine = filePawns[me][c];
+    if (mine > 1) doubled++;
+    if (mine && !(c > 0 && filePawns[me][c - 1]) && !(c < 7 && filePawns[me][c + 1])) isolated++;
+  }
+  return { pieces, pawns, center, open, isolated, doubled, own, theirB, advance, king };
+}
 
 function empty(): FeatureValues {
   return Object.fromEntries(FEATURES.map((k) => [k, NaN])) as FeatureValues;
@@ -84,20 +220,24 @@ export function gameFeatures(moves: string[], color: 'white' | 'black', result: 
   let queens = 2;
   let queensOffAt = Infinity;
   let queenEarly = 0;
-  const balance: number[] = [0]; // material, mine minus theirs, after each ply
-  let material = 0;
+  let firstCapture = 0;
+  let queenTrade = 0;
+  let castlePly = 0;
+  let pawnCaptures = 0;
+  let snap30: ReturnType<typeof snapshot> | undefined;
+  let snap50: ReturnType<typeof snapshot> | undefined;
 
   try {
     for (let ply = 0; ply < moves.length; ply++) {
       const m = chess.move(moves[ply]);
       const own = m.color === me;
-      const sign = own ? 1 : -1;
-      if (m.captured) material += sign * VALUE[m.captured];
-      if (m.promotion) material += sign * (VALUE[m.promotion] - 1);
-      balance.push(material);
+      if (m.captured && !firstCapture) firstCapture = ply + 1;
+      if (ply + 1 === 30) snap30 = snapshot(chess.board(), me);
+      if (ply + 1 === 50) snap50 = snapshot(chess.board(), me);
       if (m.captured === 'q' || m.promotion === 'q') {
         queens += m.captured === 'q' ? -1 : 1;
         if (queens <= 0 && queensOffAt === Infinity) queensOffAt = ply + 1;
+        if (queens <= 0 && !queenTrade) queenTrade = ply + 1;
       }
       if (!own) {
         if (m.flags.includes('k') || m.flags.includes('q')) theirs.push(m.flags.includes('k') ? 'k' : 'q');
@@ -106,9 +246,11 @@ export function gameFeatures(moves: string[], color: 'white' | 'black', result: 
 
       mine++;
       if (m.captured) bump('captures');
+      if (m.captured && m.piece === 'p') pawnCaptures++;
       if (m.san.includes('+') || m.san.includes('#')) bump('checks');
       if (m.flags.includes('k') || m.flags.includes('q')) {
         castled.push(m.flags.includes('k') ? 'k' : 'q');
+        if (!castlePly) castlePly = ply + 1;
       } else {
         const key = PIECE_KEY[m.piece];
         if (key) bump(key);
@@ -128,24 +270,6 @@ export function gameFeatures(moves: string[], color: 'white' | 'black', result: 
     f[k] = rate(k);
   }
 
-  // Sacrifices: material given up (not just traded) that stays given up. Only in games not lost, so a
-  // blunder that decided the game is not mistaken for one.
-  let sacrifices = 0;
-  if (result !== 'loss') {
-    let last = -Infinity;
-    const first = me === 'w' ? 1 : 2; // 1-based plies of my moves
-    for (let p = first; p + 1 < balance.length; p += 2) {
-      const before = balance[p - 1];
-      if (balance[p + 1] > before - SACRIFICE_MATERIAL || p - last < 8) continue;
-      const horizon = Math.min(p + SACRIFICE_HORIZON, balance.length - 1);
-      if (balance[horizon] <= before - SACRIFICE_MATERIAL) {
-        sacrifices++;
-        last = p;
-      }
-    }
-  }
-  f.sacrifices = sacrifices / mine;
-
   f.castleKing = castled.includes('k') ? 1 : 0;
   f.castleQueen = castled.includes('q') ? 1 : 0;
   // Castling to different wings: the pawn storms that make such games sharp.
@@ -154,6 +278,26 @@ export function gameFeatures(moves: string[], color: 'white' | 'black', result: 
   f.queensOff = queensOffAt <= QUEENS_OFF_BY_PLY ? 1 : 0;
   f.length = Math.log(moves.length / 2);
   f.draws = result === 'draw' ? 1 : 0;
+
+  if (snap30) {
+    f.pieces30 = snap30.pieces / 14;
+    f.pawns30 = snap30.pawns / 16;
+    f.openFiles30 = snap30.open / 8;
+    f.centerPawns30 = snap30.center / 8;
+    f.pawnSpace30 = snap30.own.pawns ? snap30.advance / snap30.own.pawns / 5 : NaN;
+    f.bishopPairEdge30 = (snap30.own.b >= 2 ? 1 : 0) - (snap30.theirB.b >= 2 ? 1 : 0);
+    f.bishopsOverKnights30 = snap30.own.b - snap30.own.n;
+    f.isolatedPawns30 = snap30.own.pawns ? snap30.isolated / snap30.own.pawns : NaN;
+    f.doubledPawns30 = snap30.own.pawns ? snap30.doubled / snap30.own.pawns : NaN;
+  }
+  if (snap50) {
+    f.pieces50 = snap50.pieces / 14;
+    f.kingAdvance50 = snap50.king ? (snap50.king.rank - 1) / 7 : NaN;
+  }
+  if (firstCapture) f.firstCapturePly = Math.log(firstCapture);
+  if (castlePly) f.castlePly = Math.log(castlePly);
+  if (queenTrade) f.queenTradePly = Math.log(queenTrade);
+  f.pawnCaptures = counts.captures ? pawnCaptures / counts.captures : NaN;
 
   const first = moves[0].replace(/[+#]/g, '');
   const reply = moves[1]?.replace(/[+#]/g, '');

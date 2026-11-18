@@ -829,11 +829,10 @@
     "axisCol": "Eixo",
     "axis": {
       "aggression": "Agressividade",
-      "risk": "Risco",
-      "simplification": "Simplificação",
-      "activity": "Jogo de peças",
+      "closedPlay": "Jogo fechado",
+      "pieceplay": "Jogo de peças",
       "openness": "Jogo aberto",
-      "endurance": "Resistência"
+      "kingSafety": "Segurança do rei"
     },
     "loadError": "Não foi possível carregar os dados das lendas.",
     "computing": "Lendo suas partidas… {{done}}/{{total}}",
@@ -850,7 +849,7 @@
     "unlike": "Vocês diferem em:",
     "more": "mais do que eles",
     "less": "menos do que eles",
-    "disclaimer": "Isto compara hábitos de jogo (aberturas, capturas, roques, sacrifícios, duração…), não força: mostra de quem as partidas mais se parecem com as suas, não o quão bom você é. Os sacrifícios são detectados só pelo material, então são aproximados.",
+    "disclaimer": "Isto compara hábitos de jogo (aberturas, quais peças você move, estrutura de peões, roques), não força: mostra de quem as partidas mais se parecem com as suas, não o quão bom você é. O que reflete sobretudo nível ou ritmo (duração, empates, capturas, trocas) fica fora do ranking. Características que distinguem melhor os jogadores pesam mais, e as aberturas pesam metade. Mesmo assim é uma pista: o estilo das lendas mudou ao longo da carreira, e a correspondência fica bem mais fraca em partidas de outra fase delas.",
     "feature": {
       "captures": "Capturas",
       "checks": "Xeques",
@@ -861,7 +860,6 @@
       "queenMoves": "Lances de dama",
       "kingMoves": "Lances de rei",
       "pawnAdvance": "Peões avançados além do meio",
-      "sacrifices": "Sacrifícios de material",
       "castleKing": "Roque pequeno",
       "castleQueen": "Roque grande",
       "oppositeCastling": "Roques em lados opostos",
@@ -875,7 +873,22 @@
       "blackVsE4E5": "Responde 1.e4 com …e5",
       "blackVsE4C5": "Responde 1.e4 com …c5",
       "blackVsD4D5": "Responde 1.d4 com …d5",
-      "blackVsD4Nf6": "Responde 1.d4 com …Nf6"
+      "blackVsD4Nf6": "Responde 1.d4 com …Nf6",
+      "pieces30": "Peças restantes no lance 15",
+      "pieces50": "Peças restantes no lance 25",
+      "pawns30": "Peões restantes no lance 15",
+      "openFiles30": "Colunas abertas no lance 15",
+      "centerPawns30": "Peões no centro no lance 15",
+      "pawnSpace30": "Avanço dos peões no lance 15",
+      "bishopPairEdge30": "Tem o par de bispos no lance 15",
+      "bishopsOverKnights30": "Bispos acima de cavalos no lance 15",
+      "isolatedPawns30": "Peões isolados no lance 15",
+      "doubledPawns30": "Peões dobrados no lance 15",
+      "kingAdvance50": "Rei avançado no lance 25",
+      "firstCapturePly": "Primeira captura (quão tarde)",
+      "castlePly": "Roque (quão tarde)",
+      "queenTradePly": "Troca de damas (quão tarde)",
+      "pawnCaptures": "Capturas feitas por peões"
     },
     "legend": {
       "alekhine": "Xadrez de ataque feroz e complexo, com preparação profunda.",
@@ -907,6 +920,14 @@
       "steinitz": "Fundador do jogo posicional: acumula pequenas vantagens.",
       "tal": "O Mágico de Riga: sacrifícios e ataques selvagens que sufocam o adversário.",
       "topalov": "Agressivo e implacável, sempre buscando a iniciativa."
-    }
+    },
+    "group": {
+      "openings": "Aberturas",
+      "moves": "Lances",
+      "structure": "Andamento da partida",
+      "positions": "Posições atingidas"
+    },
+    "groupHint": "Onde vocês se parecem, por tipo de evidência: a abertura é só uma parte.",
+    "notCounted": "Não entram no ranking: refletem sobretudo o seu nível e o ritmo da partida, não o seu estilo."
   }
 }
