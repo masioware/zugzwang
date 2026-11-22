@@ -27,7 +27,7 @@ Ordenado por prioridade: primeiro o que tem mais impacto com menos esforço.
 - [ ] **Importar partidas mais antigas**: hoje, depois da primeira importação só vêm partidas mais novas (`importer.ts`). Permitir ampliar o período para trás.
 - [x] **Resumo de análise leve**: `useAnalyses()` carrega todas as análises completas (com as linhas do motor de cada posição). Guardar um resumo (precisão, contagem por classificação) numa tabela separada para a lista, estatísticas e amigos.
 - [ ] **Escolha de promoção** ao jogar variantes (hoje sempre dama).
-- [ ] **Puzzles a partir dos próprios erros**: transformar erros graves das partidas analisadas em puzzles ("encontre o lance certo") e permitir montar conjuntos do Pica-pau com eles.
+- [x] **Puzzles a partir dos próprios erros**: transformar erros graves das partidas analisadas em puzzles ("encontre o lance certo") e permitir montar conjuntos do Pica-pau com eles.
 
 ## 3. Maior esforço / refinamento
 

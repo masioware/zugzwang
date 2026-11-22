@@ -45,7 +45,7 @@ export default function PuzzleStats() {
   const scoped = useMemo(() => {
     const since = period ? Date.now() - period * 86_400_000 : 0;
     return (all ?? []).filter(
-      (a) => a.startedAt >= since && (mode === 'all' ? a.mode !== 'train' : (mode === 'free' ? a.mode === 'rated' || a.mode === 'practice' : a.mode === mode)),
+      (a) => a.startedAt >= since && (mode === 'all' ? a.mode !== 'train' && a.mode !== 'mistakes' : (mode === 'free' ? a.mode === 'rated' || a.mode === 'practice' : a.mode === mode)),
     );
   }, [all, mode, period]);
   const attempts = useMemo(() => (theme ? scoped.filter((a) => a.themes?.includes(theme)) : scoped), [scoped, theme]);

@@ -415,6 +415,7 @@
     "failed": "Failed",
     "tabs": {
       "train": "Train",
+      "mistakes": "My mistakes",
       "sprint": "Sprint",
       "woodpecker": "Woodpecker",
       "blindfold": "Blindfold",
@@ -669,7 +670,8 @@
     "hardestSub": "One square per cycle: green solved, red missed.",
     "noMisses": "No misses yet.",
     "misses_one": "{{count}} miss",
-    "misses_other": "{{count}} misses"
+    "misses_other": "{{count}} misses",
+    "fromOwn": "My mistakes"
   },
   "puzzleStats": {
     "title": "Puzzle statistics",
@@ -970,5 +972,30 @@
     "bannerVerifying": "Checking “{{name}}”: {{seen}}/{{total}} new games",
     "bannerRedo": "Back to drills: “{{name}}”",
     "bannerGo": "Open training"
+  },
+  "mistakes": {
+    "title": "Puzzles from your mistakes",
+    "subtitle": "Every serious mistake in your analysed games, turned into a \"find the right move\" puzzle.",
+    "loading": "Looking through your games…",
+    "empty": "No mistakes costing {{loss}}% or more in your analysed games yet. Analyse more games and they will show up here.",
+    "showSmaller": "Include smaller mistakes",
+    "goAnalyse": "Go to my games",
+    "allSolved": "All of these are solved. Lower the minimum loss or analyse more games.",
+    "fixed": "Fixed: this time you found it",
+    "stillMissed": "Still missed",
+    "stillMissedSub": "Replay it later: this is the move that cost you the game.",
+    "openGame": "Open the game",
+    "minLoss": "Mistakes costing at least",
+    "lossChoice": "{{loss}}% win chance",
+    "unsolvedOnly": "Not solved yet",
+    "count_one": "{{count}} mistake",
+    "count_other": "{{count}} mistakes",
+    "row": "Move {{move}} vs. {{opponent}}",
+    "showMore": "Show more",
+    "stateSolved": "Solved",
+    "stateFailed": "Missed",
+    "stateNew": "Not tried",
+    "setTitle": "Woodpecker set",
+    "setHint": "Drill the worst of these mistakes again and again until the right move is automatic."
   }
 }

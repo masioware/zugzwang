@@ -54,6 +54,25 @@ const LOW_SECONDS = 15;
 
 export const isMistake = (m: MoveAnalysis) => MISTAKES.has(m.classification);
 
+/** The mistake `m` made in a game replayed as `plies`; undefined when the replay has no such move. */
+export function mistakeExample(gameId: string, m: MoveAnalysis, plies: ReturnType<typeof replay>, loss: number): MistakeExample | undefined {
+  const ply = plies[m.ply];
+  if (!ply) return undefined;
+  const prev = plies[m.ply - 1];
+  return {
+    gameId,
+    ply: m.ply,
+    fenBefore: ply.fenBefore,
+    setup: prev && { fen: prev.fenBefore, uci: prev.uci },
+    playedUci: m.uci,
+    bestUci: m.bestUci,
+    loss,
+  };
+}
+
+/** Win% the mover threw away with the move. */
+export const winLoss = (m: MoveAnalysis) => Math.max(0, m.winBefore - m.winAfter);
+
 export function isLowClock(m: MoveAnalysis, initialTime?: number): boolean {
   if (m.clockBefore === undefined) return false;
   return m.clockBefore <= LOW_SECONDS || (!!initialTime && m.clockBefore <= initialTime * LOW_SHARE);
@@ -99,20 +118,11 @@ export function diagnose(games: Game[], analyses: Map<string, GameAnalysis>): We
       if (family) get('opening', family).opportunities++;
       if (!isMistake(m)) continue;
       mistakes++;
-      const loss = Math.max(0, m.winBefore - m.winAfter);
+      const loss = winLoss(m);
       plies ??= replay(game.moves);
       const ply = plies[m.ply];
       if (!ply) continue;
-      const prev = plies[m.ply - 1];
-      const example: MistakeExample = {
-        gameId: game.id,
-        ply: m.ply,
-        fenBefore: ply.fenBefore,
-        setup: prev && { fen: prev.fenBefore, uci: prev.uci },
-        playedUci: m.uci,
-        bestUci: m.bestUci,
-        loss,
-      };
+      const example = mistakeExample(game.id, m, plies, loss)!;
       const hit = (b: Bucket) => {
         b.count++;
         b.loss += loss;
