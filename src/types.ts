@@ -143,7 +143,7 @@ export interface Puzzle {
   addedAt: number;
 }
 
-export type PuzzleMode = 'rated' | 'practice' | 'woodpecker' | 'sprint' | 'blindfold' | 'train';
+export type PuzzleMode = 'rated' | 'practice' | 'woodpecker' | 'sprint' | 'blindfold' | 'train' | 'mistakes';
 
 export interface PuzzleAttempt {
   id?: number;
@@ -190,7 +190,7 @@ export interface WoodpeckerSet {
   name: string;
   puzzleIds: string[];
   createdAt: number;
-  origin: { kind: 'filter'; theme?: string; min: number; max: number } | { kind: 'failed' };
+  origin: { kind: 'filter'; theme?: string; min: number; max: number } | { kind: 'failed' } | { kind: 'own' };
 }
 
 export interface WoodpeckerCycle {

@@ -6,6 +6,7 @@ export default function PuzzleTabs() {
   const { t } = useTranslation();
   const tabs: [string, string, boolean][] = [
     ['/puzzles', t('puzzles.tabs.train'), true],
+    ['/puzzles/mistakes', t('puzzles.tabs.mistakes'), false],
     ['/puzzles/sprint', t('puzzles.tabs.sprint'), false],
     ['/puzzles/woodpecker', t('puzzles.tabs.woodpecker'), false],
     ['/puzzles/blindfold', t('puzzles.tabs.blindfold'), false],

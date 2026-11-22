@@ -44,6 +44,7 @@ export function ThemeSelect({ themes, value, onChange }: { themes: string[]; val
 /** "Fork · 1100–1400" or "Failed puzzles": where a Woodpecker set's puzzles came from. */
 export function originLabel(set: WoodpeckerSet, t: (k: string, o?: Record<string, unknown>) => string): string {
   if (set.origin.kind === 'failed') return t('woodpecker.fromFailed');
+  if (set.origin.kind === 'own') return t('woodpecker.fromOwn');
   const theme = set.origin.theme ? t(`puzzleTheme.${set.origin.theme}`, { defaultValue: set.origin.theme }) : t('puzzles.anyTheme');
   return `${theme} · ${set.origin.min}–${set.origin.max}`;
 }

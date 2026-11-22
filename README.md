@@ -31,6 +31,10 @@ RUN_ENGINE=1 npm test   # inclui o teste de integração com o Stockfish real
   em ciclos com ordem embaralhada; erro encerra o puzzle e cada ciclo mira metade do tempo do anterior.
 - Sprint: resolver o máximo de puzzles em 3 min, 5 min ou sem relógio, com dificuldade crescente e fim no terceiro
   erro. Guarda recorde por modo, não altera o rating e os puzzles errados entram nos conjuntos de errados do Pica-pau.
+- Meus erros (`/puzzles/mistakes`): cada erro grave (perda mínima de win% ajustável) das partidas analisadas vira um puzzle
+  "encontre o lance certo" (o lance do adversário antes do erro é o setup; a solução é o melhor lance do motor, ou o mate
+  forçado inteiro). Tentativas ficam no modo `mistakes`, fora do rating e das estatísticas gerais, e os piores erros
+  podem virar um conjunto do Pica-pau.
 - Cada tentativa guarda tempo até o resultado e até o fim da linha, tempo por lance, lances errados, temas, cor e
   tamanho do puzzle; a aba Estatísticas de puzzles agrega isso por tema, rating, tamanho, fase, cor e tempo gasto.
 - Stockfish é GPL-3.0; é carregado como arquivo separado a partir de `public/stockfish`.

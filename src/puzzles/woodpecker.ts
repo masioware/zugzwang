@@ -28,6 +28,14 @@ export async function createFromFailed(name: string, size: number): Promise<Wood
   return saveSet(name, puzzles, { kind: 'failed' });
 }
 
+/** Creates a set from puzzles built from the player's own mistakes (the caller passes them worst first). */
+export async function createFromOwn(name: string, puzzles: Puzzle[], size: number): Promise<WoodpeckerSet | undefined> {
+  const chosen = puzzles.slice(0, size);
+  if (!chosen.length) return undefined;
+  await Promise.all(chosen.map(savePuzzle));
+  return saveSet(name, chosen, { kind: 'own' });
+}
+
 async function saveSet(name: string, puzzles: Puzzle[], origin: WoodpeckerSet['origin']): Promise<WoodpeckerSet> {
   const set: WoodpeckerSet = { id: crypto.randomUUID(), name, puzzleIds: puzzles.map((p) => p.id), createdAt: Date.now(), origin };
   await db.woodpeckerSets.add(set);

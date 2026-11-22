@@ -13,7 +13,7 @@ const section = (tree: Record<string, unknown>, name: string) => keys(tree[name]
 
 describe('translations', () => {
   it('has the same keys in both languages for the stats navigation and the style page', () => {
-    for (const name of ['statsNav', 'style', 'train']) {
+    for (const name of ['statsNav', 'style', 'train', 'mistakes']) {
       expect(section(pt, name).sort(), name).toEqual(section(en, name).sort());
     }
   });

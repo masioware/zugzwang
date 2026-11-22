@@ -461,6 +461,7 @@
     "failed": "Errado",
     "tabs": {
       "train": "Resolver",
+      "mistakes": "Meus erros",
       "sprint": "Sprint",
       "woodpecker": "Pica-pau",
       "blindfold": "Às cegas",
@@ -715,7 +716,8 @@
     "hardestSub": "Um quadrado por ciclo: verde acertou, vermelho errou.",
     "noMisses": "Nenhum erro ainda.",
     "misses_one": "{{count}} erro",
-    "misses_other": "{{count}} erros"
+    "misses_other": "{{count}} erros",
+    "fromOwn": "Meus erros"
   },
   "puzzleStats": {
     "title": "Estatísticas de puzzles",
@@ -1020,5 +1022,30 @@
     "bannerVerifying": "Verificando “{{name}}”: {{seen}}/{{total}} partidas novas",
     "bannerRedo": "De volta aos exercícios: “{{name}}”",
     "bannerGo": "Abrir treino"
+  },
+  "mistakes": {
+    "title": "Puzzles dos seus erros",
+    "subtitle": "Cada erro grave das suas partidas analisadas, transformado em um puzzle de \"encontre o lance certo\".",
+    "loading": "Procurando nas suas partidas…",
+    "empty": "Ainda não há erros que custem {{loss}}% ou mais nas suas partidas analisadas. Analise mais partidas e eles aparecem aqui.",
+    "showSmaller": "Incluir erros menores",
+    "goAnalyse": "Ir para minhas partidas",
+    "allSolved": "Todos estes já foram resolvidos. Reduza a perda mínima ou analise mais partidas.",
+    "fixed": "Corrigido: desta vez você achou",
+    "stillMissed": "Ainda errou",
+    "stillMissedSub": "Tente de novo depois: este é o lance que custou caro na partida.",
+    "openGame": "Abrir a partida",
+    "minLoss": "Erros que custam pelo menos",
+    "lossChoice": "{{loss}}% de chance de vitória",
+    "unsolvedOnly": "Ainda não resolvidos",
+    "count_one": "{{count}} erro",
+    "count_other": "{{count}} erros",
+    "row": "Lance {{move}} contra {{opponent}}",
+    "showMore": "Mostrar mais",
+    "stateSolved": "Resolvido",
+    "stateFailed": "Errou",
+    "stateNew": "Não tentado",
+    "setTitle": "Conjunto do Pica-pau",
+    "setHint": "Treine os piores destes erros várias vezes até o lance certo ficar automático."
   }
 }

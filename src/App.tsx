@@ -21,6 +21,7 @@ const TrainLesson = lazy(() => import('./pages/TrainLesson'));
 const Puzzles = lazy(() => import('./pages/Puzzles'));
 const PuzzleStats = lazy(() => import('./pages/PuzzleStats'));
 const Play = lazy(() => import('./pages/Play'));
+const MyMistakes = lazy(() => import('./pages/MyMistakes'));
 const Sprint = lazy(() => import('./pages/Sprint'));
 const BlindfoldPuzzles = lazy(() => import('./pages/BlindfoldPuzzles'));
 const BlindfoldDrills = lazy(() => import('./pages/BlindfoldDrills'));
@@ -178,6 +179,7 @@ export default function App() {
             <Route path="/puzzles" element={<Puzzles />} />
             <Route path="/puzzles/p/:id" element={<Puzzles />} />
             <Route path="/puzzles/stats" element={<PuzzleStats />} />
+            <Route path="/puzzles/mistakes" element={<MyMistakes />} />
             <Route path="/puzzles/sprint" element={<Sprint />} />
             <Route path="/puzzles/blindfold" element={<BlindfoldPuzzles />} />
             <Route path="/puzzles/vision" element={<BlindfoldDrills />} />
